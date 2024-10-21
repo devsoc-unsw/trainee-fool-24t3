@@ -37,6 +37,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# pnpm
+.pnpm-store
 
-
-
+# Other nonsense
+.DS_Store
+.idea
+/.vscode/
