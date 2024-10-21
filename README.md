@@ -11,6 +11,7 @@
 SESSION_SECRET=
 NODE_ENV=development
 ALLOWED_ORIGINS=commaseparated,regexes,slashesnotrequired
+DATABASE_URL="postgresql://..."
 ```
 
 `NODE_ENV` may be either 'development' or 'production'
