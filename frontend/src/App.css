@@ -1,3 +1,7 @@
+html {
+  font-family: Inter, Arial;
+}
+
 .event {
   color: green;
 }
