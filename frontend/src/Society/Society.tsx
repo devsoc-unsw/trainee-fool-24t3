@@ -17,7 +17,7 @@ function Society(props: SocietyProps) {
         backgroundImage: `url(${props.image})`,
         backgroundPositionY: props.backgroundPositionY,
         }}/>
-        <div className={classes["society-name-container"]} style={{backgroundColor: props.color}}>
+        <div className={classes["society-name-container"]} style={{backgroundColor: props.color ? props.color : 'hsl(0, 0%, 100%)'}}>
             <h1 className={classes["society-name"]}>{props.name}</h1>
         </div>
     </div>
