@@ -1,7 +1,7 @@
 import './App.css';
 import Event from './Event/Event';
 import bbq from './assets/bbq.png';
-import Society from './Society/Society'
+
 function App() {
   return (
     <>
