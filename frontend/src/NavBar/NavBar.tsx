@@ -3,9 +3,6 @@ import pyramidIcon from '../assets/pyramidIcon.svg';
 
 export type NavBarProps = {
   profileImage: string;
-  timeline?: boolean;
-  calendar?: boolean;
-  about?: boolean;
 }
 
 function NavBar(props: NavBarProps) {
