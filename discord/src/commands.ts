@@ -4,7 +4,7 @@ const { BOT_TOKEN, APPLICATION_ID } = process.env;
 
 if (!BOT_TOKEN || !APPLICATION_ID) {
   throw new Error(
-    'BOT_TOKEN and CLIENT_ID must be defined in a supplied .env file.'
+    'BOT_TOKEN and APPLICATION_ID must be defined in a supplied .env file.'
   );
 }
 
@@ -12,6 +12,10 @@ const commands = [
   {
     name: 'ping',
     description: 'Replies with Pong!',
+  },
+  {
+    name: 'newevent',
+    description: 'Creates a new event',
   },
 ];
 

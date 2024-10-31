@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx --env-file=.env src/index.ts"
+    "cmds": "tsx watch --env-file=.env src/commands.ts",
+    "bot": "tsx watch --env-file=.env src/bot.ts"
   },
   "keywords": [],
   "author": "",

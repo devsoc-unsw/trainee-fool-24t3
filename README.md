@@ -46,6 +46,8 @@ PUBLIC_KEY=
 BOT_TOKEN=
 ```
 
+4. `pnpm run cmds` to establish the commands, then `pnpm run bot` to start the bot.
+
 ## credits
 
 * aaron fang
