@@ -32,6 +32,17 @@ echo "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/ENDPOINT_
 
 you can now use the `rebuild` script in the root of the repository to initiate manual deployments without having to push changes to `main`.
 
+### setting up the discord bot
+
+1. `cd discord && pnpm i`
+2. create an application in the [discord developer portal](https://discord.com/developers/applications).
+3. set the following values in `discord/.env` to match those noted in the discord developer portal for your new app:
+
+```bash
+APPLICATION_ID=
+PUBLIC_KEY=
+```
+
 ## credits
 
 * aaron fang
