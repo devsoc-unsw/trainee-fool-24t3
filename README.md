@@ -34,6 +34,8 @@ you can now use the `rebuild` script in the root of the repository to initiate m
 
 ### setting up the discord bot
 
+if you're not interested in self-hosting, you can invite the pyramids discord bot [here](https://discord.com/oauth2/authorize?client_id=1301423026633445447&permissions=17600776112128&integration_type=0&scope=applications.commands+bot).
+
 1. `cd discord && pnpm i`
 2. create an application in the [discord developer portal](https://discord.com/developers/applications).
 3. set the following values in `discord/.env` to match those noted in the discord developer portal for your new app:
