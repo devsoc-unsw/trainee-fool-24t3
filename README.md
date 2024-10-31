@@ -41,6 +41,7 @@ you can now use the `rebuild` script in the root of the repository to initiate m
 ```bash
 APPLICATION_ID=
 PUBLIC_KEY=
+BOT_TOKEN=
 ```
 
 ## credits
