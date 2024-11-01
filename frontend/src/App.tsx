@@ -1,5 +1,6 @@
 import './App.css';
 import Event from './Event/Event';
+import NavBar from './NavBar/NavBar';
 import bbq from './assets/bbq.png';
 
 function App() {
@@ -19,6 +20,9 @@ function App() {
         time="25th Dec 2024"
         keywords={['hiii', 'another keyword']}
       ></Event>
+      <NavBar
+        profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"
+      ></NavBar>
     </>
   );
 }

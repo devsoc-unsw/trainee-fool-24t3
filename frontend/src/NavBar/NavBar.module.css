@@ -1,0 +1,43 @@
+.container {
+  background: hsl(0, 0%, 85%);
+  height: 10vh;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 20px;
+}
+
+.pyramids {
+  display: flex;
+  margin: 12px 0px 0px 3%;
+  align-items: center;
+  justify-content: space-between;
+  width: 11%;
+  font-size: 18px;
+}
+
+.logo {
+  height: 48px;
+}
+
+.title {
+  margin-top: 12px;
+}
+
+.pages {
+  display: flex;
+  width: 35%;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 300px
+}
+
+.profile {
+  border-radius: 16px;
+  height: 48px;
+  width: 48px;
+  margin: 12px;
+  margin-right: 3%;
+  margin-left: 5%;
+  background-size: cover;
+}
