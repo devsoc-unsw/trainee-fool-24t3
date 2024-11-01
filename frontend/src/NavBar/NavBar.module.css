@@ -1,22 +1,19 @@
 .container {
   background: hsl(0, 0%, 85%);
-  height: 72px;
+  height: 10vh;
   display: flex;
-  position: fixed;
-  bottom: 0;
+  justify-content: space-between;
   width: 100%;
-  font-family: sans-serif;
-  font-size: 12px;
-  font-weight: 80;
+  font-size: 20px;
 }
 
 .pyramids {
   display: flex;
-  margin: 12px 280px 0px 70px;
+  margin: 12px 0px 0px 3%;
   align-items: center;
   justify-content: space-between;
-  width: 200px;
-  font-size: 14px;
+  width: 11%;
+  font-size: 18px;
 }
 
 .logo {
@@ -29,9 +26,10 @@
 
 .pages {
   display: flex;
-  width: 480px;
+  width: 35%;
   justify-content: space-between;
   align-items: center;
+  min-width: 300px
 }
 
 .profile {
@@ -39,7 +37,7 @@
   height: 48px;
   width: 48px;
   margin: 12px;
-  margin-right: 48px;
-  margin-left: auto;
-  background-size: 48px;
+  margin-right: 3%;
+  margin-left: 5%;
+  background-size: cover;
 }

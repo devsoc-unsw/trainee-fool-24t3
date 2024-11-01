@@ -7,15 +7,15 @@ export type NavBarProps = {
 
 function NavBar(props: NavBarProps) {
   return (
-    <div className={classes.container}>
+    <nav className={classes.container}>
       <div className={classes.pyramids}>
         <img src={pyramidIcon} className={classes.logo} ></img>
         <h1 className={classes.title}>Pyramids</h1>
       </div>
       <div className={classes.pages}>
-        <h1>Timeline</h1>
-        <h1>Calendar</h1>
-        <h1>About</h1>
+        <a>Timeline</a>
+        <a>Calendar</a>
+        <a>About</a>
       </div>
       <div 
         className={classes.profile}
@@ -23,7 +23,7 @@ function NavBar(props: NavBarProps) {
           backgroundImage: `url(${props.profileImage})`,
         }}
       ></div>
-    </div>
+    </nav>
   );
 }
 
