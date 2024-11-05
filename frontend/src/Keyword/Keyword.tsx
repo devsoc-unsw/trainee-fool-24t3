@@ -1,19 +1,34 @@
-import classes from './Keyword.module.css';
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import classes from "./Keyword.module.css";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+
+export enum KeywordOptions {
+  Delete,
+  Add,
+}
 
 type KeywordProps = {
-  keyword: string;
+  children: string;
+  type: KeywordOptions;
 };
 
-function Keyword(props: KeywordProps) {
+export function Keyword(props: KeywordProps) {
   return (
-    <div className={classes.keyword}>
-      <div className={classes.keywordText}>{props.keyword}</div>
+    <div
+      className={
+        props.type === KeywordOptions.Delete
+          ? classes.DeleteKeyword
+          : classes.AddKeyword
+      }
+    >
+      <div className={classes.keywordText}>{props.children}</div>
       <button className={classes.button}>
-        <XMarkIcon className={classes.deleteButtonIcon} />
+        {props.type === KeywordOptions.Delete && (
+          <XMarkIcon className={classes.deleteButtonIcon} />
+        )}
+        {props.type === KeywordOptions.Add && (
+          <PlusIcon className={classes.deleteButtonIcon} />
+        )}
       </button>
     </div>
   );
 }
-
-export default Keyword;

@@ -1,7 +1,7 @@
-import './App.css';
-import Event from './Event/Event';
-import Keyword from './Keyword/Keyword';
-import bbq from './assets/bbq.png';
+import "./App.css";
+import Event from "./Event/Event";
+import { Keyword, KeywordOptions } from "./Keyword/Keyword";
+import bbq from "./assets/bbq.png";
 
 function App() {
   return (
@@ -18,13 +18,13 @@ function App() {
         image="https://pbs.twimg.com/media/F2y8Ehbb0AA-ch9.jpg"
         backgroundPositionY="150px"
         time="25th Dec 2024"
-        keywords={['hiii', 'another keyword']}
+        keywords={["hiii", "another keyword"]}
       ></Event>
-      <Keyword keyword="Frunk Dwindleward"></Keyword>
-      <Keyword keyword="Frunk"></Keyword>
-      <Keyword keyword="Frunk Deteriossssss wfiuhdihabd auhfiuhwi dkhihaiuhf auhfihai fiuahfiuhi fiuahifuha iuahiudhi aiufhiuahfiu aifhh"></Keyword>
-      <Keyword keyword="Frunk Deteriossssss wfiuhdihabd auhfiuhwi dkhihaiuhf auhfihai fiuahfiuhi fiuahifuha iuahiudhi aiufhiuahfiu aifhh"></Keyword>
-      <Keyword keyword="Frunk Deteriossssss wfiuhdihabd auhfiuhwi dkhihaiuhf auhfihai fiuahfiuhi fiuahifuha iuahiudhi aiufhiuahfiu aifhh"></Keyword>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Add}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
     </>
   );
 }

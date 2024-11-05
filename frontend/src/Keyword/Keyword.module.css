@@ -1,5 +1,17 @@
-.keyword {
+.DeleteKeyword {
   background: hsl(0, 3%, 93%);
+  border-radius: 16px;
+  padding: 0.4em 0.6em 0.4em 0.8em;
+  margin: 0.5em;
+  margin-right: 1em;
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  height: 24px;
+}
+
+.AddKeyword {
+  background: hsl(160, 72%, 43%);
   border-radius: 16px;
   padding: 0.4em 0.6em 0.4em 0.8em;
   margin: 0.5em;
