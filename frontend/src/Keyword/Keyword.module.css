@@ -1,0 +1,35 @@
+.container {
+    background: hsl(0, 0%, 86%);
+    border-radius: 16px;
+    width: fit-content;
+    padding: 0.5em;
+    display: inline-block;
+    margin-right: 1em;
+    margin: 0.5em;
+    height: 1em;
+}
+
+.keywordText {
+    width: 100%;
+    display: inline;
+    margin-right: 10px;
+    font-size: 1em;
+}
+
+.buttonContainer {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: none;
+    background-color: hsl(0, 0%, 86%);
+}
+
+.deleteButton {
+    display: table;
+    margin: 0;
+    align-self: center;
+    border: none;
+    width: 15px;
+}

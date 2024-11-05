@@ -2,6 +2,7 @@ import "./App.css";
 import Event from "./Event/Event";
 import Keyword from "./Keyword/Keyword";
 import bbq from "./assets/bbq.png";
+import deleteButton from "./assets/icons/X.png";
 
 function App() {
   return (
@@ -20,7 +21,23 @@ function App() {
         time="25th Dec 2024"
         keywords={["hiii", "another keyword"]}
       ></Event>
-      <Keyword></Keyword>
+      <Keyword
+        keyword="Frunk Dwindleward"
+        deleteButton={deleteButton}
+      ></Keyword>
+      <Keyword keyword="Frunk" deleteButton={deleteButton}></Keyword>
+      <Keyword
+        keyword="Frunk Deteriossssss wfiuhdihabd auhfiuhwi dkhihaiuhf auhfihai fiuahfiuhi fiuahifuha iuahiudhi aiufhiuahfiu aifhh"
+        deleteButton={deleteButton}
+      ></Keyword>
+      <Keyword
+        keyword="Frunk Deteriossssss wfiuhdihabd auhfiuhwi dkhihaiuhf auhfihai fiuahfiuhi fiuahifuha iuahiudhi aiufhiuahfiu aifhh"
+        deleteButton={deleteButton}
+      ></Keyword>
+      <Keyword
+        keyword="Frunk Deteriossssss wfiuhdihabd auhfiuhwi dkhihaiuhf auhfihai fiuahfiuhi fiuahifuha iuahiudhi aiufhiuahfiu aifhh"
+        deleteButton={deleteButton}
+      ></Keyword>
     </>
   );
 }
