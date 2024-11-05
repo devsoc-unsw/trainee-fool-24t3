@@ -10,7 +10,7 @@ function NavBar(props: NavBarProps) {
     <nav className={classes.container}>
       <div className={classes.pyramids}>
         <img src={pyramidIcon} className={classes.logo} ></img>
-        <h1 className={classes.title}>Pyramids</h1>
+        <h1>Pyramids</h1>
       </div>
       <div className={classes.pages}>
         <a>Timeline</a>
