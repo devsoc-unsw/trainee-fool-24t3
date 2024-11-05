@@ -1,16 +1,16 @@
-import classes from "./Keyword.module.css";
+import classes from './Keyword.module.css';
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 type KeywordProps = {
   keyword: string;
-  deleteButton: string;
 };
 
 function Keyword(props: KeywordProps) {
   return (
-    <div className={classes.container}>
+    <div className={classes.keyword}>
       <div className={classes.keywordText}>{props.keyword}</div>
-      <button className={classes.buttonContainer}>
-        <img src={props.deleteButton} className={classes.deleteButton}></img>
+      <button className={classes.button}>
+        <XMarkIcon className={classes.deleteButtonIcon} />
       </button>
     </div>
   );
