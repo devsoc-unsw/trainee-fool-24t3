@@ -2,6 +2,7 @@ import "./App.css";
 import Event from "./Event/Event";
 import { Keyword, KeywordOptions } from "./Keyword/Keyword";
 import bbq from "./assets/bbq.png";
+import NavBar from './NavBar/NavBar';
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
       <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
       <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
       <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <NavBar
+        profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"
+      ></NavBar>
     </>
   );
 }
