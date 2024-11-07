@@ -7,8 +7,10 @@ import {
 } from 'discord.js';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
 
 dayjs.extend(customParseFormat);
+dayjs.extend(isSameOrBefore);
 
 export default {
   data: new SlashCommandBuilder()
@@ -69,6 +71,22 @@ export default {
       await interaction.followUp({
         content:
           'Invalid date format. Please use: DD/MM/YYYY HH:mm, D/M/YYYY HH:mm, or D/M/YY HH:mm.',
+        ephemeral: true,
+      });
+      return;
+    }
+
+    if (startTime.isAfter(endTime)) {
+      await interaction.followUp({
+        content: 'Start time must precede the end time.',
+        ephemeral: true,
+      });
+      return;
+    }
+
+    if (startTime.isSameOrBefore(dayjs())) {
+      await interaction.followUp({
+        content: 'Start time must be in the future.',
         ephemeral: true,
       });
       return;
