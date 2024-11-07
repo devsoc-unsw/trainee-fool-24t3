@@ -6,6 +6,9 @@ import {
   SlashCommandBuilder,
 } from 'discord.js';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+
+dayjs.extend(customParseFormat);
 
 export default {
   data: new SlashCommandBuilder()
@@ -51,9 +54,25 @@ export default {
     const startTime_string = interaction.options.get('start_time', true);
     const endTime_string = interaction.options.get('end_time', true);
 
-    // TODO: improve date parsing
-    const startTime = dayjs(startTime_string.value as string).toDate();
-    const endTime = dayjs(endTime_string.value as string).toDate();
+    const startTime = dayjs(startTime_string.value as string, [
+      'DD/MM/YYYY HH:mm',
+      'D/M/YYYY HH:mm',
+      'D/M/YY HH:mm',
+    ]);
+    const endTime = dayjs(endTime_string.value as string, [
+      'DD/MM/YYYY HH:mm',
+      'D/M/YYYY HH:mm',
+      'D/M/YY HH:mm',
+    ]);
+
+    if (!startTime.isValid() || !endTime.isValid()) {
+      await interaction.followUp({
+        content:
+          'Invalid date format. Please use: DD/MM/YYYY HH:mm, D/M/YYYY HH:mm, or D/M/YY HH:mm.',
+        ephemeral: true,
+      });
+      return;
+    }
 
     const manager = interaction.guild
       ?.scheduledEvents as GuildScheduledEventManager;
@@ -63,8 +82,8 @@ export default {
       entityMetadata: {
         location: location.value as string,
       },
-      scheduledStartTime: startTime,
-      scheduledEndTime: endTime,
+      scheduledStartTime: startTime.toDate(),
+      scheduledEndTime: endTime.toDate(),
       privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
       entityType: GuildScheduledEventEntityType.External,
       description: description.value as string,
