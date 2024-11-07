@@ -1,0 +1,40 @@
+.container {
+  background: hsl(0, 0%, 85%);
+  height: 10vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+  font-size: 20px;
+}
+
+.pyramids {
+  display: flex;
+  margin-left: 3%;
+  align-items: center;
+  justify-content: space-between;
+  width: 12%;
+  font-size: 18px;
+}
+
+.logo {
+  height: 48px;
+}
+
+.pages {
+  display: flex;
+  width: 35%;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 300px
+}
+
+.profile {
+  border-radius: 16px;
+  height: 48px;
+  width: 48px;
+  margin-right: 3%;
+  margin-left: 5%;
+  background-size: cover;
+}
