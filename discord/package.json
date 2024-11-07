@@ -16,6 +16,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "discord.js": "^14.16.3"
   }
 }
