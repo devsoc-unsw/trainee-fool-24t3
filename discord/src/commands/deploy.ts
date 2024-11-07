@@ -46,14 +46,22 @@ const deploy = async (mode: string) => {
 };
 
 const args = process.argv.slice(2);
-if (args.length !== 1 || (args[0] !== 'test' && args[0] !== 'public')) {
-  console.error('Usage: pnpm run cmds test|public');
+if (
+  args.length < 1 ||
+  args.length > 2 ||
+  (args[0] !== 'test' && args[0] !== 'public') ||
+  (args.length === 2 && args[1] !== '-v')
+) {
+  console.error('Usage: pnpm run cmds test|public [-v]');
 } else {
   if (args[0] === 'test' && !SERVER_ID) {
     console.error(
       'SERVER_ID must be defined in a supplied .env file for test mode.'
     );
   } else {
+    if (args[1] === '-v') {
+      console.log(commands_data);
+    }
     deploy(args[0]);
   }
 }
