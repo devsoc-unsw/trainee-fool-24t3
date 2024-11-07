@@ -5,13 +5,49 @@ import {
   GuildScheduledEventEntityType,
   GuildScheduledEventManager,
   GuildScheduledEventPrivacyLevel,
+  REST,
+  Routes,
 } from 'discord.js';
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-const { BOT_TOKEN } = process.env;
+const { BOT_TOKEN, APPLICATION_ID } = process.env;
 
-if (!BOT_TOKEN) {
-  throw new Error('BOT_TOKEN must be defined in a supplied .env file.');
+if (!BOT_TOKEN || !APPLICATION_ID) {
+  throw new Error(
+    'BOT_TOKEN and APPLICATION_ID must be defined in a supplied .env file.'
+  );
 }
+/*
+    Set commands
+*/
+
+const commands = [
+  {
+    name: 'ping',
+    description: 'Replies with Pong!',
+  },
+  {
+    name: 'newevent',
+    description: 'Creates a new event',
+  },
+];
+
+const rest = new REST({ version: '10' }).setToken(BOT_TOKEN);
+
+try {
+  console.log('Started refreshing application (/) commands.');
+
+  await rest.put(Routes.applicationCommands(APPLICATION_ID), {
+    body: commands,
+  });
+
+  console.log('Successfully reloaded application (/) commands.');
+} catch (error) {
+  console.error(error);
+}
+
+/*
+    Command handling
+*/
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user?.tag}!`);
