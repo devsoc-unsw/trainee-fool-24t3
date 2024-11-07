@@ -45,16 +45,23 @@ export default {
         .setName('end_time')
         .setDescription('The end time of the event')
         .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName('image')
+        .setDescription('The image of the event')
+        .setRequired(false)
     ),
 
   async execute(interaction: CommandInteraction) {
-    await interaction.reply('Creating new event...');
+    await interaction.reply('🤔  Creating new event...');
 
     const name = interaction.options.get('name', true);
     const description = interaction.options.get('description', true);
     const location = interaction.options.get('location', true);
     const startTime_string = interaction.options.get('start_time', true);
     const endTime_string = interaction.options.get('end_time', true);
+    const image = interaction.options.get('image') ?? null;
 
     const startTime = dayjs(startTime_string.value as string, [
       'DD/MM/YYYY HH:mm',
@@ -70,7 +77,7 @@ export default {
     if (!startTime.isValid() || !endTime.isValid()) {
       await interaction.followUp({
         content:
-          'Invalid date format. Please use: DD/MM/YYYY HH:mm, D/M/YYYY HH:mm, or D/M/YY HH:mm.',
+          '⚠️  Invalid date format. Please use: DD/MM/YYYY HH:mm, D/M/YYYY HH:mm, or D/M/YY HH:mm.',
         ephemeral: true,
       });
       return;
@@ -78,7 +85,7 @@ export default {
 
     if (startTime.isAfter(endTime)) {
       await interaction.followUp({
-        content: 'Start time must precede the end time.',
+        content: '⚠️  Start time must precede the end time.',
         ephemeral: true,
       });
       return;
@@ -86,7 +93,7 @@ export default {
 
     if (startTime.isSameOrBefore(dayjs())) {
       await interaction.followUp({
-        content: 'Start time must be in the future.',
+        content: '⚠️  Start time must be in the future.',
         ephemeral: true,
       });
       return;
@@ -105,7 +112,11 @@ export default {
       privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
       entityType: GuildScheduledEventEntityType.External,
       description: description.value as string,
+      image: image ? (image.value as string) : null,
     });
-    interaction.editReply(`Created event ${event.id}`);
+    // TODO: update link below
+    interaction.editReply(
+      `✅  **Created event '${event.name}'**.\n🔗  Pyramids link: TODO`
+    );
   },
 };
