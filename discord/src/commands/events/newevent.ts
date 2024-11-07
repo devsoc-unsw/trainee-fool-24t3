@@ -7,6 +7,7 @@ import {
 } from 'discord.js';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter.js';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
 
 dayjs.extend(customParseFormat);
@@ -83,7 +84,7 @@ export default {
       return;
     }
 
-    if (startTime.isAfter(endTime)) {
+    if (startTime.isSameOrAfter(endTime)) {
       await interaction.followUp({
         content: '⚠️  Start time must precede the end time.',
         ephemeral: true,
