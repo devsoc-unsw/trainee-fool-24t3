@@ -46,7 +46,7 @@ BOT_TOKEN=
 SERVER_ID=
 ```
 
-4. `pnpm run cmds` to establish the commands, then `pnpm run bot` to start the bot.
+4. `pnpm run cmds public` to establish the commands, then `pnpm run bot` to start the bot.
 
 ## credits
 
