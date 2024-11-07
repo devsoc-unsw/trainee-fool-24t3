@@ -14,37 +14,38 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// enum UserType {
-//   Attendee
-//   SOCIETY
-// }
+enum UserType {
+  ATTENDEE
+  SOCIETY
+}
 
-// model User {
-//   id Int @id @default(autoincrement())
-//   email String
-//   passwordHash String
-//   userType UserType
-//   attendee Attendee?
-//   society Society?
-
-// }
+model User {
+    id Int @id @default(autoincrement())
+    username String
+    email String
+    password String
+    userType UserType
+    attendee Attendee?
+    society Society?
+    salt String 
+    dateJoined DateTime
+    profilePicture String?
+ }
 
 model Attendee {
   id Int @id @default(autoincrement())
-  //user User @relation(fields: [userId], references: [id])
-  //userId Int @unique
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
   name String
-  picture String
   keywords Keyword[]
   societies Society[]
 }
 
 model Society {
   id Int @id @default(autoincrement())
-  //user User @relation(fields: [userId], references: [id])
-  //userId Int @unique
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
   name String @unique
-  picture String
   events Event[]
   members Attendee[]
   discordId String @unique
