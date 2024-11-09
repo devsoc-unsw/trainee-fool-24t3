@@ -13,7 +13,6 @@ NODE_ENV=development
 ALLOWED_ORIGINS=commaseparated,regexes,slashesnotrequired
 DATABASE_URL="postgresql://.../postgres?pgbouncer=true"
 DIRECT_URL="postgresql://.../postgres"
-TEST_URL="postgres://postgres:postgres@localhost:5432"
 ```
 
 `NODE_ENV` may be either 'development' or 'production'
@@ -33,6 +32,13 @@ echo "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/ENDPOINT_
 ```
 
 you can now use the `rebuild` script in the root of the repository to initiate manual deployments without having to push changes to `main`.
+
+7. To run tests, create a new file called .env.test in the backend folder. Set the following values:
+```
+DATABASE_URL="postgres://postgres:postgres@localhost:5432"
+DIRECT_URL="postgres://postgres:postgres@localhost:5432"
+NODE_ENV=test
+```
 
 ## credits
 
