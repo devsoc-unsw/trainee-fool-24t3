@@ -20,7 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post("/register", async (req: TypedRequest<LoginBody>, res: Response) => {
   const { username, email, password, userType } = req.body;
-
+  console.log("called");
   // check database for existing user with same username
   const errorCheck: LoginErrors = {
     matchingCredentials: true,
@@ -56,6 +56,10 @@ app.post("/register", async (req: TypedRequest<LoginBody>, res: Response) => {
 
   return res.status(201).send("User Successfully Registered");
 });
+
+app.get("/hello", () => {
+  console.log("Hello World!");
+})
 
 app.listen(SERVER_PORT, () => {
   console.log(`Server running on port http://localhost:${SERVER_PORT}`);

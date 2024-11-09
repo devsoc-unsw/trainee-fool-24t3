@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest",
+    "test:unit": "vitest -c ./vitest.config.unit.ts",
+    "test:unit:ui": "vitest -c ./vitest.config.unit.ts --ui",
+    "test:int": "./scripts/run-integration.sh",
+    "test:int:ui": "./scripts/run-integration.sh --ui"
   },
   "keywords": [],
   "author": "",
@@ -26,9 +30,12 @@
     "@types/express": "4",
     "@types/express-session": "^1.18.0",
     "@types/node": "^22.7.7",
-    "jest": "^29.7.0",
+    "jest-mock-extended": "2.0.4",
+    "sync-request-curl": "^3.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4",
+    "vitest-mock-extended": "^2.0.2"
   }
 }
