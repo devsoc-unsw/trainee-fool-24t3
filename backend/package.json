@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=dev ts-node src/index.ts",
     "test": "vitest",
-    "test:int": "NODE_ENV=test && ./scripts/run-integration.sh"
+    "test:int": "./scripts/run-integration.sh"
   },
   "keywords": [],
   "author": "",

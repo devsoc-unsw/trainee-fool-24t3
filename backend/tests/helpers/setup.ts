@@ -1,4 +1,4 @@
-// src/tests/helpers/setup.ts
+// Resets local db
 import resetDb from './reset-db'
 import { beforeEach } from 'vitest'
 

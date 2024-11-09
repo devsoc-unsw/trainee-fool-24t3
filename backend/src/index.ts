@@ -7,7 +7,6 @@ import { LoginErrors } from "./interfaces";
 import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
 import prisma from "./prisma";
 
-
 const app = express();
 const SERVER_PORT = 5180;
 
