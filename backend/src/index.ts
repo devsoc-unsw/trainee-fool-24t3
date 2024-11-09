@@ -5,8 +5,9 @@ import { LoginBody, TypedRequest } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors } from "./interfaces";
 import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
+import prisma from "./prisma";
 
-const prisma = new PrismaClient();
+
 const app = express();
 const SERVER_PORT = 5180;
 
@@ -18,9 +19,9 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express :)))!");
 });
 
-app.post("/register", async (req: TypedRequest<LoginBody>, res: Response) => {
+app.post("/auth/register", async (req: TypedRequest<LoginBody>, res: Response) => {
   const { username, email, password, userType } = req.body;
-  console.log("called");
+  
   // check database for existing user with same username
   const errorCheck: LoginErrors = {
     matchingCredentials: true,
@@ -42,7 +43,7 @@ app.post("/register", async (req: TypedRequest<LoginBody>, res: Response) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   //add user prisma
-  await prisma.user.create({
+  const newUser = await prisma.user.create({
     data: {
       username,
       email,
@@ -52,9 +53,15 @@ app.post("/register", async (req: TypedRequest<LoginBody>, res: Response) => {
       dateJoined: new Date(),
       profilePicture: null,
     },
+    select: {
+      id: true,
+      username:true
+    }
   });
 
-  return res.status(201).send("User Successfully Registered");
+  return res.status(201).json({
+    newUser
+  });
 });
 
 app.get("/hello", () => {
@@ -64,3 +71,5 @@ app.get("/hello", () => {
 app.listen(SERVER_PORT, () => {
   console.log(`Server running on port http://localhost:${SERVER_PORT}`);
 });
+
+export default app
