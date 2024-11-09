@@ -13,6 +13,7 @@ NODE_ENV=development
 ALLOWED_ORIGINS=commaseparated,regexes,slashesnotrequired
 DATABASE_URL="postgresql://.../postgres?pgbouncer=true"
 DIRECT_URL="postgresql://.../postgres"
+TEST_URL="postgres://postgres:postgres@localhost:5432"
 ```
 
 `NODE_ENV` may be either 'development' or 'production'
