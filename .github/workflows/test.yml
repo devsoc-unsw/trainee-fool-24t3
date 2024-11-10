@@ -1,5 +1,11 @@
 name: Tests
 on:
+  push: 
+     branches:
+      - main
+      - feature/login
+    paths:
+    - 'backend/**'
   pull_request:
     branches:
       - main
