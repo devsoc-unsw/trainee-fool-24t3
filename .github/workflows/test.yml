@@ -5,22 +5,22 @@ on:
       - main
       - feature/login
     paths:
-    - 'backend/**'
+      - 'backend/**'
   pull_request:
     branches:
       - main
       - feature/login
     paths:
-    - 'backend/**'
+      - 'backend/**'
 env:
   DATABASE_URL: postgres://postgres:postgres@localhost:5432
   NODE_ENV: test
 jobs:
   integration-tests:
-        runs-on: ubuntu-latest
-        steps:
-          - uses: actions/checkout@v3
-          - uses: ./.github/actions/build
-          - uses: ./.github/actions/docker-compose
-          - name: Run tests
-            run: pnpm run ./backend/test:int
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/build
+      - uses: ./.github/actions/docker-compose
+      - name: Run tests
+        run: pnpm run ./backend/test:int
