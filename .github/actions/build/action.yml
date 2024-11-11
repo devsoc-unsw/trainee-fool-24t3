@@ -11,5 +11,6 @@ runs:
       uses: actions/setup-node@v3
     - name: Install dependencies
       shell: bash
+      working-directory: ./backend
       run: pnpm install
 
