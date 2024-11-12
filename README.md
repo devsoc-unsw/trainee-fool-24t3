@@ -33,11 +33,20 @@ echo "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/ENDPOINT_
 
 you can now use the `rebuild` script in the root of the repository to initiate manual deployments without having to push changes to `main`.
 
-7. To run tests, create a new file called .env.test in the backend folder. Set the following values:
+## testing
+
+To run tests locally, follow the steps below.
+1. Create a new file called .env.test in the backend folder. Set the following values:
 ```
 DATABASE_URL="postgres://postgres:postgres@localhost:5432"
 DIRECT_URL="postgres://postgres:postgres@localhost:5432"
 NODE_ENV=test
+```
+2. Ensure you have docker installed and make sure you have the docker engine running.
+
+3. Make sure that the tests you've written are in the tests directory. You can then run these tests by running:
+```
+npm run test:int
 ```
 
 ## credits
