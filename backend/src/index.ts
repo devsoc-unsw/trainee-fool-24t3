@@ -100,7 +100,7 @@ app.post("/login", async (req: TypedRequest<LoginBody>, res: Response) => {
     // Find user
     const user = await prisma.user.findFirst({
       where: {
-        AND: [{ username: username }, { password: password }],
+        username: username
       },
     });
 
