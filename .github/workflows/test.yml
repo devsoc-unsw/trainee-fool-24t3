@@ -5,14 +5,10 @@ on:
     branches:
       - main
       - feature/login
-    paths:
-      - "backend/**"
   pull_request:
     branches:
       - main
       - feature/login
-    paths:
-      - "backend/**"
 env:
   DATABASE_URL: postgres://postgres:postgres@localhost:5432
   NODE_ENV: test
