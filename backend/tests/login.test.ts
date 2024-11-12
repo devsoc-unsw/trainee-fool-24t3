@@ -9,7 +9,7 @@ import { createClient } from "redis";
 /*beforeEach( () => {
     prisma.$transaction([
         //add more as we work on more tables and such
-        prisma.user.deleteMany()
+        await prisma.user.deleteMany()
     ])
 })*/
 describe("Tests", () => {
@@ -20,12 +20,14 @@ describe("Tests", () => {
       email: "longseason1996@gmail.com",
       userType: "ATTENDEE",
     });
-
+    const users = await prisma.user.findMany({})
+    console.log(users)
     const newUser = await prisma.user.findFirst({
       where: {
         id: body.newUser.id,
       },
     });
+
     if (newUser == null) return;
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
