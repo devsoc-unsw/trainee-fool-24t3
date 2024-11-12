@@ -3,6 +3,15 @@ import { expect, test, vi, describe } from "vitest"; // 👈🏻 Added the `vi` 
 import prisma from "../src/prisma";
 import request from "supertest";
 import app from "../src/index";
+import { beforeEach } from "node:test";
+import { createClient } from "redis";
+
+/*beforeEach( () => {
+  prisma.$transaction([
+      //add more as we work on more tables and such
+      prisma.user.deleteMany()
+  ])
+})*/
 
 describe("Tests", () => {
   test("register test", async () => {
@@ -15,10 +24,10 @@ describe("Tests", () => {
 
     const newUser = await prisma.user.findFirst({
       where: {
-        email: "longseason1996@gmail.com",
+        id: body.newUser.id,
       },
     });
-
+    
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
     expect(body.newUser).toStrictEqual({

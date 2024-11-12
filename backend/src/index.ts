@@ -15,12 +15,12 @@ declare module "express-session" {
 }
 
 // Initialize client.
-if (process.env['REDIS_PORT'] === undefined) {
+if (process.env["REDIS_PORT"] === undefined) {
   console.error("Redis port not provided in .env file");
   process.exit(1);
 }
 let redisClient = createClient({
-  url: `redis://localhost:${process.env['REDIS_PORT']}`
+  url: `redis://localhost:${process.env["REDIS_PORT"]}`,
 });
 redisClient.connect().catch(console.error);
 
@@ -111,8 +111,8 @@ app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
     // Find user
     const user = await prisma.user.findFirst({
       where: {
-        username: username
-      }
+        username: username,
+      },
     });
 
     if (!user) {
@@ -128,18 +128,19 @@ app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
     // Set user session
     req.session.userId = user.id;
     req.session.save(); // Explicitly save session to Redis
-    return res.status(200).json({message:"ok"});
+    return res.status(200).json({ message: "ok" });
   } catch (error) {
     return res.status(500).json({ error: "Error logging in" });
   }
 });
 
 app.get("/user", async (req: TypedRequest<UserIdBody>, res: Response) => {
-  console.log("running");
+  console.log("SESSIONUSERID:", req.session.userId);
+  console.log("USERIDBODY:", req.body.userId);
   if (req.session.userId === req.body.userId) {
-    return res.status(200).json({message:'ok'})
+    return res.status(200).json({ message: "ok" });
   } else {
-    return res.status(401).json({message:'nah'})
+    return res.status(401).json({ message: "nah" });
   }
 });
 
@@ -147,7 +148,7 @@ app.get("/hello", () => {
   console.log("Hello World!");
 });
 
-if (process.env['NODE_ENV'] !== 'test') {
+if (process.env["NODE_ENV"] !== "test") {
   app.listen(SERVER_PORT, () => {
     console.log(`Server running on port http://localhost:${SERVER_PORT}`);
   });
