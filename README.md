@@ -36,15 +36,19 @@ you can now use the `rebuild` script in the root of the repository to initiate m
 ## testing
 
 To run tests locally, follow the steps below.
+
 1. Create a new file called .env.test in the backend folder. Set the following values:
+
 ```
 DATABASE_URL="postgres://postgres:postgres@localhost:5432"
 DIRECT_URL="postgres://postgres:postgres@localhost:5432"
 NODE_ENV=test
 ```
+
 2. Ensure you have docker installed and make sure you have the docker engine running.
 
 3. Make sure that the tests you've written are in the tests directory. You can then run these tests by running:
+
 ```
 npm run test:int
 ```
