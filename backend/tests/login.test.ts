@@ -26,23 +26,24 @@ describe("Tests", () => {
         id: body.newUser.id,
       },
     });
-    console.log("return from reg", body.newUser)
+    if (newUser == null) return;
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
     const response = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
+      username: newUser.username,
       password: "testpassword",
     });
 
-    console.log(response.error);
     expect(response.status).toBe(200);
 
-    if (newUser == null) return;
-    console.log(newUser)
-    const response2 = await request(app).get("/user").send({
-      userId: newUser.id,
-    });
+    const sessionID = response.headers["set-cookie"];
+    const response2 = await request(app)
+      .get("/user")
+      .set("Cookie", sessionID)
+      .send({
+        userId: newUser.id,
+      });
     expect(response2.status).toBe(200);
   });
 });
