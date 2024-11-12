@@ -147,8 +147,10 @@ app.get("/hello", () => {
   console.log("Hello World!");
 });
 
-app.listen(SERVER_PORT, () => {
-  console.log(`Server running on port http://localhost:${SERVER_PORT}`);
-});
+if (process.env['NODE_ENV'] !== 'test') {
+  app.listen(SERVER_PORT, () => {
+    console.log(`Server running on port http://localhost:${SERVER_PORT}`);
+  });
+}
 
 export default app;
