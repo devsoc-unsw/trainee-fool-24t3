@@ -53,7 +53,7 @@ NODE_ENV=test
 npm run test:int
 ```
 
-### setting up the discord bot
+## setting up the discord bot
 
 if you're not interested in self-hosting, you can invite the pyramids discord bot [here](https://discord.com/oauth2/authorize?client_id=1301423026633445447&permissions=17600776112128&integration_type=0&scope=applications.commands+bot).
 
