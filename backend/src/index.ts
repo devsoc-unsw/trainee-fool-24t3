@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import session from "express-session";
 import cors from "cors";
-import { LoginBody, TypedRequest } from "./requestTypes";
+import { LoginBody, TypedRequest, UserIdBody } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors } from "./interfaces";
 import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
@@ -93,7 +93,7 @@ app.post(
   }
 );
 
-app.post("/login", async (req: TypedRequest<LoginBody>, res: Response) => {
+app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {
     const { username, password } = req.body;
 
@@ -120,6 +120,14 @@ app.post("/login", async (req: TypedRequest<LoginBody>, res: Response) => {
     return res.status(200)
   } catch (error) {
     return res.status(500).json({ error: "Error logging in" });
+  }
+});
+
+app.get("/user", async (req: TypedRequest<UserIdBody>, res: Response) => {
+  if (req.session.userId === req.body.userId) {
+    return res.status(200)
+  } else {
+    return res.status(401)
   }
 });
 
