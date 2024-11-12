@@ -46,4 +46,29 @@ describe("Tests", () => {
       });
     expect(response2.status).toBe(200);
   });
+
+  test("Unauthorized User", async () => {
+    const { status, body } = await request(app).post("/auth/register").send({
+        username: "shinjisatoo",
+        password: "testpassword",
+        email: "longseason1996@gmail.com",
+        userType: "ATTENDEE",
+      });
+  
+      const newUser = await prisma.user.findFirst({
+        where: {
+          id: body.newUser.id,
+        },
+      });
+      if (newUser == null) return;
+      expect(status).toBe(201);
+      expect(newUser).not.toBeNull();
+  
+      const response2 = await request(app)
+        .get("/user")
+        .send({
+          userId: newUser.id,
+        });
+      expect(response2.status).toBe(401);
+  })
 });
