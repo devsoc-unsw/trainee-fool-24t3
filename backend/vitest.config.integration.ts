@@ -6,6 +6,7 @@ export default defineConfig({
     poolOptions: {
       threads: {
         maxThreads: 1,
+        singleThread: true
       }
     },
     setupFiles: ['./tests/helpers/setup.ts']

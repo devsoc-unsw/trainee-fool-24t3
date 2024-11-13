@@ -53,7 +53,7 @@ describe("Tests", () => {
     const { status, body } = await request(app).post("/auth/register").send({
         username: "shinjisatoo",
         password: "testpassword",
-        email: "longseason1996@gmail.com",
+        email: "longseason1997@gmail.com",
         userType: "ATTENDEE",
       });
   
