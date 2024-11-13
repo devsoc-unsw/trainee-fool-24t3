@@ -6,12 +6,7 @@ import app from "../src/index";
 import { beforeEach } from "node:test";
 import { createClient } from "redis";
 
-/*beforeEach( () => {
-    prisma.$transaction([
-        //add more as we work on more tables and such
-        await prisma.user.deleteMany()
-    ])
-})*/
+
 describe("Tests", () => {
   test("Login Successful", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
@@ -20,8 +15,7 @@ describe("Tests", () => {
       email: "longseason1996@gmail.com",
       userType: "ATTENDEE",
     });
-    const users = await prisma.user.findMany({})
-    console.log(users)
+  
     const newUser = await prisma.user.findFirst({
       where: {
         id: body.newUser.id,
@@ -56,7 +50,8 @@ describe("Tests", () => {
         email: "longseason1997@gmail.com",
         userType: "ATTENDEE",
       });
-  
+      const users = await prisma.user.findMany({})
+      console.log(users)
       const newUser = await prisma.user.findFirst({
         where: {
           id: body.newUser.id,
