@@ -18,3 +18,7 @@ export interface LoginBody {
   password: string;
   userType: UserType;
 }
+
+export interface UserIdBody {
+  userId: number
+}

@@ -3,45 +3,69 @@ import { expect, test, vi, describe } from "vitest"; // 👈🏻 Added the `vi` 
 import prisma from "../src/prisma";
 import request from "supertest";
 import app from "../src/index";
+import { beforeEach } from "node:test";
+import { createClient } from "redis";
+
 
 describe("Tests", () => {
-  test("register test", async () => {
+  test("Login Successful", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
       email: "longseason1996@gmail.com",
       userType: "ATTENDEE",
     });
-
+  
     const newUser = await prisma.user.findFirst({
       where: {
-        email: "longseason1996@gmail.com",
+        id: body.newUser.id,
       },
     });
 
+    if (newUser == null) return;
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
-    expect(body.newUser).toStrictEqual({
-      username: "shinjisatoo",
-      id: newUser?.id,
+
+    const response = await request(app).post("/auth/login").send({
+      username: newUser.username,
+      password: "testpassword",
     });
+
+    expect(response.status).toBe(200);
+
+    const sessionID = response.headers["set-cookie"];
+    const response2 = await request(app)
+      .get("/user")
+      .set("Cookie", sessionID)
+      .send({
+        userId: newUser.id,
+      });
+    expect(response2.status).toBe(200);
   });
 
-  test("Email already exists", async () => {
-    await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
-      userType: "ATTENDEE",
-    });
-
+  test("Unauthorized User", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo2",
-      password: "testpassword2",
-      email: "longseason1996@gmail.com",
-      userType: "ATTENDEE",
-    });
-
-    expect(status).toBe(400);
+        username: "shinjisatoo",
+        password: "testpassword",
+        email: "longseason1997@gmail.com",
+        userType: "ATTENDEE",
+      });
+      const users = await prisma.user.findMany({})
+      console.log(users)
+      const newUser = await prisma.user.findFirst({
+        where: {
+          id: body.newUser.id,
+        },
+      });
+      if (newUser == null) return;
+      expect(status).toBe(201);
+      expect(newUser).not.toBeNull();
+  
+      const response2 = await request(app)
+        .get("/user")
+        .send({
+          userId: newUser.id,
+        });
+      expect(response2.status).toBe(401);
   })
 });

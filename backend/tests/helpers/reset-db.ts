@@ -1,11 +1,16 @@
 //Cleans up the local db
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
+import { createClient } from "redis";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
+
+let redisClient = createClient({
+  url: `redis://localhost:${process.env["REDIS_PORT"]}`,
+});
 
 export default async () => {
-  await prisma.$transaction([
-    //add more as we work on more tables and such
-    prisma.user.deleteMany()
-  ])
-}
+  await redisClient.connect();
+  await prisma.user.deleteMany();
+  await redisClient.flushDb();
+  await redisClient.quit();
+};
