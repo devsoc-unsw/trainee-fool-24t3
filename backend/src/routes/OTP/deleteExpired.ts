@@ -6,7 +6,7 @@ export const removeExpiredOTPs = cron.schedule('* * * * *', async () => {
             await prisma.otpToken.deleteMany({
                 where: {
                     expiryTime: {
-                        lte: new Date(Date.now()),
+                        lte: Date.now(),
                     },
                 },
             });

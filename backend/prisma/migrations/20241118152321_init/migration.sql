@@ -1,8 +1,25 @@
+-- CreateEnum
+CREATE TYPE "UserType" AS ENUM ('ATTENDEE', 'SOCIETY');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "username" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "userType" "UserType" NOT NULL,
+    "salt" TEXT NOT NULL,
+    "dateJoined" TIMESTAMP(3) NOT NULL,
+    "profilePicture" TEXT,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateTable
 CREATE TABLE "Attendee" (
     "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
-    "picture" TEXT NOT NULL,
 
     CONSTRAINT "Attendee_pkey" PRIMARY KEY ("id")
 );
@@ -10,8 +27,8 @@ CREATE TABLE "Attendee" (
 -- CreateTable
 CREATE TABLE "Society" (
     "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
-    "picture" TEXT NOT NULL,
     "discordId" TEXT NOT NULL,
 
     CONSTRAINT "Society_pkey" PRIMARY KEY ("id")
@@ -39,6 +56,17 @@ CREATE TABLE "Keyword" (
 );
 
 -- CreateTable
+CREATE TABLE "OtpToken" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "token" TEXT NOT NULL,
+    "timeCreated" TIMESTAMP(3) NOT NULL,
+    "expiryTime" INTEGER NOT NULL,
+
+    CONSTRAINT "OtpToken_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_AttendeeToKeyword" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -63,6 +91,18 @@ CREATE TABLE "_EventToKeyword" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Attendee_userId_key" ON "Attendee"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Society_userId_key" ON "Society"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Society_name_key" ON "Society"("name");
 
 -- CreateIndex
@@ -70,6 +110,9 @@ CREATE UNIQUE INDEX "Society_discordId_key" ON "Society"("discordId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Keyword_text_key" ON "Keyword"("text");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OtpToken_userId_key" ON "OtpToken"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_AttendeeToKeyword_AB_unique" ON "_AttendeeToKeyword"("A", "B");
@@ -94,6 +137,15 @@ CREATE UNIQUE INDEX "_EventToKeyword_AB_unique" ON "_EventToKeyword"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_EventToKeyword_B_index" ON "_EventToKeyword"("B");
+
+-- AddForeignKey
+ALTER TABLE "Attendee" ADD CONSTRAINT "Attendee_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Society" ADD CONSTRAINT "Society_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OtpToken" ADD CONSTRAINT "OtpToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_AttendeeToKeyword" ADD CONSTRAINT "_AttendeeToKeyword_A_fkey" FOREIGN KEY ("A") REFERENCES "Attendee"("id") ON DELETE CASCADE ON UPDATE CASCADE;

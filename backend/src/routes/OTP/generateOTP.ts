@@ -22,7 +22,7 @@ export const generateOTP = async (emailAddress: string, salt_rounds: number) => 
       user,
       token: hash,
       timeCreated: new Date(Date.now()),
-      expiryTime: new Date(Date.now()+60000),
+      expiryTime: Date.now()+60000,
     };
 
     await addTokenToDb(token);
