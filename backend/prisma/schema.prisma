@@ -35,7 +35,7 @@ model User {
 
 model Attendee {
   id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int @unique
   name String
   keywords Keyword[]
@@ -44,7 +44,7 @@ model Attendee {
 
 model Society {
   id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int @unique
   name String @unique
   events Event[]
@@ -73,7 +73,7 @@ model Keyword {
 
 model OtpToken {
   id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int @unique
   token String
   timeCreated DateTime

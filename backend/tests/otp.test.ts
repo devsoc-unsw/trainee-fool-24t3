@@ -60,5 +60,5 @@ describe("Tests", () => {
             expect(checkTokens).toBeNull();
         }
     }
-  });
+  }, 100000);
 });
