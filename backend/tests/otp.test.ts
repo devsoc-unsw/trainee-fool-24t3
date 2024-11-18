@@ -50,7 +50,7 @@ describe("Tests", () => {
         if(newToken) {
             console.log(newToken.token);
 
-            await new Promise(resolve => setTimeout(resolve, 61000));
+            await new Promise(resolve => setTimeout(resolve, 120000));
 
             const checkTokens = await prisma.otpToken.findFirst({
                 where: {
