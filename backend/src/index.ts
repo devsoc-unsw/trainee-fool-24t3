@@ -16,12 +16,9 @@ import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
 import prisma from "./prisma";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
-<<<<<<< HEAD
 import dayjs, { Dayjs } from "dayjs";
-=======
 import { generateOTP } from "./routes/OTP/generateOTP";
 import { removeExpiredOTPs } from "./routes/OTP/deleteExpired";
->>>>>>> 8ffe1a2 (😶 began working on forgotten password backend 😶)
 declare module "express-session" {
   interface SessionData {
     userId: number;
