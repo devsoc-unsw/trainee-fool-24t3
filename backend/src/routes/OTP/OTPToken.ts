@@ -4,5 +4,5 @@ export interface OTPToken {
     user: User,
     token: string,
     timeCreated: Date,
-    expiryTime: number,
+    expiryTime: Date,
 }
