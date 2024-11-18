@@ -8,6 +8,8 @@ import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
 import prisma from "./prisma";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
+import { generateOTP } from "./routes/OTP/generateOTP";
+import { removeExpiredOTPs } from "./routes/OTP/deleteExpired";
 declare module "express-session" {
   interface SessionData {
     userId: number;
@@ -32,6 +34,7 @@ let redisStore = new RedisStore({
 
 const app = express();
 const SERVER_PORT = 5180;
+const SALT_ROUNDS = 10;
 
 app.use(cors());
 app.use(express.json());
@@ -50,6 +53,9 @@ app.use(
     secret: process.env["SESSION_SECRET"],
   })
 );
+
+// OTP removing cron job
+removeExpiredOTPs.start();
 
 app.get("/", (req: Request, res: Response) => {
   console.log("Hello, TypeScript with Express :)))!");
@@ -77,7 +83,7 @@ app.post(
       return res.status(400).json(errorCheck);
     }
 
-    const saltRounds: number = 10;
+    const saltRounds: number = SALT_ROUNDS;
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -103,6 +109,27 @@ app.post(
     });
   }
 );
+
+app.post("/auth/otp", async(req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    
+    if(!email) {
+      throw new Error("Email address expected.");
+    }
+
+    const result = await generateOTP(email, SALT_ROUNDS); 
+
+    if (result) {
+      return res.status(200).json({ message: "ok" });
+    } else {
+      return res.status(400).json( {message: "Unexpected error while generating OTP."} );
+    }
+
+  } catch(error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+});
 
 app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {

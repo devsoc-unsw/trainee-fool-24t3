@@ -1,4 +1,5 @@
 import { UserType } from "@prisma/client";
+import { OTPToken } from "./routes/OTP/OTPToken";
 
 export interface User {
   //id Int @id @default(autoincrement())
@@ -11,6 +12,7 @@ export interface User {
   profilePicture: string | null;
   //attendee: Attendee?
   //society: Society?
+  otpToken: OTPToken | undefined;
 }
 
 export interface LoginErrors {
