@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/login
+      - feature/forgot-password
   pull_request:
     branches:
       - main
