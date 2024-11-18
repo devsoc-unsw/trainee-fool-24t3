@@ -5,8 +5,12 @@ on:
     branches:
       - main
       - feature/login
+<<<<<<< HEAD
       - feature/event
       - feature/societyJoin
+=======
+      - feature/forgot-password
+>>>>>>> ffa83ec (👾 updated github actions to run tests on push)
   pull_request:
     branches:
       - main
