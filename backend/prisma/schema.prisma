@@ -68,8 +68,8 @@ model Event {
 }
 
 model Keyword {
-  id        Int     @id @default(autoincrement())
-  text      String  @unique
-  subscribers User[]
-  events    Event[]
+  id Int @id @default(autoincrement())
+  text String @unique
+  attendees Attendee[]
+  events Event[]
 }
