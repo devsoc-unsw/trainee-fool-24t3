@@ -20,7 +20,7 @@ describe("Session Tests", () => {
         expect(body.message).toBe("User session invalid")
     })
 
-    test.skip("Session Valid(Does not interact with db pls update!)", async () => {
+    test("Session Valid(Does not interact with db pls update!)", async () => {
         const { status, body } = await request(app).post("/auth/register").send({
             username: "shinjisatoo",
             password: "testpassword",
@@ -28,26 +28,28 @@ describe("Session Tests", () => {
             userType: "ATTENDEE",
           });
 
-        await request(app).post("/auth/login").send({
+        const loginres = await request(app).post("/auth/login").send({
             username: "shinjisatoo",
             password: "testpassword",
         });
+        let sessionID = loginres.headers["set-cookie"];
 
-        const response = await request(app).post("/event/create").send({
+        const response = await request(app)
+        .post("/event/create")
+        .set("Cookie", sessionID)
+        .send({
             banner: "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
             name: "tiktokrizzparty",
-            startTimeDate: dayjs(),
-            endTimeDate: dayjs().add(1, 'd'),
+            startTimeDate: dayjs().add(30, 'm'),
+            endTimeDate: dayjs().add(60, 'm'),
             location: "tampa, florida",
             description: "fein! fein! fein! fein! fein so good she honor roll"
         });
 
         expect(response.status).toBe(200)
     })
-})
 
-describe("Date Tests", async () => {
-    beforeEach(async () => {
+    test("Invalid Date(end before start)", async () => {
         const { status, body } = await request(app).post("/auth/register").send({
             username: "shinjisatoo",
             password: "testpassword",
@@ -55,13 +57,24 @@ describe("Date Tests", async () => {
             userType: "ATTENDEE",
           });
 
-        const response = await request(app).post("/auth/login").send({
+        const loginres = await request(app).post("/auth/login").send({
             username: "shinjisatoo",
             password: "testpassword",
         });
-    })
+        let sessionID = loginres.headers["set-cookie"];
+        
+        const response = await request(app)
+        .post("/event/create")
+        .set("Cookie", sessionID)
+        .send({
+            banner: "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
+            name: "tiktokrizzparty",
+            startTimeDate: dayjs().add(30, 'm'),
+            endTimeDate: dayjs().add(15, 'm'),
+            location: "tampa, florida",
+            description: "fein! fein! fein! fein! fein so good she honor roll"
+        });
 
-    test("Valid Date", () => {
-
+        expect(response.status).toBe(400)
     })
 })

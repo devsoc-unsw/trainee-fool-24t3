@@ -173,11 +173,10 @@ app.post("/event/create", (req: TypedRequest<CreateEventBody>, res:Response) => 
 
 function isValidDate(startDate:Dayjs, endDate:Dayjs):boolean{
   //Should probably add more test cases here
-  if (startDate.isAfter(endDate) || startDate.isSame(endDate) || 
-  startDate.isBefore(dayjs())){
+  if (dayjs(startDate).isAfter(endDate) || dayjs(startDate).isSame(endDate) || 
+  dayjs(startDate).isBefore(dayjs())){
     return false;
   }
-
   return true;
 }
 //===============================
