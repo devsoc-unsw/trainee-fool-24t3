@@ -43,6 +43,8 @@ To run tests locally, follow the steps below.
 DATABASE_URL="postgres://postgres:postgres@localhost:5432"
 DIRECT_URL="postgres://postgres:postgres@localhost:5432"
 NODE_ENV=test
+REDIS_PORT=6380
+SESSION_SECRET=notsecret
 ```
 
 2. Ensure you have docker installed and make sure you have the docker engine running.
