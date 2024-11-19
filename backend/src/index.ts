@@ -162,11 +162,13 @@ app.post(
       return res.status(401).json({ message: "Invalid session provided." });
     }
 
-    if (!req.body.discordID) {
-      return res.status(400).json({ error: "Body is missing discordID" });
+    if (!req.body.discordID || typeof req.body.discordID !== "number") {
+      return res
+        .status(400)
+        .json({ error: "Body is missing discordID, or it is not a number." });
     }
 
-    await redisClient.set(`discord_${req.body.discordID}`, sessionFromDB.id);
+    await redisClient.set(`discord:${req.body.discordID}`, req.session.id);
     return res.status(200).json({ message: "ok" });
   }
 );
@@ -181,12 +183,14 @@ app.post(
       return res.status(401).json({ message: "Invalid session provided." });
     }
 
-    if (!req.body.discordID) {
-      return res.status(400).json({ error: "Body is missing discordID." });
+    if (!req.body.discordID || typeof req.body.discordID !== "number") {
+      return res
+        .status(400)
+        .json({ error: "Body is missing discordID, or it is not a number." });
     }
 
     const sessionString = await redisClient.get(
-      `discord_${req.body.discordID}`
+      `discord:${req.body.discordID}`
     );
 
     if (!sessionString) {
@@ -202,12 +206,10 @@ app.post(
     }
 
     await redisClient.del(`discord_${req.body.discordID}`);
-    return res
-      .status(200)
-      .json({
-        message:
-          "The association between a Pyramids session and this Discord account has been removed.",
-      });
+    return res.status(200).json({
+      message:
+        "The association between a Pyramids session and this Discord account has been removed.",
+    });
   }
 );
 
