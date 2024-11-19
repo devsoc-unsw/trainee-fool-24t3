@@ -27,8 +27,8 @@ export interface UserIdBody {
 export interface CreateEventBody {
   banner: string;
   name: string;
-  startTimeDate: Dayjs; 
-  endTimeDate: Dayjs; 
+  startDateTime: Dayjs; 
+  endDateTime: Dayjs; 
   location: string;
   description: string;
 }

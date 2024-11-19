@@ -141,8 +141,7 @@ app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
 });
 
 app.get("/user", async (req: TypedRequest<UserIdBody>, res: Response) => {
-  console.log("SESSIONUSERID:", req.session.userId);
-  console.log("USERIDBODY:", req.body.userId);
+
   if (req.session.userId) {
     return res.status(200).json({ message: "ok" });
   } else {
@@ -152,23 +151,32 @@ app.get("/user", async (req: TypedRequest<UserIdBody>, res: Response) => {
 
 //===================================
 //CREATE EVENT + HELPERS
-app.post("/event/create", (req: TypedRequest<CreateEventBody>, res:Response) => {
+app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Response) => {
   //Session validation
   const event = req.body 
   console.log(event)
-
   //replace this with lachlan's helper function
   if(!req.session.userId) {
     return res.status(401).json({ message: "User session invalid"})
   }
 
   //Sanitize Inputs/Check Validity
-  if(!isValidDate(event.startTimeDate, event.endTimeDate)) {
+  if(!isValidDate(event.startDateTime, event.endDateTime)) {
     return res.status(400).json({ message: "Invalid date"})
   }
   
-  //Do some db stuff
-  return res.status(200).json({ message:"ok" })
+  //Do some db stuff TODO: RELATION LINK THING
+  const eventRes = await prisma.event.create({
+    data: {
+      banner: event.banner,
+      name: event.name,
+      startDateTime: dayjs(event.startDateTime).toISOString(),
+      endDateTime: dayjs(event.endDateTime).toISOString(),
+      location: event.location,
+      description: event.description
+    }
+  })
+  return res.status(200).json({ eventRes })
 })
 
 function isValidDate(startDate:Dayjs, endDate:Dayjs):boolean{
@@ -177,6 +185,7 @@ function isValidDate(startDate:Dayjs, endDate:Dayjs):boolean{
   dayjs(startDate).isBefore(dayjs())){
     return false;
   }
+  
   return true;
 }
 //===============================

@@ -52,20 +52,22 @@ model Society {
 }
 
 model Event {
-  id Int @id @default(autoincrement())
+  numId Int @id @default(autoincrement())
   banner String
   name String
   startDateTime DateTime
   endDateTime DateTime
   location String
   description String
-  societies Society[]
+  societyId Int
+  society Society @relation(fields:[societyId], references: [id])
   keywords Keyword[]
+  @@unique(name: "eventID", [societyId, name, startDateTime, endDateTime])
 }
 
 model Keyword {
   id Int @id @default(autoincrement())
   text String @unique
   attendees Attendee[]
-  events Event[]
+  events Event[] 
 }
