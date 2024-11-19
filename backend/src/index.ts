@@ -19,6 +19,11 @@ import { createClient } from "redis";
 import dayjs, { Dayjs } from "dayjs";
 import { generateOTP } from "./routes/OTP/generateOTP";
 import { removeExpiredOTPs } from "./routes/OTP/deleteExpired";
+import dotenv from 'dotenv';
+import { verifyOTP } from "./routes/OTP/verifyOTP";
+
+dotenv.config(); 
+
 declare module "express-session" {
   interface SessionData {
     userId: number;
@@ -27,6 +32,7 @@ declare module "express-session" {
 
 // Initialize client.
 if (process.env["REDIS_PORT"] === undefined) {
+  console.log(process.env);
   console.error("Redis port not provided in .env file");
   process.exit(1);
 }
@@ -132,23 +138,47 @@ app.post(
   }
 );
 
-app.post("/auth/otp", async(req: Request, res: Response) => {
+app.post("/auth/otp/generate", async(req: Request, res: Response) => {
   try {
-    const { email } = req.body;
+    const { email } : { email: string} = req.body;
     
     if(!email) {
       throw new Error("Email address expected.");
     }
 
-    const result = await generateOTP(email, SALT_ROUNDS); 
+    const token = await generateOTP(email, SALT_ROUNDS); 
 
-    if (result) {
+    if (token) {
+      await redisClient.set(email, token, { EX: 60 });
       return res.status(200).json({ message: "ok" });
     } else {
       return res.status(400).json( {message: "Unexpected error while generating OTP."} );
     }
 
   } catch(error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+});
+
+app.post("/auth/otp/verify", async(req: Request, res: Response) => {
+  try {
+    const { email, token } = req.body;
+    
+    if(!token) {
+      throw new Error("One time code expected");
+    }
+    
+    const hash  = await redisClient.get(email);
+
+    if(!hash) {
+      throw Error("One time code has expired.");
+    }
+
+    await verifyOTP(token, hash);
+
+    return res.status(200).json({message: "ok" });
+
+  } catch (error) {
     return res.status(400).json({ message: (error as Error).message });
   }
 });
