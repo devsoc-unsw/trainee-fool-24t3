@@ -1,14 +1,12 @@
 import classes from "./CreateEvent.module.css";
 import Button, { ButtonOptions } from "../Button/Button";
-import { ChevronLeftIcon } from "@heroicons/react/24/solid";
 import { CameraIcon } from "@heroicons/react/24/outline";
+import BackButton from "../BackButton/BackButton";
 
 function CreateEvent() {
   return (
     <div className={classes.container}>
-      <button className={classes.back}>
-        <ChevronLeftIcon className={classes.chevronIcon}></ChevronLeftIcon>
-      </button>
+      <BackButton></BackButton>
       <div className={classes.main}>
         <header className={classes.header}>
           <h1>Create new event</h1>
