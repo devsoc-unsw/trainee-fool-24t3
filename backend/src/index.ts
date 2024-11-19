@@ -1,34 +1,34 @@
-import express, { Request, Response } from 'express';
-import session from 'express-session';
-import cors from 'cors';
-import { LoginBody, TypedRequest } from './requestTypes';
-import bcrypt from 'bcrypt';
-import { LoginErrors, SanitisedUser } from './interfaces';
-import { PrismaClient, Prisma, UserType, User } from '@prisma/client';
-import prisma from './prisma';
-import RedisStore from 'connect-redis';
-import { createClient } from 'redis';
-import dayjs from 'dayjs';
-declare module 'express-session' {
+import express, { Request, Response } from "express";
+import session, { Session } from "express-session";
+import cors from "cors";
+import { DiscordLoginBody, LoginBody, TypedRequest } from "./requestTypes";
+import bcrypt from "bcrypt";
+import { LoginErrors, SanitisedUser } from "./interfaces";
+import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
+import prisma from "./prisma";
+import RedisStore from "connect-redis";
+import { createClient } from "redis";
+import dayjs from "dayjs";
+declare module "express-session" {
   interface SessionData {
     userId: number;
   }
 }
 
 // Initialize client.
-if (process.env['REDIS_PORT'] === undefined) {
-  console.error('Redis port not provided in .env file');
+if (process.env["REDIS_PORT"] === undefined) {
+  console.error("Redis port not provided in .env file");
   process.exit(1);
 }
 let redisClient = createClient({
-  url: `redis://localhost:${process.env['REDIS_PORT']}`,
+  url: `redis://localhost:${process.env["REDIS_PORT"]}`,
 });
 redisClient.connect().catch(console.error);
 
 // Initialize store.
 let redisStore = new RedisStore({
   client: redisClient,
-  prefix: 'session:',
+  prefix: "session:",
 });
 
 const app = express();
@@ -37,16 +37,16 @@ const SERVER_PORT = 5180;
 app.use(cors());
 app.use(express.json());
 
-if (process.env['SESSION_SECRET'] === undefined) {
-  console.error('Session secret not provided in .env file');
+if (process.env["SESSION_SECRET"] === undefined) {
+  console.error("Session secret not provided in .env file");
   process.exit(1);
 }
 
 if (
-  process.env['DATABASE_URL'] === undefined ||
-  process.env['DIRECT_URL'] === undefined
+  process.env["DATABASE_URL"] === undefined ||
+  process.env["DIRECT_URL"] === undefined
 ) {
-  console.error('Database URL or Direct URL not provided in .env file.');
+  console.error("Database URL or Direct URL not provided in .env file.");
   process.exit(1);
 }
 
@@ -56,22 +56,22 @@ app.use(
     store: redisStore,
     resave: false, // required: force lightweight session keep alive (touch)
     saveUninitialized: false, // recommended: only save session when data exists
-    secret: process.env['SESSION_SECRET'],
+    secret: process.env["SESSION_SECRET"],
   })
 );
 
-app.get('/', (req: Request, res: Response) => {
-  console.log('Hello, TypeScript with Express :)))!');
-  res.send('Hello, TypeScript with Express :)))!');
+app.get("/", (req: Request, res: Response) => {
+  console.log("Hello, TypeScript with Express :)))!");
+  res.send("Hello, TypeScript with Express :)))!");
 });
 
 app.post(
-  '/auth/register',
+  "/auth/register",
   async (req: TypedRequest<LoginBody>, res: Response) => {
     const { username, email, password, userType } = req.body;
 
     if (!username || !email || !password || !userType) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     // check database for existing user with same username
@@ -117,12 +117,12 @@ app.post(
   }
 );
 
-app.post('/auth/login', async (req: TypedRequest<LoginBody>, res: Response) => {
+app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Find user
@@ -133,24 +133,83 @@ app.post('/auth/login', async (req: TypedRequest<LoginBody>, res: Response) => {
     });
 
     if (!user) {
-      return res.status(400).json({ error: 'User doesnt exist!' });
+      return res.status(400).json({ error: "User doesnt exist!" });
     }
 
     // Check password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(400).json({ error: 'Invalid password' });
+      return res.status(400).json({ error: "Invalid password" });
     }
 
     // Set user session
     req.session.userId = user.id;
-    req.session.cookie.expires = dayjs().add(1, 'week').toDate();
+    req.session.cookie.expires = dayjs().add(1, "week").toDate();
     req.session.save(); // Explicitly save session to Redis
-    return res.status(200).json({ message: 'ok' });
+    return res.status(200).json({ message: "ok" });
   } catch (error) {
-    return res.status(500).json({ error: 'Error logging in' });
+    return res.status(500).json({ error: "Error logging in" });
   }
 });
+
+app.post(
+  "/discord/login",
+  async (req: TypedRequest<DiscordLoginBody>, res: Response) => {
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    if (!req.body.discordID) {
+      return res.status(400).json({ error: "Body is missing discordID" });
+    }
+
+    await redisClient.set(`discord_${req.body.discordID}`, sessionFromDB.id);
+    return res.status(200).json({ message: "ok" });
+  }
+);
+
+app.post(
+  "/discord/logout",
+  async (req: TypedRequest<DiscordLoginBody>, res: Response) => {
+    const providedSession = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!providedSession) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    if (!req.body.discordID) {
+      return res.status(400).json({ error: "Body is missing discordID." });
+    }
+
+    const sessionString = await redisClient.get(
+      `discord_${req.body.discordID}`
+    );
+
+    if (!sessionString) {
+      return res
+        .status(400)
+        .json({ error: "No session is associated with this Discord account." });
+    }
+
+    const session = JSON.parse(sessionString);
+
+    if (!providedSession.id !== session.id) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    await redisClient.del(`discord_${req.body.discordID}`);
+    return res
+      .status(200)
+      .json({
+        message:
+          "The association between a Pyramids session and this Discord account has been removed.",
+      });
+  }
+);
 
 /**
  * Validates a given session object, checking if it exists in Redis and if it has expired.
@@ -202,10 +261,10 @@ const getUserFromID = async (userID: number): Promise<SanitisedUser | null> => {
   }
 };
 
-app.get('/user', async (req, res: Response) => {
+app.get("/user", async (req, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
-    return res.status(401).json({ message: 'Invalid session provided.' });
+    return res.status(401).json({ message: "Invalid session provided." });
   }
 
   const userID = sessionFromDB.userId;
@@ -234,11 +293,11 @@ app.get('/user', async (req, res: Response) => {
   });
 });
 
-app.get('/hello', () => {
-  console.log('Hello World!');
+app.get("/hello", () => {
+  console.log("Hello World!");
 });
 
-if (process.env['NODE_ENV'] !== 'test') {
+if (process.env["NODE_ENV"] !== "test") {
   app.listen(SERVER_PORT, () => {
     console.log(`Server running on port http://localhost:${SERVER_PORT}`);
   });
