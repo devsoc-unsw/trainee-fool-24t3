@@ -1,4 +1,5 @@
-import { default as ping } from './utility/ping.js';
-import { default as newevent } from './events/newevent.js';
+import ping from './utility/ping.js';
+import newevent from './events/newevent.js';
+import login from './user/login.js';
 
-export default [ping, newevent];
+export default [ping, newevent, login];

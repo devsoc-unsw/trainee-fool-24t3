@@ -4,7 +4,7 @@ const { BOT_TOKEN, APPLICATION_ID } = process.env;
 
 if (!BOT_TOKEN || !APPLICATION_ID) {
   throw new Error(
-    'BOT_TOKEN and APPLICATION_ID must be defined in a supplied .env file.'
+    'BOT_TOKEN and APPLICATION_ID must be defined.\nConsider defining them in a supplied .env file.'
   );
 }
 
