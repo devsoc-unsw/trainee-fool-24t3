@@ -4,6 +4,7 @@ import { Keyword, KeywordOptions } from "./Keyword/Keyword";
 import bbq from "./assets/bbq.png";
 import NavBar from "./NavBar/NavBar";
 import Button, { ButtonOptions } from "./Button/Button";
+import CreateEvent from "./CreateEvent/CreateEvent";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
       <Button type={ButtonOptions.Plus}></Button>
       <Button type={ButtonOptions.Bookmark}></Button>
       <Button type={ButtonOptions.String}>Log in</Button>
+      <CreateEvent></CreateEvent>
       <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
     </>
   );
