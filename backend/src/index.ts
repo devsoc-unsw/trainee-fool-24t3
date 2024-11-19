@@ -58,8 +58,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express :)))!");
 });
 
-//===============================
-//REGISTER
 app.post(
   "/auth/register",
   async (req: TypedRequest<LoginBody>, res: Response) => {
@@ -108,8 +106,6 @@ app.post(
   }
 );
 
-//==========================================
-//LOGIN
 app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {
     const { username, password } = req.body;
@@ -149,8 +145,6 @@ app.get("/user", async (req: TypedRequest<UserIdBody>, res: Response) => {
   }
 });
 
-//===================================
-//CREATE EVENT + HELPERS
 app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Response) => {
   //Session validation
   const event = req.body 
@@ -188,7 +182,7 @@ function isValidDate(startDate:Dayjs, endDate:Dayjs):boolean{
   
   return true;
 }
-//===============================
+
 app.get("/hello", () => {
   console.log("Hello World!");
 });
