@@ -4,13 +4,12 @@ import {
   GuildScheduledEventManager,
   GuildScheduledEventPrivacyLevel,
   SlashCommandBuilder,
-} from 'discord.js';
-import { startDB } from '../../db.js';
+} from "discord.js";
 
 export default {
   data: new SlashCommandBuilder()
-    .setName('login')
-    .setDescription('Log into Pyramids using your browser.'),
+    .setName("login")
+    .setDescription("Log into Pyramids using your browser."),
 
   async execute(interaction: CommandInteraction) {
     await interaction.reply({
