@@ -13,9 +13,10 @@ NODE_ENV=development
 ALLOWED_ORIGINS=commaseparated,regexes,slashesnotrequired
 DATABASE_URL="postgresql://.../postgres?pgbouncer=true"
 DIRECT_URL="postgresql://.../postgres"
+REDIS_PORT=6379
 ```
 
-`NODE_ENV` may be either 'development' or 'production'
+`NODE_ENV` may be either 'development' or 'production'.
 
 3. `cd ../frontend && pnpm i`
 4. set the following values in `frontend/.env`:
@@ -32,6 +33,19 @@ echo "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/ENDPOINT_
 ```
 
 you can now use the `rebuild` script in the root of the repository to initiate manual deployments without having to push changes to `main`.
+
+## running
+
+### backend
+
+1. `cd backend`
+2. `docker run -d --name redis-stack-server -p <REDIS_PORT>:6379 redis/redis-stack-server:latest`
+3. `pnpm run start`
+
+### frontend
+
+1. `cd frontend`
+2. `pnpm run dev`
 
 ## testing
 
