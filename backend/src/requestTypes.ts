@@ -1,4 +1,5 @@
 import { UserType } from "@prisma/client";
+import { Dayjs } from "dayjs";
 
 export interface TypedRequest<T> extends Express.Request {
   body: T;
@@ -26,8 +27,8 @@ export interface UserIdBody {
 export interface CreateEventBody {
   banner: string;
   name: string;
-  startTimeDate: Date; 
-  endTimeDate: Date; 
+  startTimeDate: Dayjs; 
+  endTimeDate: Dayjs; 
   location: string;
   description: string;
 }

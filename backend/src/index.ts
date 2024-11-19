@@ -8,6 +8,8 @@ import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
 import prisma from "./prisma";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
+import dayjs, {Dayjs} from "dayjs";
+
 declare module "express-session" {
   interface SessionData {
     userId: number;
@@ -56,6 +58,8 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express :)))!");
 });
 
+//===============================
+//REGISTER
 app.post(
   "/auth/register",
   async (req: TypedRequest<LoginBody>, res: Response) => {
@@ -104,6 +108,8 @@ app.post(
   }
 );
 
+//==========================================
+//LOGIN
 app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {
     const { username, password } = req.body;
@@ -144,14 +150,37 @@ app.get("/user", async (req: TypedRequest<UserIdBody>, res: Response) => {
   }
 });
 
-//Create event
+//===================================
+//CREATE EVENT + HELPERS
 app.post("/event/create", (req: TypedRequest<CreateEventBody>, res:Response) => {
+  //Session validation
+  const event = req.body 
+  console.log(event)
+
+  //replace this with lachlan's helper function
   if(!req.session.userId) {
     return res.status(401).json({ message: "User session invalid"})
   }
+
+  //Sanitize Inputs/Check Validity
+  if(!isValidDate(event.startTimeDate, event.endTimeDate)) {
+    return res.status(400).json({ message: "Invalid date"})
+  }
+  
+  //Do some db stuff
   return res.status(200).json({ message:"ok" })
 })
 
+function isValidDate(startDate:Dayjs, endDate:Dayjs):boolean{
+  //Should probably add more test cases here
+  if (startDate.isAfter(endDate) || startDate.isSame(endDate) || 
+  startDate.isBefore(dayjs())){
+    return false;
+  }
+
+  return true;
+}
+//===============================
 app.get("/hello", () => {
   console.log("Hello World!");
 });
