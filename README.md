@@ -49,9 +49,9 @@ you can now use the `rebuild` script in the root of the repository to initiate m
 
 ## testing
 
-To run tests locally, follow the steps below.
+to run tests locally, follow the steps below.
 
-1. Create a new file called .env.test in the backend folder. Set the following values:
+1. create a new file called .env.test in the backend folder. Set the following values:
 
 ```
 DATABASE_URL="postgres://postgres:postgres@localhost:5432"
@@ -61,13 +61,15 @@ REDIS_PORT=6380
 SESSION_SECRET=notsecret
 ```
 
-2. Ensure you have docker *and* docker-compose installed and make sure you have the docker engine running.
+2. ensure you have docker _and_ docker-compose installed and make sure you have the docker engine running.
 
-3. Make sure that the tests you've written are in the tests directory. You can then run these tests by running:
+3. make sure that the tests you've written are in the tests directory. You can then run these tests by running:
 
 ```
-npm run test:int
+pnpm run test:int
 ```
+
+> ⚠️ note that docker-compose or docker may require root privileges to run. any errors pertaining to either of things that appear when running the above scripts can probably be resolved by using `su`.
 
 ## setting up the discord bot
 
