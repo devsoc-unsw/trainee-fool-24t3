@@ -13,9 +13,10 @@ NODE_ENV=development
 ALLOWED_ORIGINS=commaseparated,regexes,slashesnotrequired
 DATABASE_URL="postgresql://.../postgres?pgbouncer=true"
 DIRECT_URL="postgresql://.../postgres"
+REDIS_PORT=6379
 ```
 
-`NODE_ENV` may be either 'development' or 'production'
+`NODE_ENV` may be either 'development' or 'production'.
 
 3. `cd ../frontend && pnpm i`
 4. set the following values in `frontend/.env`:
@@ -33,10 +34,25 @@ echo "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/ENDPOINT_
 
 you can now use the `rebuild` script in the root of the repository to initiate manual deployments without having to push changes to `main`.
 
+## running
+
+### backend
+
+1. `cd backend`
+2. `docker run -d --name redis-stack-server -p <REDIS_PORT>:6379 redis/redis-stack-server:latest`
+3. `pnpm run start`
+
+### frontend
+
+1. `cd frontend`
+2. `pnpm run dev`
+
 ## testing
 
-To run tests locally, follow the steps below.
-1. Create a new file called .env.test in the backend folder. Set the following values:
+to run tests locally, follow the steps below.
+
+1. create a new file called .env.test in the backend folder. Set the following values:
+
 ```
 DATABASE_URL="postgres://postgres:postgres@localhost:5432"
 DIRECT_URL="postgres://postgres:postgres@localhost:5432"
@@ -44,14 +60,18 @@ NODE_ENV=test
 REDIS_PORT=6380
 SESSION_SECRET=notsecret
 ```
-2. Ensure you have docker installed and make sure you have the docker engine running.
 
-3. Make sure that the tests you've written are in the tests directory. You can then run these tests by running:
+2. ensure you have docker _and_ docker-compose installed and make sure you have the docker engine running.
+
+3. make sure that the tests you've written are in the tests directory. You can then run these tests by running:
+
 ```
-npm run test:int
+pnpm run test:int
 ```
 
-### setting up the discord bot
+> ⚠️ note that docker-compose or docker may require root privileges to run. any errors pertaining to either of things that appear when running the above scripts can probably be resolved by using `su`.
+
+## setting up the discord bot
 
 if you're not interested in self-hosting, you can invite the pyramids discord bot [here](https://discord.com/oauth2/authorize?client_id=1301423026633445447&permissions=17600776112128&integration_type=0&scope=applications.commands+bot).
 

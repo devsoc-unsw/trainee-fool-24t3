@@ -1,4 +1,4 @@
-import { UserType } from "@prisma/client";
+import { UserType } from '@prisma/client';
 
 export interface TypedRequest<T> extends Express.Request {
   body: T;
@@ -17,8 +17,4 @@ export interface LoginBody {
   email: string;
   password: string;
   userType: UserType;
-}
-
-export interface UserIdBody {
-  userId: number
 }
