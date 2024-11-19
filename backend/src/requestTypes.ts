@@ -22,3 +22,12 @@ export interface LoginBody {
 export interface UserIdBody {
   userId: number
 }
+
+export interface CreateEventBody {
+  banner: string;
+  name: string;
+  startTimeDate: Date; 
+  endTimeDate: Date; 
+  location: string;
+  description: string;
+}

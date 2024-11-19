@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import session from "express-session";
 import cors from "cors";
-import { LoginBody, TypedRequest, UserIdBody } from "./requestTypes";
+import { LoginBody, TypedRequest, UserIdBody, CreateEventBody } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors } from "./interfaces";
 import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
@@ -137,12 +137,20 @@ app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
 app.get("/user", async (req: TypedRequest<UserIdBody>, res: Response) => {
   console.log("SESSIONUSERID:", req.session.userId);
   console.log("USERIDBODY:", req.body.userId);
-  if (req.session.userId === req.body.userId) {
+  if (req.session.userId) {
     return res.status(200).json({ message: "ok" });
   } else {
     return res.status(401).json({ message: "nah" });
   }
 });
+
+//Create event
+app.post("/event/create", (req: TypedRequest<CreateEventBody>, res:Response) => {
+  if(!req.session.userId) {
+    return res.status(401).json({ message: "User session invalid"})
+  }
+  return res.status(200).json({ message:"ok" })
+})
 
 app.get("/hello", () => {
   console.log("Hello World!");
