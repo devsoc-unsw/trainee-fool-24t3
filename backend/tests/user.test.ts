@@ -3,6 +3,7 @@ import { expect, test, vi, describe } from 'vitest';
 import prisma from '../src/prisma';
 import request from 'supertest';
 import app from '../src/index';
+import { SanitisedUser } from '../src/interfaces';
 
 describe('Tests', () => {
   test('login success, fetch /user', async () => {
@@ -23,22 +24,28 @@ describe('Tests', () => {
     expect(newUser).not.toBeNull();
     if (newUser == null) return;
 
-    const response = await request(app).post('/auth/login').send({
+    const loginResponse = await request(app).post('/auth/login').send({
       username: newUser.username,
       password: 'testpassword',
     });
 
-    expect(response.status).toBe(200);
+    expect(loginResponse.status).toBe(200);
 
-    const sessionID = response.headers['set-cookie'];
-    console.log(response.headers);
-    const response2 = await request(app)
+    const sessionID = loginResponse.headers['set-cookie'];
+    const userResponse = await request(app)
       .get('/user')
-      .set('Cookie', sessionID)
-      .send({
-        userId: newUser.id,
-      });
-    expect(response2.status).toBe(200);
+      .set('Cookie', sessionID);
+
+    expect(userResponse.status).toBe(200);
+
+    const userBody: SanitisedUser = userResponse.body;
+
+    expect(userBody.id == newUser.id);
+    expect(userBody.username == newUser.username);
+    expect(userBody.email == newUser.email);
+    expect(userBody.dateJoined == newUser.dateJoined);
+    expect(userBody.userType == newUser.userType);
+    expect(userBody.profilePicture == newUser.profilePicture);
   });
 
   // test('Unauthorized User', async () => {
