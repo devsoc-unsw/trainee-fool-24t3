@@ -32,3 +32,22 @@ export interface LoginErrors {
   passwordInvalid?: boolean;
   matchingCredentials?: boolean;
 }
+
+export interface EventInfo {
+  image: string;
+  backgroundPositionY: string;
+  name: string;
+  time: string;
+  keywords?: string[];
+}
+
+export interface DayInfo {
+  date: Date;
+  events: EventInfo[];
+}
+
+export interface TimelineInfo {
+  startDate: Date;
+  endDate: Date;
+  days: DayInfo[];
+}
