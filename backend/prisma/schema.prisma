@@ -11,4 +11,61 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserType {
+  ATTENDEE
+  SOCIETY
+}
+
+model User {
+    id Int @id @default(autoincrement())
+    username String 
+    email String 
+    password String
+    userType UserType
+    attendee Attendee?
+    society Society?
+    salt String 
+    dateJoined DateTime
+    profilePicture String?
+ }
+
+model Attendee {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
+  name String
+  keywords Keyword[]
+  societies Society[]
+}
+
+model Society {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
+  name String @unique
+  events Event[]
+  members Attendee[]
+  discordId String @unique
+}
+
+model Event {
+  id Int @id @default(autoincrement())
+  banner String
+  name String
+  startDateTime DateTime
+  endDateTime DateTime
+  location String
+  description String
+  societies Society[]
+  keywords Keyword[]
+}
+
+model Keyword {
+  id Int @id @default(autoincrement())
+  text String @unique
+  attendees Attendee[]
+  events Event[]
 }

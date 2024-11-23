@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import Event from "./Event/Event";
+import { Keyword, KeywordOptions } from "./Keyword/Keyword";
+import bbq from "./assets/bbq.png";
+import NavBar from "./NavBar/NavBar";
+import Button, { ButtonOptions } from "./Button/Button";
+import CreateEvent from "./CreateEvent/CreateEvent";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>Hi</h1>
+      <Event
+        name="DevSoc BBQ"
+        image={bbq}
+        backgroundPositionY="180px"
+        time="Tomorrow mate"
+      ></Event>
+      <Event
+        name="TikTok rizz party"
+        image="https://pbs.twimg.com/media/F2y8Ehbb0AA-ch9.jpg"
+        backgroundPositionY="150px"
+        time="25th Dec 2024"
+        keywords={["hiii", "another keyword"]}
+      ></Event>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Add}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
+      <Button type={ButtonOptions.Plus}></Button>
+      <Button type={ButtonOptions.Bookmark}></Button>
+      <Button type={ButtonOptions.String}>Log in</Button>
+      <CreateEvent></CreateEvent>
+      <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
