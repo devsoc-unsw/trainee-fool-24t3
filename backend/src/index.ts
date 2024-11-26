@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import session from 'express-session';
 import cors from 'cors';
-import { LoginBody, TypedRequest,CreateEventBody } from './requestTypes';
+import { LoginBody, TypedRequest,CreateEventBody, CreateSocietyBody } from './requestTypes';
 import bcrypt from 'bcrypt';
 import { LoginErrors, SanitisedUser } from './interfaces';
 import { PrismaClient, Prisma, UserType, User } from '@prisma/client';
@@ -247,6 +247,25 @@ app.get('/user', async (req, res: Response) => {
   });
 });
 
+app.post("/society/create", async (req:TypedRequest<CreateSocietyBody>, res: Response) => {
+  const society = req.body;
+  if (!society.name || !society.profilePicture || !society.userId) {
+    return res.status(400).json({ message: 'Invalid input.' });
+  }
+
+  const sessionFromDB = await validateSession(req.session ? req.session : null);
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: 'Invalid session provided.' });
+  }
+  
+  const newSociety = await prisma.society.create({
+    data: {
+      name: society.name
+      profi
+    }
+  })
+  return res.status(400)
+})
 /*app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Response) => {
   //Session validation
   const event = req.body 

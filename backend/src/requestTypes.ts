@@ -32,3 +32,9 @@ export interface CreateEventBody {
   location: string;
   description: string;
 }
+
+export interface CreateSocietyBody {
+  name:string
+  profilePicture: string 
+  userId: number
+}
