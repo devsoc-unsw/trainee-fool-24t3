@@ -23,6 +23,7 @@ if (process.env["REDIS_PORT"] === undefined) {
 let redisClient = createClient({
   url: `redis://localhost:${process.env["REDIS_PORT"]}`,
 });
+
 redisClient.connect().catch(console.error);
 
 // Initialize store.

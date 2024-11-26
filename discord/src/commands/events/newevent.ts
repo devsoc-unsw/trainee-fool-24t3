@@ -124,7 +124,6 @@ export default {
       description: description.value as string,
       image: image ? (image.value as string) : null,
     });
-    // TODO: update link below
     interaction.editReply(
       `✅  **Created event '${event.name}'**.\n🔗  Pyramids link: TODO`
     );
