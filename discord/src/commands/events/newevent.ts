@@ -50,8 +50,8 @@ export default {
     )
     .addStringOption((option) =>
       option
-        .setName("image")
-        .setDescription("The image of the event")
+        .setName("banner")
+        .setDescription("The banner (image) for the event")
         .setRequired(false)
     ),
 
@@ -63,7 +63,7 @@ export default {
     const location = interaction.options.get("location", true);
     const startTime_string = interaction.options.get("start_time", true);
     const endTime_string = interaction.options.get("end_time", true);
-    const image = interaction.options.get("image") ?? null;
+    const banner = interaction.options.get("banner") ?? null;
 
     const startTime = dayjs(startTime_string.value as string, [
       "DD/MM/YYYY HH:mm",
@@ -122,7 +122,7 @@ export default {
       privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
       entityType: GuildScheduledEventEntityType.External,
       description: description.value as string,
-      image: image ? (image.value as string) : null,
+      image: banner ? (banner.value as string) : null,
     });
     interaction.editReply(
       `✅  **Created event '${event.name}'**.\n🔗  Pyramids link: TODO`
