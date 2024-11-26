@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - feature/login
+      - feature/event
   pull_request:
     branches:
       - main
       - feature/login
+      - feature/event
 env:
   DATABASE_URL: postgres://postgres:postgres@localhost:5432
   NODE_ENV: test
