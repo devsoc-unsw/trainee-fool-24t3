@@ -17,7 +17,7 @@ describe("Session Tests", () => {
         });
 
         expect(status).toBe(401);
-        expect(body.message).toBe("User session invalid")
+        expect(body.message).toBe("Invalid session provided.")
     })
 
     test.skip("Create Record(Does not account for relation)", async () => {
