@@ -296,6 +296,41 @@ app.get("/user", async (req, res: Response) => {
   });
 });
 
+app.get("/user/societies", async (req, res: Response) => {
+  const sessionFromDB = await validateSession(req.session ? req.session : null);
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  const userID = sessionFromDB.userId;
+
+  const societies_joined = await prisma.society.findMany({
+    where: {
+      members: {
+        some: {
+          id: userID,
+        },
+      },
+    },
+  });
+
+  const societies = {
+    joined: societies_joined,
+    administering: null,
+  };
+
+  return res.status(200).json(societies);
+});
+
+app.get("/societies", async (req, res: Response) => {
+  const societies = await prisma.society.findMany({
+    orderBy: {
+      id: "asc",
+    },
+  });
+  return res.status(200).json(societies);
+});
+
 app.get("/hello", () => {
   console.log("Hello World!");
 });
