@@ -20,19 +20,39 @@ describe("Session Tests", () => {
         expect(body.message).toBe("Invalid session provided.")
     })
 
-    test.skip("Create Record(Does not account for relation)", async () => {
+    test("Create Record", async () => {
         const { status, body } = await request(app).post("/auth/register").send({
             username: "shinjisatoo",
             password: "testpassword",
             email: "longseason1996@gmail.com",
             userType: "ATTENDEE",
+        });
+
+        const newUser = await prisma.user.findFirst({
+            where: {
+              id: body.newUser.id,
+            },
           });
+      
+          if (newUser == null) return;
+          expect(status).toBe(201);
+          expect(newUser).not.toBeNull();
 
         const loginres = await request(app).post("/auth/login").send({
             username: "shinjisatoo",
             password: "testpassword",
         });
         let sessionID = loginres.headers["set-cookie"];
+
+        const societyRes = await request(app).post("/society/create")
+        .set("Cookie", sessionID)
+        .send({
+            name: "Rizzsoc",
+            userId: newUser.id,
+        });
+        console.log(societyRes.body)
+        const socId = societyRes.body.id
+        expect(societyRes.status).toBe(200);
 
         const response = await request(app)
         .post("/event/create")
@@ -43,10 +63,11 @@ describe("Session Tests", () => {
             startDateTime: dayjs().add(30, 'm'),
             endDateTime: dayjs().add(60, 'm'),
             location: "tampa, florida",
-            description: "fein! fein! fein! fein! fein so good she honor roll"
+            description: "fein! fein! fein! fein! fein so good she honor roll",
+            societyId: socId
         });
 
-        console.log(response)
+        console.log(response.body)
         expect(response.status).toBe(200)
     })
 

@@ -31,6 +31,7 @@ export interface CreateEventBody {
   endDateTime: Dayjs; 
   location: string;
   description: string;
+  societyId: number;
 }
 
 export interface CreateSocietyBody {

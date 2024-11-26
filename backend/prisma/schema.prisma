@@ -42,7 +42,7 @@ model Attendee {
 
 model Society {
   id Int @id @default(autoincrement())
-  admin User @relation(fields: [userId], references: [id])
+  admin User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
   name String @unique
   events Event[]
@@ -60,7 +60,7 @@ model Event {
   location String
   description String
   societyId Int
-  society Society @relation(fields:[societyId], references: [id])
+  society Society @relation(fields:[societyId], references: [id], onDelete: Cascade)
   keywords Keyword[]
   @@unique(name: "eventID", [societyId, name, startDateTime, endDateTime])
 }

@@ -113,7 +113,7 @@ app.post(
 
     //Really temporary as idk how the interaction between this is supposed to go
     //Just wanna check out the interaction between creating an event and this
-    if (userType === "SOCIETY") {
+   /* if (userType === "SOCIETY") {
       await prisma.society.create({
         data: {
           name:username, 
@@ -121,7 +121,7 @@ app.post(
           userId: newUser.id
         }
       })
-    }
+    }*/
     return res.status(201).json({
       newUser,
     });
@@ -249,8 +249,12 @@ app.get('/user', async (req, res: Response) => {
 
 app.post("/society/create", async (req:TypedRequest<CreateSocietyBody>, res: Response) => {
   const society = req.body;
-  if (!society.name || !society.profilePicture || !society.userId) {
+  if (!society.name || !society.userId) {
     return res.status(400).json({ message: 'Invalid input.' });
+  }
+
+  if (!society.profilePicture) {
+    society.profilePicture = "null";
   }
 
   const sessionFromDB = await validateSession(req.session ? req.session : null);
@@ -260,13 +264,19 @@ app.post("/society/create", async (req:TypedRequest<CreateSocietyBody>, res: Res
   
   const newSociety = await prisma.society.create({
     data: {
-      name: society.name
-      profi
+      name: society.name,
+      admin: {
+        connect: {
+          id: society.userId,
+        }
+      }
     }
   })
-  return res.status(400)
+
+  return res.status(200).json(newSociety);
 })
-/*app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Response) => {
+
+app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Response) => {
   //Session validation
   const event = req.body 
 
@@ -288,11 +298,16 @@ app.post("/society/create", async (req:TypedRequest<CreateSocietyBody>, res: Res
       startDateTime: dayjs(event.startDateTime).toISOString(),
       endDateTime: dayjs(event.endDateTime).toISOString(),
       location: event.location,
-      description: event.description
+      description: event.description,
+      society: {
+        connect: {
+          id: event.societyId
+        }
+      }
     }
   })
   return res.status(200).json({ eventRes })
-})*/
+})
 
 function isValidDate(startDate:Dayjs, endDate:Dayjs):boolean{
   //Should probably add more test cases here
