@@ -7,11 +7,12 @@ import dayjs from "dayjs";
 
 describe("Session Tests", () => {
     test("Session Invalid", async () => {
+        var start = new Date()
         const { status, body } = await request(app).post("/event/create").send({
             banner: "asdasd",
             name: "tiktokrizzparty",
-            startDateTime: dayjs(),
-            endDateTime: dayjs().add(1, 'd'),
+            startDateTime: start,
+            endDateTime: new Date(start.getTime() + 86400000),
             location: "tampa, florida",
             description: "fein! fein! fein! fein! fein so good she honor roll"
         });
@@ -53,6 +54,7 @@ describe("Session Tests", () => {
         console.log(societyRes.body)
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
+        var start = new Date()
 
         const response = await request(app)
         .post("/event/create")
@@ -60,8 +62,8 @@ describe("Session Tests", () => {
         .send({
             banner: "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
             name: "tiktokrizzparty",
-            startDateTime: dayjs().add(30, 'm'),
-            endDateTime: dayjs().add(60, 'm'),
+            startDateTime: new Date(),
+            endDateTime: new Date(start.getTime() + 86400000),
             location: "tampa, florida",
             description: "fein! fein! fein! fein! fein so good she honor roll",
             societyId: socId

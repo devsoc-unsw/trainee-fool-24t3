@@ -28,8 +28,8 @@ export interface UserIdBody {
 export interface CreateEventBody {
   banner: string;
   name: string;
-  startDateTime: Dayjs; 
-  endDateTime: Dayjs; 
+  startDateTime: Date; 
+  endDateTime: Date; 
   location: string;
   description: string;
   societyId: number;

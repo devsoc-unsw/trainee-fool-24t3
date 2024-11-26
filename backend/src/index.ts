@@ -112,17 +112,6 @@ app.post(
       },
     });
 
-    //Really temporary as idk how the interaction between this is supposed to go
-    //Just wanna check out the interaction between creating an event and this
-   /* if (userType === "SOCIETY") {
-      await prisma.society.create({
-        data: {
-          name:username, 
-          discordId:"asdas",
-          userId: newUser.id
-        }
-      })
-    }*/
     return res.status(201).json({
       newUser,
     });
@@ -291,8 +280,6 @@ app.get("/user", async (req, res: Response) => {
 
   if (user === null) {
     return res.status(404).json({
-      //Not sure if concrete, but I was playing around with insomnia, deleted a user in supabase, and then called it.
-      //This resulting message was thrown. I mean duh but like cool to see that it popped up ecksdee
       message:
         "User not found, though session is valid? This shouldn't happen.",
     });
@@ -352,7 +339,6 @@ app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Respons
     return res.status(400).json({ message: "Invalid date"})
   }
   
-  //Do some db stuff TODO: RELATION LINK THING
   const eventRes = await prisma.event.create({
     data: {
       banner: event.banner,
@@ -371,14 +357,13 @@ app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Respons
   return res.status(200).json({ eventRes })
 })
 
-function isValidDate(startDate:Dayjs, endDate:Dayjs):boolean{
+function isValidDate(startDate:Date, endDate:Date):boolean{
   //Should probably add more test cases here
-  if (dayjs(startDate).isAfter(endDate) || dayjs(startDate).isSame(endDate) || 
-  dayjs(startDate).isBefore(dayjs())){
-    return false;
-  }
-  
-  return true;
+  var parsedStartDate = dayjs(startDate)
+  var parsedEndDate = dayjs(endDate)
+  //Might need to keep an eye on this condition, I'm subtracting two mins from dayjs as allowance as 
+  //previously it registered that dayJs() is after startDate.
+  return (!(parsedStartDate.isAfter(parsedEndDate) || parsedStartDate.isSame(parsedEndDate) || parsedStartDate.isBefore(dayjs().subtract(2, 'minutes'))))
 }
 
 
