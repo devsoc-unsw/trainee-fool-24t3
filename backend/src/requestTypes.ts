@@ -1,6 +1,7 @@
 import { UserType } from "@prisma/client";
 import { Dayjs } from "dayjs";
 
+
 export interface TypedRequest<T> extends Express.Request {
   body: T;
 }
@@ -39,3 +40,8 @@ export interface CreateSocietyBody {
   profilePicture: string 
   userId: number
 }
+
+export interface DiscordLoginBody {
+  discordID: number;
+}
+
