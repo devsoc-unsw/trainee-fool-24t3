@@ -19,7 +19,9 @@ export function AuthScreen(props: AuthScreenProp) {
       <main>
         <form>
           {props.inputs.map((input: ReactNode) => input)}{" "}
-          <button type="button">{props.buttonText}</button>{" "}
+          <button type="button" className={classes.button}>
+            {props.buttonText}
+          </button>{" "}
         </form>
       </main>
       {props.footer && <footer>{props.footer}</footer>}
