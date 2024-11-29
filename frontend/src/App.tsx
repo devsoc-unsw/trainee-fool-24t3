@@ -6,6 +6,8 @@ import bbq from "./assets/bbq.png";
 import { TextInput } from "./TextInput/TextInput";
 import { AtSymbolIcon } from "@heroicons/react/24/solid";
 import NavBar from "./NavBar/NavBar";
+import Button, { ButtonOptions } from "./Button/Button";
+import CreateEvent from "./CreateEvent/CreateEvent";
 
 function App() {
   return (
@@ -43,6 +45,10 @@ function App() {
         buttonText="Sign Up"
         footer={<p>stone</p>}
       ></AuthScreen>
+      <Button type={ButtonOptions.Plus}></Button>
+      <Button type={ButtonOptions.Bookmark}></Button>
+      <Button type={ButtonOptions.String}>Log in</Button>
+      <CreateEvent></CreateEvent>
       <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
     </>
   );

@@ -3,25 +3,23 @@
   height: 10vh;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
+  padding: 12px;
   font-size: 20px;
 }
 
 .pyramids {
   display: flex;
-  margin: 12px 0px 0px 3%;
+  margin-left: 3%;
   align-items: center;
   justify-content: space-between;
-  width: 11%;
+  width: 12%;
   font-size: 18px;
 }
 
 .logo {
   height: 48px;
-}
-
-.title {
-  margin-top: 12px;
 }
 
 .pages {
@@ -36,7 +34,6 @@
   border-radius: 16px;
   height: 48px;
   width: 48px;
-  margin: 12px;
   margin-right: 3%;
   margin-left: 5%;
   background-size: cover;
