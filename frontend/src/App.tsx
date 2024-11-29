@@ -4,7 +4,7 @@ import Event from "./Event/Event";
 import { Keyword, KeywordOptions } from "./Keyword/Keyword";
 import bbq from "./assets/bbq.png";
 import { TextInput } from "./TextInput/TextInput";
-import { AtSymbolIcon } from "@heroicons/react/24/solid";
+import { LockClosedIcon, AtSymbolIcon } from "@heroicons/react/24/outline";
 import NavBar from "./NavBar/NavBar";
 import Button, { ButtonOptions } from "./Button/Button";
 import CreateEvent from "./CreateEvent/CreateEvent";
@@ -32,7 +32,7 @@ function App() {
       <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
       <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
       <AuthScreen
-        heading="Login"
+        heading="Log in"
         text={<p>The quick brown fox jumped over the lazy dog</p>}
         inputs={[
           <TextInput
@@ -40,14 +40,20 @@ function App() {
             placeholder="Email"
             name="email"
           />,
-          <TextInput placeholder="Password" name="password" />,
+          <TextInput
+            icon={<LockClosedIcon />}
+            placeholder="Password"
+            name="password"
+          />,
         ]}
         buttonText="Sign Up"
         footer={<p>stone</p>}
       ></AuthScreen>
-      <Button type={ButtonOptions.Plus}></Button>
-      <Button type={ButtonOptions.Bookmark}></Button>
-      <Button type={ButtonOptions.String}>Log in</Button>
+      <Button type="button" variant={ButtonOptions.Plus}></Button>
+      <Button type="button" variant={ButtonOptions.Bookmark}></Button>
+      <Button type="button" variant={ButtonOptions.String}>
+        Log in
+      </Button>
       <CreateEvent></CreateEvent>
       <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
     </>
