@@ -11,7 +11,8 @@
 SESSION_SECRET=
 NODE_ENV=development
 ALLOWED_ORIGINS=commaseparated,regexes,slashesnotrequired
-DATABASE_URL="postgresql://..."
+DATABASE_URL="postgresql://.../postgres?pgbouncer=true"
+DIRECT_URL="postgresql://.../postgres"
 ```
 
 `NODE_ENV` may be either 'development' or 'production'
@@ -34,11 +35,11 @@ you can now use the `rebuild` script in the root of the repository to initiate m
 
 ## credits
 
-* aaron fang
-* isaac kim
-* jared schulz
-* lachlan shoesmith
-* ricky pham
-* vincent tannos
+- aaron fang
+- isaac kim
+- jared schulz
+- lachlan shoesmith
+- ricky pham
+- vincent tannos
 
-* pyramid icon by [liam gabe](https://thenounproject.com/icon/pyramid-7276619/)
+- pyramid icon by [liam gabe](https://thenounproject.com/icon/pyramid-7276619/)
