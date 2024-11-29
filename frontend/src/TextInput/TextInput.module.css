@@ -1,0 +1,11 @@
+.icon{
+    width: 15px;
+}
+
+.container{
+    display: flex;
+}
+
+.input{
+    border: none;
+}
