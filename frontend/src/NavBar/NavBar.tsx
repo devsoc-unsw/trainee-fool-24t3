@@ -1,23 +1,24 @@
-import classes from './NavBar.module.css';
-import pyramidIcon from '../assets/pyramidIcon.svg';
+import classes from "./NavBar.module.css";
+import pyramidIcon from "../assets/pyramidIcon.svg";
+import { NavLink } from "react-router";
 
 export type NavBarProps = {
   profileImage: string;
-}
+};
 
 function NavBar(props: NavBarProps) {
   return (
     <nav className={classes.container}>
       <div className={classes.pyramids}>
-        <img src={pyramidIcon} className={classes.logo} ></img>
+        <img src={pyramidIcon} className={classes.logo}></img>
         <h1>Pyramids</h1>
       </div>
       <div className={classes.pages}>
-        <a>Timeline</a>
-        <a>Calendar</a>
-        <a>About</a>
+        <NavLink to="/timeline">Timeline</NavLink>
+        <NavLink to="/timeline?view=calendar">Calendar</NavLink>
+        <NavLink to="/">About</NavLink>
       </div>
-      <div 
+      <div
         className={classes.profile}
         style={{
           backgroundImage: `url(${props.profileImage})`,
