@@ -58,3 +58,8 @@
   margin-top: 1.5px;
   border-bottom: 2px solid hsl(203, 88%, 27%);
 }
+
+.container h1 a:hover {
+  margin-top: 0;
+  border: none;
+}
