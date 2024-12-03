@@ -4,6 +4,7 @@ import FormData from 'form-data';
 const mailgun = new Mailgun(FormData);
 
 export const sendEmail = async (emailAddress: string, userName: string, code: string) => {
+    if(process.env["CI"]) return;
     const key = process.env["EMAIL_KEY"]
     // don't send email when running tests.
     if(key === "test") {
