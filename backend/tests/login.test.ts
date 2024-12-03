@@ -14,7 +14,6 @@ describe('/login endpoint', () => {
       email: 'longseason1996@gmail.com',
       userType: 'ATTENDEE',
     });
-
     const newUser = await prisma.user.findFirst({
       where: {
         id: body.newUser.id,
@@ -29,7 +28,7 @@ describe('/login endpoint', () => {
       username: newUser.username,
       password: 'testpassword',
     });
-
+    
     expect(response.status).toBe(200);
 
     const sessionID = response.headers['set-cookie'];
