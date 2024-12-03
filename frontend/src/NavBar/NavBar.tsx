@@ -1,7 +1,6 @@
 import classes from "./NavBar.module.css";
 import pyramidIcon from "../assets/pyramidIcon.svg";
 import { NavLink, useLocation } from "react-router";
-import { useEffect } from "react";
 
 export type NavBarProps = {
   profileImage: string;
