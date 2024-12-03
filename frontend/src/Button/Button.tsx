@@ -11,21 +11,36 @@ export enum ButtonOptions {
 type ButtonProps = {
   children?: string;
   type: ButtonOptions;
+  className?: string;
 };
 
 function Button(props: ButtonProps) {
   return (
     <button className={classes.button}>
       {props.type === ButtonOptions.Plus && (
-        <PlusIcon className={classes.icon}></PlusIcon>
+        <PlusIcon
+          className={`${classes.icon} ${
+            props.className ? props.className : ""
+          }`}
+        ></PlusIcon>
       )}
 
       {props.type === ButtonOptions.Bookmark && (
-        <BookmarkIcon className={classes.icon}></BookmarkIcon>
+        <BookmarkIcon
+          className={`${classes.icon} ${
+            props.className ? props.className : ""
+          }`}
+        ></BookmarkIcon>
       )}
 
       {props.type === ButtonOptions.String && (
-        <span className={classes.string}>{props.children}</span>
+        <span
+          className={`${classes.string} ${
+            props.className ? props.className : ""
+          }`}
+        >
+          {props.children}
+        </span>
       )}
     </button>
   );
