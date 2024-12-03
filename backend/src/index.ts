@@ -504,7 +504,7 @@ app.post("/user/society/leave", async (req: TypedRequest<societyIdBody>, res: Re
   return res.status(200).json(result);
 })
 
-app.post("/user/event/join", async (req: TypedRequest<eventIdBody>, res:Response) => {
+app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Response) => {
   const sessionFromDB = await validateSession(
     req.session ? req.session : null
   );
@@ -542,6 +542,51 @@ app.post("/user/event/join", async (req: TypedRequest<eventIdBody>, res:Response
 
   return res.status(200).json(result)
 })
+
+app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Response) => {
+  const sessionFromDB = await validateSession(
+    req.session ? req.session : null
+  );
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  const userID = sessionFromDB.userId;
+
+  const eventId = await prisma.event.findFirst({
+    where: {
+      numId: req.body.eventId
+    },
+    select: {
+      numId: true
+    }
+  })
+
+  if (!eventId) {
+    return res.status(400).json({message: "Invalid Event"})
+  }
+
+  const result = await prisma.event.update({
+    where: {
+      numId: eventId.numId,
+    },
+    data: {
+      attendees: {
+        disconnect: {
+          id: userID,
+        },
+      },
+    },
+  });
+
+  return res.status(200).json(result)
+});
+
+/*
+TODO:
+app.get("/event/details") - Individual Event Details
+app.get("/user/events") - Paginated event names, times, and ids
+*/
 
 app.get("/hello", () => {
   console.log("Hello World!");

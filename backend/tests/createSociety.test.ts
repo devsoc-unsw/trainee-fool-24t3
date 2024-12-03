@@ -4,7 +4,7 @@ import request from "supertest";
 import app from "../src/index";
 import { beforeEach } from "node:test";
 
-describe("Tests", () => {
+describe("'/society/create endpoint", () => {
   test("Successful Creation", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",

@@ -5,7 +5,7 @@ import app from "../src/index";
 import { beforeEach } from "node:test";
 import dayjs from "dayjs";
 
-describe("Session Tests", () => {
+describe("/event endpoint", () => {
     test("Session Invalid", async () => {
         var start = new Date()
         const { status, body } = await request(app).post("/event/create").send({
