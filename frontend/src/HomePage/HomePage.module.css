@@ -1,0 +1,22 @@
+.homePage {
+  height: 100%;
+}
+
+.homePage,
+.header,
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.main {
+  margin-top: 16px;
+  line-height: 1.5;
+  color: #222;
+}
+
+.logo {
+  width: 64px;
+}
