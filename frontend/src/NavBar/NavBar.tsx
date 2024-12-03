@@ -11,12 +11,14 @@ function NavBar(props: NavBarProps) {
     <nav className={classes.container}>
       <div className={classes.pyramids}>
         <img src={pyramidIcon} className={classes.logo}></img>
-        <h1>Pyramids</h1>
+        <h1>
+          <NavLink to="/">Pyramids</NavLink>
+        </h1>
       </div>
       <div className={classes.pages}>
         <NavLink to="/timeline">Timeline</NavLink>
         <NavLink to="/timeline?view=calendar">Calendar</NavLink>
-        <NavLink to="/">About</NavLink>
+        <NavLink to="/about">About</NavLink>
       </div>
       <div
         className={classes.profile}

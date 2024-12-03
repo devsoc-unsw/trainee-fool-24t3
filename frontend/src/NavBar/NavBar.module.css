@@ -16,6 +16,7 @@
   justify-content: space-between;
   width: 12%;
   font-size: 18px;
+  gap: 16px;
 }
 
 .logo {
@@ -27,7 +28,7 @@
   width: 35%;
   justify-content: space-between;
   align-items: center;
-  min-width: 300px
+  min-width: 300px;
 }
 
 .profile {

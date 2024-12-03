@@ -17,3 +17,8 @@ body {
   height: 90vh;
   overflow-y: auto;
 }
+
+h1 a {
+  color: inherit;
+  text-decoration: none;
+}
