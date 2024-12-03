@@ -514,22 +514,23 @@ app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Respon
 
   const userID = sessionFromDB.userId;
 
-  const eventId = await prisma.event.findFirst({
+  const event = await prisma.event.findFirst({
     where: {
       numId: req.body.eventId
     },
     select: {
-      numId: true
+      numId: true,
+      numAttendees: true
     }
   })
 
-  if (!eventId) {
+  if (!event) {
     return res.status(400).json({message: "Invalid Event"})
   }
 
   const result = await prisma.event.update({
     where: {
-      numId: eventId.numId,
+      numId: event.numId,
     },
     data: {
       attendees: {
@@ -537,6 +538,9 @@ app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Respon
           id: userID,
         },
       },
+      //Not sure if this is the best way to keep track of numAttendees, but afaik prisma
+      //doesn't support array cardinalities.
+      numAttendees: event.numAttendees++
     },
   });
 
@@ -553,22 +557,23 @@ app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Resp
 
   const userID = sessionFromDB.userId;
 
-  const eventId = await prisma.event.findFirst({
+  const event = await prisma.event.findFirst({
     where: {
       numId: req.body.eventId
     },
     select: {
-      numId: true
+      numId: true,
+      numAttendees: true,
     }
   })
 
-  if (!eventId) {
+  if (!event) {
     return res.status(400).json({message: "Invalid Event"})
   }
 
   const result = await prisma.event.update({
     where: {
-      numId: eventId.numId,
+      numId: event.numId,
     },
     data: {
       attendees: {
@@ -576,6 +581,7 @@ app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Resp
           id: userID,
         },
       },
+      numAttendees: event.numAttendees--,
     },
   });
 

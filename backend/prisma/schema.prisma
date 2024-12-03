@@ -56,7 +56,8 @@ model Event {
   society       Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
   keywords      Keyword[]
   attendees     User[]
-
+  numAttendees  Int       @default(0)
+  
   @@unique(name: "eventID", [societyId, name, startDateTime, endDateTime])
 }
 
