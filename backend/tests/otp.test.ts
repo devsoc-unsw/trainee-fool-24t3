@@ -6,22 +6,14 @@ import { createClient } from "redis";
 import { afterEach, beforeEach } from "node:test";
 import prisma from "../src/prisma";
 
-let redisClient: ReturnType<typeof createClient>;
-
-beforeEach(async () => {
-  redisClient = createClient({
-    url: `redis://localhost:${process.env["REDIS_PORT"]}`,
-  });
-  await redisClient.connect().catch(console.error);
-});
-
-afterEach(async () => {
-  await redisClient.flushDb();
-  await redisClient.quit();
-});
-
 describe("Tests", () => {
   test("otp create test", async () => {
+    const redisClient = createClient({
+      url: `redis://localhost:${process.env["REDIS_PORT"]}`,
+    });
+    await redisClient.connect().catch(console.error);
+
+    expect(redisClient).not.toBeUndefined();
     
     const { status, body } = await request(app).post("/auth/register").send({
       username: "richard grayson",
@@ -44,7 +36,7 @@ describe("Tests", () => {
     });
 
     if(newUser) {
-        const response = await request(app).post("/auth/otp").send({
+        const response = await request(app).post("/auth/otp/generate").send({
             email: "pyramidstestdump@gmail.com"
         });
         expect(response.status).toBe(200);

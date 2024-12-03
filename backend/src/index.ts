@@ -10,10 +10,7 @@ import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import { generateOTP } from "./routes/OTP/generateOTP";
 import { removeExpiredOTPs } from "./routes/OTP/deleteExpired";
-import dotenv from 'dotenv';
 import { verifyOTP } from "./routes/OTP/verifyOTP";
-
-dotenv.config(); 
 
 declare module "express-session" {
   interface SessionData {
