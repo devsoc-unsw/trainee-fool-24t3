@@ -1,11 +1,12 @@
 import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 import commands from "./commands/commands.js";
 import { createClient } from "redis";
-const { BOT_TOKEN, APPLICATION_ID, REDIS_PORT } = process.env;
+export const { BOT_TOKEN, APPLICATION_ID, REDIS_PORT, BACKEND_URL } =
+  process.env;
 
-if (!BOT_TOKEN || !APPLICATION_ID || !REDIS_PORT) {
+if (!BOT_TOKEN || !APPLICATION_ID || !REDIS_PORT || !BACKEND_URL) {
   throw new Error(
-    "BOT_TOKEN and APPLICATION_ID must be defined.\nConsider defining them in a supplied .env file."
+    "BOT_TOKEN, APPLICATION_ID, REDIS_PORT, and BACKEND_URL must be defined.\nConsider defining them in a supplied .env file."
   );
 }
 

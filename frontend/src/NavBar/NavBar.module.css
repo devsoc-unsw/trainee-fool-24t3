@@ -49,6 +49,11 @@
   color: black;
 }
 
+.container a:hover {
+  margin-top: 1.5px;
+  border-bottom: 2px solid hsl(203, 88%, 47%);
+}
+
 .container a.active {
   margin-top: 1.5px;
   border-bottom: 2px solid hsl(203, 88%, 27%);
