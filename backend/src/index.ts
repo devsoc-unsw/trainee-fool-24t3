@@ -1,14 +1,22 @@
 import express, { Request, Response } from "express";
 import session, { Session } from "express-session";
 import cors from "cors";
-import { DiscordLoginBody, LoginBody, TypedRequest, CreateSocietyBody, CreateEventBody } from "./requestTypes";
+import {
+  DiscordLoginBody,
+  LoginBody,
+  TypedRequest,
+  CreateSocietyBody,
+  CreateEventBody,
+  societyIdBody,
+  eventIdBody
+} from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors, SanitisedUser } from "./interfaces";
 import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
 import prisma from "./prisma";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
-import dayjs, {Dayjs} from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 declare module "express-session" {
   interface SessionData {
     userId: number;
@@ -296,76 +304,89 @@ app.get("/user", async (req, res: Response) => {
   });
 });
 
-app.post("/society/create", async (req:TypedRequest<CreateSocietyBody>, res: Response) => {
-  const society = req.body;
-  if (!society.name || !society.userId) {
-    return res.status(400).json({ message: 'Invalid input.' });
-  }
-
-  if (!society.profilePicture) {
-    society.profilePicture = "null";
-  }
-
-  const sessionFromDB = await validateSession(req.session ? req.session : null);
-  if (!sessionFromDB) {
-    return res.status(401).json({ message: 'Invalid session provided.' });
-  }
-  
-  const newSociety = await prisma.society.create({
-    data: {
-      name: society.name,
-      admin: {
-        connect: {
-          id: society.userId,
-        }
-      }
+app.post(
+  "/society/create",
+  async (req: TypedRequest<CreateSocietyBody>, res: Response) => {
+    const society = req.body;
+    if (!society.name) {
+      return res.status(400).json({ message: "Invalid input." });
     }
-  })
 
-  return res.status(200).json(newSociety);
-})
-
-app.post("/event/create", async (req: TypedRequest<CreateEventBody>, res:Response) => {
-  //Session validation
-  const event = req.body 
-
-  const sessionFromDB = await validateSession(req.session ? req.session : null);
-  if (!sessionFromDB) {
-    return res.status(401).json({ message: 'Invalid session provided.' });
-  }
-
-  //Sanitize Inputs/Check Validity
-  if(!isValidDate(event.startDateTime, event.endDateTime)) {
-    return res.status(400).json({ message: "Invalid date"})
-  }
-  
-  const eventRes = await prisma.event.create({
-    data: {
-      banner: event.banner,
-      name: event.name,
-      startDateTime: dayjs(event.startDateTime).toISOString(),
-      endDateTime: dayjs(event.endDateTime).toISOString(),
-      location: event.location,
-      description: event.description,
-      society: {
-        connect: {
-          id: event.societyId
-        }
-      }
+    if (!society.profilePicture) {
+      society.profilePicture = "null";
     }
-  })
-  return res.status(200).json({ eventRes })
-})
 
-function isValidDate(startDate:Date, endDate:Date):boolean{
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    const newSociety = await prisma.society.create({
+      data: {
+        name: society.name,
+        admin: {
+          connect: {
+            id: sessionFromDB.userId,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json(newSociety);
+  }
+);
+
+app.post(
+  "/event/create",
+  async (req: TypedRequest<CreateEventBody>, res: Response) => {
+    //Session validation
+    const event = req.body;
+
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    //Sanitize Inputs/Check Validity
+    if (!isValidDate(event.startDateTime, event.endDateTime)) {
+      return res.status(400).json({ message: "Invalid date" });
+    }
+
+    const eventRes = await prisma.event.create({
+      data: {
+        banner: event.banner,
+        name: event.name,
+        startDateTime: dayjs(event.startDateTime).toISOString(),
+        endDateTime: dayjs(event.endDateTime).toISOString(),
+        location: event.location,
+        description: event.description,
+        society: {
+          connect: {
+            id: event.societyId,
+          },
+        },
+      },
+    });
+    return res.status(200).json({ eventRes });
+  }
+);
+
+function isValidDate(startDate: Date, endDate: Date): boolean {
   //Should probably add more test cases here
-  var parsedStartDate = dayjs(startDate)
-  var parsedEndDate = dayjs(endDate)
-  //Might need to keep an eye on this condition, I'm subtracting two mins from dayjs as allowance as 
+  var parsedStartDate = dayjs(startDate);
+  var parsedEndDate = dayjs(endDate);
+  //Might need to keep an eye on this condition, I'm subtracting two mins from dayjs as allowance as
   //previously it registered that dayJs() is after startDate.
-  return (!(parsedStartDate.isAfter(parsedEndDate) || parsedStartDate.isSame(parsedEndDate) || parsedStartDate.isBefore(dayjs().subtract(2, 'minutes'))))
+  return !(
+    parsedStartDate.isAfter(parsedEndDate) ||
+    parsedStartDate.isSame(parsedEndDate) ||
+    parsedStartDate.isBefore(dayjs().subtract(2, "minutes"))
+  );
 }
-
 
 app.get("/user/societies", async (req, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
@@ -401,6 +422,126 @@ app.get("/societies", async (req, res: Response) => {
   });
   return res.status(200).json(societies);
 });
+
+app.post("/user/society/join",
+  async (req: TypedRequest<societyIdBody>, res: Response) => {
+    //get userid from session
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    const userID = sessionFromDB.userId;
+
+    const societyId = await prisma.society.findFirst({
+      where: {
+        id: req.body.societyId
+      },
+      select: {
+        id: true
+      }
+    })
+
+    if (!societyId) {
+      return res.status(400).json({message: "Invalid society"})
+    }
+
+    const result = await prisma.society.update({
+      where: {
+        id: req.body.societyId,
+      },
+      data: {
+        members: {
+          connect: {
+            id: userID,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json(result);
+  }
+);
+
+app.post("/user/society/leave", async (req: TypedRequest<societyIdBody>, res: Response) => {
+  const sessionFromDB = await validateSession(
+    req.session ? req.session : null
+  );
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  const userID = sessionFromDB.userId;
+
+  const societyId = await prisma.society.findFirst({
+    where: {
+      id: req.body.societyId
+    },
+    select: {
+      id: true
+    }
+  })
+
+  if (!societyId) {
+    return res.status(400).json({message: "Invalid society"})
+  }
+
+  const result = await prisma.society.update({
+    where: {
+      id: societyId.id,
+    },
+    data: {
+      members: {
+        disconnect: {
+          id: userID,
+        },
+      },
+    },
+  });
+
+  return res.status(200).json(result);
+})
+
+app.post("/user/event/join", async (req: TypedRequest<eventIdBody>, res:Response) => {
+  const sessionFromDB = await validateSession(
+    req.session ? req.session : null
+  );
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  const userID = sessionFromDB.userId;
+
+  const eventId = await prisma.event.findFirst({
+    where: {
+      numId: req.body.eventId
+    },
+    select: {
+      numId: true
+    }
+  })
+
+  if (!eventId) {
+    return res.status(400).json({message: "Invalid Event"})
+  }
+
+  const result = await prisma.event.update({
+    where: {
+      numId: eventId.numId,
+    },
+    data: {
+      attendees: {
+        connect: {
+          id: userID,
+        },
+      },
+    },
+  });
+
+  return res.status(200).json(result)
+})
 
 app.get("/hello", () => {
   console.log("Hello World!");

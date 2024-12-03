@@ -38,10 +38,17 @@ export interface CreateEventBody {
 export interface CreateSocietyBody {
   name:string
   profilePicture: string 
-  userId: number
 }
 
 export interface DiscordLoginBody {
   discordID: number;
+}
+
+export interface societyIdBody {
+  societyId: number;
+}
+
+export interface eventIdBody {
+  eventId: number;
 }
 
