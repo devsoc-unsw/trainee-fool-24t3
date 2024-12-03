@@ -1,6 +1,5 @@
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
-import prisma from '../../prisma';
 import { addTokenToDb, deleteToken, getUserFromEmail, OTPToken } from './OTPToken';
 import { sendEmail } from './sendEmail';
 import { RedisClientType, RedisModules } from 'redis';

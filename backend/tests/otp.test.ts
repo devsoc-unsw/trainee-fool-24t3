@@ -1,15 +1,32 @@
 //test/sample.test.ts
 import { expect, test, vi, describe } from "vitest"; // 👈🏻 Added the `vi` import
-import prisma from "../src/prisma";
 import request from "supertest";
 import app from "../src/index";
+import { createClient } from "redis";
+import { afterEach, beforeEach } from "node:test";
+import prisma from "../src/prisma";
+
+let redisClient: ReturnType<typeof createClient>;
+
+beforeEach(async () => {
+  redisClient = createClient({
+    url: `redis://localhost:${process.env["REDIS_PORT"]}`,
+  });
+  await redisClient.connect().catch(console.error);
+});
+
+afterEach(async () => {
+  await redisClient.flushDb();
+  await redisClient.quit();
+});
 
 describe("Tests", () => {
-  test("register test", async () => {
+  test("otp create test", async () => {
+    
     const { status, body } = await request(app).post("/auth/register").send({
       username: "richard grayson",
       password: "iheartkori&barbs",
-      email: "nightwing1@gmail.com",
+      email: "pyramidstestdump@gmail.com",
       userType: "ATTENDEE",
     });
 
@@ -28,35 +45,20 @@ describe("Tests", () => {
 
     if(newUser) {
         const response = await request(app).post("/auth/otp").send({
-            email: "nightwing1@gmail.com"
+            email: "pyramidstestdump@gmail.com"
         });
         expect(response.status).toBe(200);
 
-        const tokens = await prisma.otpToken.findMany({
-            where: {
-                userId: newUser.id
-            }
-        });
+        const hash  = await redisClient.get(newUser.email);
 
-        expect(tokens.length).toBe(1);
-        
-        const newToken = await prisma.otpToken.findFirst({
-            where: {
-                userId: newUser.id
-            }
-        });
-        expect(newToken).not.toBeNull();
+        expect(hash).not.toBeNull();
 
-        if(newToken) {
-            console.log(newToken.token);
+        if(hash) {
+            console.log(hash);
 
-            await new Promise(resolve => setTimeout(resolve, 120000));
+            await new Promise(resolve => setTimeout(resolve, 70000));
 
-            const checkTokens = await prisma.otpToken.findFirst({
-                where: {
-                    userId: newUser.id
-                }
-            });
+            const checkTokens = await redisClient.get(newUser.email);
             expect(checkTokens).toBeNull();
         }
     }
