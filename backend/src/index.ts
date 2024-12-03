@@ -19,10 +19,7 @@ import { createClient } from "redis";
 import dayjs, { Dayjs } from "dayjs";
 import { generateOTP } from "./routes/OTP/generateOTP";
 import { removeExpiredOTPs } from "./routes/OTP/deleteExpired";
-import dotenv from 'dotenv';
 import { verifyOTP } from "./routes/OTP/verifyOTP";
-
-dotenv.config(); 
 
 declare module "express-session" {
   interface SessionData {
