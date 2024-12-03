@@ -35,9 +35,9 @@
 }
 
 .profile {
-  border-radius: 16px;
-  height: 48px;
-  width: 48px;
+  border-radius: 12px;
+  height: 32px;
+  width: 32px;
   margin-right: 3%;
   margin-left: 5%;
   background-size: cover;
@@ -47,9 +47,9 @@
   text-decoration: none;
   font-weight: bold;
   color: black;
-  height: 24px;
 }
 
 .container a.active {
+  margin-top: 1.5px;
   border-bottom: 2px solid hsl(203, 88%, 27%);
 }
