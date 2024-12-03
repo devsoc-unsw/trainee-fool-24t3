@@ -8,5 +8,7 @@ export const verifyOTP = async (token: string, hash: string) => {
     if(!verify) {
         throw new Error("Incorrect code.");
     }
+    
+    return verify;
 }
 

@@ -143,8 +143,12 @@ app.post("/auth/otp/verify", async(req: Request, res: Response) => {
   try {
     const { email, token } = req.body;
     
+    if(!email) {
+      throw new Error("Email address expected.");
+    }
+
     if(!token) {
-      throw new Error("One time code expected");
+      throw new Error("One time code expected.");
     }
     
     const hash  = await redisClient.get(email);
