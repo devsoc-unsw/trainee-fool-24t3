@@ -540,7 +540,9 @@ app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Respon
       },
       //Not sure if this is the best way to keep track of numAttendees, but afaik prisma
       //doesn't support array cardinalities.
-      numAttendees: event.numAttendees++
+      numAttendees: {
+        increment: 1
+      }
     },
   });
 
@@ -581,7 +583,9 @@ app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Resp
           id: userID,
         },
       },
-      numAttendees: event.numAttendees--,
+      numAttendees: {
+        decrement: 1
+      },
     },
   });
 
