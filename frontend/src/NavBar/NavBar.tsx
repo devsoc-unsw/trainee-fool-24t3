@@ -1,12 +1,16 @@
 import classes from "./NavBar.module.css";
 import pyramidIcon from "../assets/pyramidIcon.svg";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
+import { useEffect } from "react";
 
 export type NavBarProps = {
   profileImage: string;
 };
 
 function NavBar(props: NavBarProps) {
+  const { search } = useLocation();
+  const view = new URLSearchParams(search).get("view");
+
   return (
     <nav className={classes.container}>
       <div className={classes.pyramids}>
@@ -16,9 +20,28 @@ function NavBar(props: NavBarProps) {
         </h1>
       </div>
       <div className={classes.pages}>
-        <NavLink to="/timeline">Timeline</NavLink>
-        <NavLink to="/timeline?view=calendar">Calendar</NavLink>
-        <NavLink to="/about">About</NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            isActive && view === null ? classes.active : ""
+          }
+          to="/timeline"
+        >
+          Timeline
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            isActive && view === "calendar" ? classes.active : ""
+          }
+          to="/timeline?view=calendar"
+        >
+          Calendar
+        </NavLink>
+        <NavLink
+          className={({ isActive }) => (isActive ? classes.active : "")}
+          to="/about"
+        >
+          About
+        </NavLink>
       </div>
       <div
         className={classes.profile}

@@ -6,7 +6,7 @@
   align-items: center;
   width: 100%;
   padding: 12px;
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .pyramids {
@@ -15,12 +15,15 @@
   align-items: center;
   justify-content: space-between;
   width: 12%;
-  font-size: 18px;
-  gap: 16px;
+  text-align: left;
+}
+
+.pyramids h1 {
+  font-size: 1.3rem;
 }
 
 .logo {
-  height: 48px;
+  height: 32px;
 }
 
 .pages {
@@ -38,4 +41,15 @@
   margin-right: 3%;
   margin-left: 5%;
   background-size: cover;
+}
+
+.container a {
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+  height: 24px;
+}
+
+.container a.active {
+  border-bottom: 2px solid hsl(203, 88%, 27%);
 }
