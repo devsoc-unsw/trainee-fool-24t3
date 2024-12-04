@@ -51,7 +51,7 @@ describe("/event endpoint", () => {
             name: "Rizzsoc",
             userId: newUser.id,
         });
-        console.log(societyRes.body)
+        
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
         var start = new Date()
@@ -69,7 +69,6 @@ describe("/event endpoint", () => {
             societyId: socId
         });
 
-        console.log(response.body)
         expect(response.status).toBe(200)
     })
 

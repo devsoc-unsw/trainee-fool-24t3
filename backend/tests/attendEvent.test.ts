@@ -116,7 +116,7 @@ describe('/attend endpoint', () => {
         .send({
             eventId: -123
         })
-        console.log(attendRes)
+        
         expect(attendRes.status).toBe(400);
     })
 })
@@ -175,7 +175,7 @@ describe('/unattend endpoint', () => {
         .send({
             eventId: eventRes.body.numId
         })
-        console.log(attendRes)
+        
         expect(attendRes.status).toBe(200);
     })
 

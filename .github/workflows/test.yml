@@ -11,6 +11,7 @@ on:
       - main
       - feature/login
       - feature/event
+      - feature/societyJoin
 env:
   DATABASE_URL: postgres://postgres:postgres@localhost:5432
   NODE_ENV: test
