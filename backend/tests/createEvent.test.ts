@@ -5,9 +5,9 @@ import app from "../src/index";
 import { beforeEach } from "node:test";
 import dayjs from "dayjs";
 
-describe("Session Tests", () => {
+describe("/event endpoint", () => {
     test("Session Invalid", async () => {
-        var start = new Date()
+        const start = new Date()
         const { status, body } = await request(app).post("/event/create").send({
             banner: "asdasd",
             name: "tiktokrizzparty",
@@ -51,10 +51,10 @@ describe("Session Tests", () => {
             name: "Rizzsoc",
             userId: newUser.id,
         });
-        console.log(societyRes.body)
+        
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
-        var start = new Date()
+        const start = new Date()
 
         const response = await request(app)
         .post("/event/create")
@@ -69,7 +69,6 @@ describe("Session Tests", () => {
             societyId: socId
         });
 
-        console.log(response.body)
         expect(response.status).toBe(200)
     })
 
