@@ -74,6 +74,8 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express :)))!");
 });
 
+//Will refactor this soon, I think prisma throws its own error when some
+//constraints are broken so ig the matchingCredentials check is kinda unnecessary.
 app.post(
   "/auth/register",
   async (req: TypedRequest<LoginBody>, res: Response) => {
@@ -323,18 +325,22 @@ app.post(
       return res.status(401).json({ message: "Invalid session provided." });
     }
 
-    const newSociety = await prisma.society.create({
-      data: {
-        name: society.name,
-        admin: {
-          connect: {
-            id: sessionFromDB.userId,
+    try {
+      const newSociety = await prisma.society.create({
+        data: {
+          name: society.name,
+          admin: {
+            connect: {
+              id: sessionFromDB.userId,
+            },
           },
         },
-      },
-    });
+      });
 
-    return res.status(200).json(newSociety);
+      return res.status(200).json(newSociety);
+    } catch (e) {
+      return res.status(400).json({message:"invalid society input"});
+    }
   }
 );
 
@@ -356,22 +362,26 @@ app.post(
       return res.status(400).json({ message: "Invalid date" });
     }
 
-    const eventRes = await prisma.event.create({
-      data: {
-        banner: event.banner,
-        name: event.name,
-        startDateTime: dayjs(event.startDateTime).toISOString(),
-        endDateTime: dayjs(event.endDateTime).toISOString(),
-        location: event.location,
-        description: event.description,
-        society: {
-          connect: {
-            id: event.societyId,
+    try {
+      const eventRes = await prisma.event.create({
+        data: {
+          banner: event.banner,
+          name: event.name,
+          startDateTime: dayjs(event.startDateTime).toISOString(),
+          endDateTime: dayjs(event.endDateTime).toISOString(),
+          location: event.location,
+          description: event.description,
+          society: {
+            connect: {
+              id: event.societyId,
+            },
           },
         },
-      },
-    });
-    return res.status(200).json({ eventRes });
+      });
+      return res.status(200).json({ eventRes });
+    } catch (e) {
+      return res.status(400).json({message:"Invalid event input"})
+    }
   }
 );
 
@@ -423,6 +433,7 @@ app.get("/societies", async (req, res: Response) => {
   return res.status(200).json(societies);
 });
 
+//Lets a user join a society
 app.post("/user/society/join",
   async (req: TypedRequest<societyIdBody>, res: Response) => {
     //get userid from session
@@ -435,6 +446,7 @@ app.post("/user/society/join",
 
     const userID = sessionFromDB.userId;
 
+    //Make sure a society actually exists
     const societyId = await prisma.society.findFirst({
       where: {
         id: req.body.societyId
@@ -448,6 +460,7 @@ app.post("/user/society/join",
       return res.status(400).json({message: "Invalid society"})
     }
 
+    //Connect society and user
     const result = await prisma.society.update({
       where: {
         id: req.body.societyId,
@@ -461,7 +474,7 @@ app.post("/user/society/join",
       },
     });
 
-    return res.status(200).json(result);
+    return res.status(200).json({message: "ok"});
   }
 );
 
@@ -501,7 +514,8 @@ app.post("/user/society/leave", async (req: TypedRequest<societyIdBody>, res: Re
     },
   });
 
-  return res.status(200).json(result);
+  //Not exactly sure what we'd want to be returning here
+  return res.status(200).json({message: "ok"});
 })
 
 app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Response) => {
@@ -591,6 +605,7 @@ app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Resp
 
   return res.status(200).json(result)
 });
+
 
 /*
 TODO:
