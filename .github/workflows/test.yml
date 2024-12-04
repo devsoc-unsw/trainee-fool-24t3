@@ -6,6 +6,7 @@ on:
       - main
       - feature/login
       - feature/event
+      - feature/societyJoin
   pull_request:
     branches:
       - main
