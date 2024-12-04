@@ -128,7 +128,7 @@ describe("/leave endpoint", () => {
 
         expect(societyRes.status).toBe(200);
 
-        const joinRes = await request(app).post("/user/society/leave")
+        const joinRes = await request(app).delete("/user/society")
         .set("Cookie", sessionID)
         .send({
             societyId: societyRes.body.id,
@@ -171,7 +171,7 @@ describe("/leave endpoint", () => {
 
         expect(societyRes.status).toBe(200);
 
-        const joinRes = await request(app).post("/user/society/leave")
+        const joinRes = await request(app).delete("/user/society")
         .set("Cookie", sessionID)
         .send({
             societyId: -230,

@@ -39,7 +39,7 @@ describe('/attend endpoint', () => {
         
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
-        var start = new Date()
+        const start = new Date()
 
         const eventRes = await request(app)
         .post("/event/create")
@@ -96,7 +96,7 @@ describe('/attend endpoint', () => {
         
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
-        var start = new Date()
+        const start = new Date()
 
         const eventRes = await request(app)
         .post("/event/create")
@@ -155,7 +155,7 @@ describe('/unattend endpoint', () => {
         
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
-        var start = new Date()
+        const start = new Date()
 
         const eventRes = await request(app)
         .post("/event/create")
@@ -170,7 +170,7 @@ describe('/unattend endpoint', () => {
             societyId: socId
         });
 
-        const attendRes = await request(app).post("/user/event/unattend")
+        const attendRes = await request(app).delete("/user/event")
         .set("Cookie", sessionID)
         .send({
             eventId: eventRes.body.numId
@@ -212,7 +212,7 @@ describe('/unattend endpoint', () => {
         
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
-        var start = new Date()
+        const start = new Date()
 
         const eventRes = await request(app)
         .post("/event/create")
@@ -227,7 +227,7 @@ describe('/unattend endpoint', () => {
             societyId: socId
         });
 
-        const attendRes = await request(app).post("/user/event/unattend")
+        const attendRes = await request(app).delete("/user/event")
         .set("Cookie", sessionID)
         .send({
             eventId: -123

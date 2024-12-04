@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 
 describe("/event endpoint", () => {
     test("Session Invalid", async () => {
-        var start = new Date()
+        const start = new Date()
         const { status, body } = await request(app).post("/event/create").send({
             banner: "asdasd",
             name: "tiktokrizzparty",
@@ -54,7 +54,7 @@ describe("/event endpoint", () => {
         
         const socId = societyRes.body.id
         expect(societyRes.status).toBe(200);
-        var start = new Date()
+        const start = new Date()
 
         const response = await request(app)
         .post("/event/create")

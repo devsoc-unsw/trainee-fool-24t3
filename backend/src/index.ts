@@ -74,8 +74,6 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello, TypeScript with Express :)))!");
 });
 
-//Will refactor this soon, I think prisma throws its own error when some
-//constraints are broken so ig the matchingCredentials check is kinda unnecessary.
 app.post(
   "/auth/register",
   async (req: TypedRequest<LoginBody>, res: Response) => {
@@ -315,12 +313,13 @@ app.post(
     }
 
     if (!society.profilePicture) {
-      society.profilePicture = "null";
+      society.profilePicture = null;
     }
 
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
+
     if (!sessionFromDB) {
       return res.status(401).json({ message: "Invalid session provided." });
     }
@@ -386,15 +385,13 @@ app.post(
 );
 
 function isValidDate(startDate: Date, endDate: Date): boolean {
-  //Should probably add more test cases here
-  var parsedStartDate = dayjs(startDate);
-  var parsedEndDate = dayjs(endDate);
-  //Might need to keep an eye on this condition, I'm subtracting two mins from dayjs as allowance as
-  //previously it registered that dayJs() is after startDate.
+  const parsedStartDate = dayjs(startDate);
+  const parsedEndDate = dayjs(endDate);
+
   return !(
     parsedStartDate.isAfter(parsedEndDate) ||
     parsedStartDate.isSame(parsedEndDate) ||
-    parsedStartDate.isBefore(dayjs().subtract(2, "minutes"))
+    parsedStartDate.isBefore(dayjs(), 'day')
   );
 }
 
@@ -478,7 +475,7 @@ app.post("/user/society/join",
   }
 );
 
-app.post("/user/society/leave", async (req: TypedRequest<societyIdBody>, res: Response) => {
+app.delete("/user/society", async (req: TypedRequest<societyIdBody>, res: Response) => {
   const sessionFromDB = await validateSession(
     req.session ? req.session : null
   );
@@ -514,7 +511,6 @@ app.post("/user/society/leave", async (req: TypedRequest<societyIdBody>, res: Re
     },
   });
 
-  //Not exactly sure what we'd want to be returning here
   return res.status(200).json({message: "ok"});
 })
 
@@ -530,11 +526,10 @@ app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Respon
 
   const event = await prisma.event.findFirst({
     where: {
-      numId: req.body.eventId
+      id: req.body.eventId
     },
     select: {
-      numId: true,
-      numAttendees: true
+      id: true
     }
   })
 
@@ -544,26 +539,21 @@ app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Respon
 
   const result = await prisma.event.update({
     where: {
-      numId: event.numId,
+      id: event.id,
     },
     data: {
       attendees: {
         connect: {
           id: userID,
         },
-      },
-      //Not sure if this is the best way to keep track of numAttendees, but afaik prisma
-      //doesn't support array cardinalities.
-      numAttendees: {
-        increment: 1
       }
     },
   });
 
-  return res.status(200).json(result)
+  return res.status(200).json({message: "ok"})
 })
 
-app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Response) => {
+app.delete("/user/event", async (req: TypedRequest<eventIdBody>, res:Response) => {
   const sessionFromDB = await validateSession(
     req.session ? req.session : null
   );
@@ -575,11 +565,10 @@ app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Resp
 
   const event = await prisma.event.findFirst({
     where: {
-      numId: req.body.eventId
+      id: req.body.eventId
     },
     select: {
-      numId: true,
-      numAttendees: true,
+      id: true
     }
   })
 
@@ -589,7 +578,7 @@ app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Resp
 
   const result = await prisma.event.update({
     where: {
-      numId: event.numId,
+      id: event.id,
     },
     data: {
       attendees: {
@@ -597,13 +586,10 @@ app.post("/user/event/unattend", async (req: TypedRequest<eventIdBody>, res:Resp
           id: userID,
         },
       },
-      numAttendees: {
-        decrement: 1
-      },
     },
   });
 
-  return res.status(200).json(result)
+  return res.status(200).json({message: "ok"})
 });
 
 
