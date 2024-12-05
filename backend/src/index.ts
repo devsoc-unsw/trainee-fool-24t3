@@ -405,11 +405,20 @@ app.get("/user/societies", async (req, res: Response) => {
 
   const societies_joined = await prisma.society.findMany({
     where: {
-      members: {
-        some: {
-          id: userID,
+      OR: [
+        {
+          members: {
+            some: {
+              id: userID,
+            },
+          },
         },
-      },
+        {
+          admin: {
+            id: userID
+          }
+        }
+      ]
     },
   });
 
@@ -702,6 +711,7 @@ app.delete("/society", async(req: TypedRequest<societyIdBody>, res: Response) =>
 
   return res.status(200).json({message:"ok"});
 })
+
 
 app.get("/hello", () => {
   console.log("Hello World!");
