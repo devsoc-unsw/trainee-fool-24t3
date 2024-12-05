@@ -63,3 +63,7 @@
   margin-top: 0;
   border: none;
 }
+
+.loginLink .active  {
+  background-color: red;
+}
