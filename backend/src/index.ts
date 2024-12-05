@@ -403,7 +403,7 @@ app.get("/user/societies", async (req, res: Response) => {
 
   const userID = sessionFromDB.userId;
 
-  const societies_joined = await prisma.society.findMany({
+  const societies = await prisma.society.findMany({
     where: {
       OR: [
         {
@@ -421,11 +421,6 @@ app.get("/user/societies", async (req, res: Response) => {
       ]
     },
   });
-
-  const societies = {
-    joined: societies_joined,
-    administering: null,
-  };
 
   return res.status(200).json(societies);
 });
