@@ -1,0 +1,13 @@
+.container{
+    width: 500px;
+    background-color: hsl(0, 0%, 100%);
+    border-radius: 10px;
+    margin: auto;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}

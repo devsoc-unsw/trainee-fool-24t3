@@ -11,7 +11,8 @@ function CreateEvent() {
         <header className={classes.header}>
           <h1>Create new event</h1>
           <Button
-            type={ButtonOptions.Plus}
+            type="button"
+            variant={ButtonOptions.Plus}
             className={classes.plusIcon}
           ></Button>
         </header>
