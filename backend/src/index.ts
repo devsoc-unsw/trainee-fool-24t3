@@ -615,7 +615,7 @@ app.delete("/event", async(req: TypedRequest<eventIdBody>, res:Response) => {
   }
 
   const userID = sessionFromDB.userId;
-  console.log(userID)
+  
   //400 if event doesn't exist
   const event = await prisma.event.findFirst({
     where: {
@@ -659,7 +659,7 @@ app.delete("/event", async(req: TypedRequest<eventIdBody>, res:Response) => {
     return res.status(400).json({message: "Deletion failed"});
   }
 
-  
+
   return res.status(200).json({message:"ok"});
 })
 
