@@ -15,7 +15,7 @@ export function AuthScreen(props: AuthScreenProp) {
     <div className={classes.container}>
       <header>
         <h1>{props.heading}</h1>
-        <p>{props.text}</p>
+        <p className={classes.headerText}>{props.text}</p>
       </header>
       <main>
         <form className={classes.form}>
@@ -29,7 +29,9 @@ export function AuthScreen(props: AuthScreenProp) {
           </Button>
         </form>
       </main>
-      {props.footer && <footer>{props.footer}</footer>}
+      {props.footer && (
+        <footer className={classes.footer}>{props.footer}</footer>
+      )}
     </div>
   );
 }

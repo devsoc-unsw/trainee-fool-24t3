@@ -43,6 +43,7 @@
 .container a:hover {
   margin-top: 1.5px;
   border-bottom: 2px solid hsl(203, 88%, 47%);
+  transition: border 0.03s ease-in;
 }
 
 .container a.active {
@@ -64,7 +65,15 @@
   background-size: cover;
 }
 
-.loginLink.active {
-  border-bottom: none;
+a.loginLink.active {
+  margin-top: 0px;
+  border: none;
   outline: 2px solid hsl(203, 88%, 27%);
+}
+
+a.loginLink:hover {
+  margin-top: 0px;
+  border: none;
+  outline: 2px solid hsl(203, 88%, 47%);
+  transition: outline 0.03s linear;
 }
