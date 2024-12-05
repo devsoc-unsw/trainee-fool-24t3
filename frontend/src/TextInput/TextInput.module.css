@@ -15,6 +15,10 @@
   color: hsl(0, 0%, 0%);
 }
 
+.input:focus {
+    outline: none;
+}
+
 .container{
     display: flex;
     background-color: hsl(0, 0%, 93%);
@@ -22,4 +26,9 @@
     padding: 24px;
     margin-bottom: 30px;
     width: 100%;
+    transition: outline 0.07s linear;
+}
+
+.focus{
+    outline: 3px hsl(203, 88%, 27%) solid;
 }
