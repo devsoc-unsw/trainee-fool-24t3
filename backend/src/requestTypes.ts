@@ -53,3 +53,6 @@ export interface eventIdBody {
   eventId: number;
 }
 
+export interface eventDetailsBody {
+  
+}

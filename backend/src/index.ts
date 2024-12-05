@@ -592,20 +592,77 @@ app.delete("/user/event", async (req: TypedRequest<eventIdBody>, res:Response) =
   return res.status(200).json({message: "ok"})
 });
 
-app.get("/event/details", async (req: TypedRequest<eventIdBody))
-/*
-TODO:
-app.get("/event/details") - Individual Event Details
-app.get("/user/events") - Paginated event names, times, and ids
-app.get("/user/societies") - Societies a user is associated with
-app.get("/user/keywords") - Keywords a user is associated with
-app.get("/user/recevents") - Gets unbookmarked events which satisfy certain criteria("Either in the user's society or keywords")
-app.post("/keyword") - Creates a keyword
-app.put("/user/keyword") - Associates a user with a keyword
-app.delete("/user/keyword") - Disassociates a user with a keyword
-app.delete("/event") - Delete an event
-app.delete("/society") - Delete a society(should be admin only)
-*/
+app.get("/event/details", async (req: TypedRequest<eventIdBody>, res:Response) => {
+  const event = await prisma.event.findFirst({
+    where:{
+      id: req.body.eventId
+    }
+  })
+
+  if (!event) {
+    return res.status(400).json({message: "invalid society"});
+  }
+
+  return res.status(200).json(event)
+});
+
+app.delete("/event", async(req: TypedRequest<eventIdBody>, res:Response) => {
+  const sessionFromDB = await validateSession(
+    req.session ? req.session : null
+  );
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  const userID = sessionFromDB.userId;
+  console.log(userID)
+  //400 if event doesn't exist
+  const event = await prisma.event.findFirst({
+    where: {
+      id: req.body.eventId
+    },
+    select: {
+      id: true, 
+      societyId: true
+    }
+  })
+
+  if (!event) {
+    return res.status(400).json({message: "event doesn't exist"});
+  }
+
+  //find society associated with event, then check to see if the user is an admin, return 401.
+  const society = await prisma.society.findFirst({
+    where: {
+      id: event.societyId,
+      admin: {
+        id: userID
+      }
+    },
+    select: {
+      id: true
+    }
+  })
+
+  if (!society) {
+    return res.status(401).json({message:"User is not an admin!"});
+  }
+
+  //200 if deletion is successful
+  try {
+    const result = await prisma.event.delete({
+      where: {
+        id: event.id
+      }
+    })
+  } catch (e) {
+    return res.status(400).json({message: "Deletion failed"});
+  }
+
+  
+  return res.status(200).json({message:"ok"});
+})
+
 
 app.get("/hello", () => {
   console.log("Hello World!");
