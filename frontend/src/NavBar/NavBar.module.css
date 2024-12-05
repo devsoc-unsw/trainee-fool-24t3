@@ -34,15 +34,6 @@
   min-width: 300px;
 }
 
-.profile {
-  border-radius: 12px;
-  height: 32px;
-  width: 32px;
-  margin-right: 3%;
-  margin-left: 5%;
-  background-size: cover;
-}
-
 .container a {
   text-decoration: none;
   font-weight: bold;
@@ -64,6 +55,16 @@
   border: none;
 }
 
-.loginLink .active  {
-  background-color: red;
+.loginLink {
+  border-radius: 12px;
+  height: 32px;
+  width: 32px;
+  margin-right: 3%;
+  margin-left: 5%;
+  background-size: cover;
+}
+
+.loginLink.active {
+  border-bottom: none;
+  outline: 2px solid hsl(203, 88%, 27%);
 }

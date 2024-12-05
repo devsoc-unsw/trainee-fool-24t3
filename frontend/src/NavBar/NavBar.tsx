@@ -49,15 +49,11 @@ function NavBar(props: NavBarProps) {
             ? `${classes.loginLink} ${classes.active}`
             : classes.loginLink
         }
+        style={{
+          backgroundImage: `url(${props.profileImage})`,
+        }}
         to="/login"
-      >
-        <div
-          className={classes.profile}
-          style={{
-            backgroundImage: `url(${props.profileImage})`,
-          }}
-        ></div>
-      </NavLink>
+      ></NavLink>
     </nav>
   );
 }
