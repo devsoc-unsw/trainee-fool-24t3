@@ -2,7 +2,6 @@ TODO:
 
 --- Jared ---
 - app.get("/user/events") - Paginated event names, times, and ids
-- app.get("/user/societies") - Societies a user is associated with
 
 --- Up 4 Grabs ---
 - app.get("/user/recevents") - Gets unbookmarked events which satisfy certain criteria("Either in the user's society or keywords")
