@@ -6,7 +6,7 @@
   align-items: center;
   width: 100%;
   padding: 12px;
-  font-size: 20px;
+  font-size: 1rem;
 }
 
 .pyramids {
@@ -15,11 +15,15 @@
   align-items: center;
   justify-content: space-between;
   width: 12%;
-  font-size: 18px;
+  text-align: left;
+}
+
+.pyramids h1 {
+  font-size: 1.3rem;
 }
 
 .logo {
-  height: 48px;
+  height: 32px;
 }
 
 .pages {
@@ -27,14 +31,35 @@
   width: 35%;
   justify-content: space-between;
   align-items: center;
-  min-width: 300px
+  min-width: 300px;
 }
 
 .profile {
-  border-radius: 16px;
-  height: 48px;
-  width: 48px;
+  border-radius: 12px;
+  height: 32px;
+  width: 32px;
   margin-right: 3%;
   margin-left: 5%;
   background-size: cover;
+}
+
+.container a {
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+}
+
+.container a:hover {
+  margin-top: 1.5px;
+  border-bottom: 2px solid hsl(203, 88%, 47%);
+}
+
+.container a.active {
+  margin-top: 1.5px;
+  border-bottom: 2px solid hsl(203, 88%, 27%);
+}
+
+.container h1 a:hover {
+  margin-top: 0;
+  border: none;
 }

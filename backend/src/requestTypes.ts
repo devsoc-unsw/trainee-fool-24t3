@@ -35,13 +35,21 @@ export interface CreateEventBody {
   societyId: number;
 }
 
+//strictNullChecks being set to false broke some more code, so I'm just gonna make it string|null
 export interface CreateSocietyBody {
   name:string
-  profilePicture: string 
-  userId: number
+  profilePicture: string|null
 }
 
 export interface DiscordLoginBody {
   discordID: number;
+}
+
+export interface societyIdBody {
+  societyId: number;
+}
+
+export interface eventIdBody {
+  eventId: number;
 }
 

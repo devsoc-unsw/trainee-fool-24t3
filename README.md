@@ -84,6 +84,7 @@ APPLICATION_ID=
 BOT_TOKEN=
 SERVER_ID=
 REDIS_PORT=
+BACKEND_URL=
 ```
 
 4. `pnpm run cmds public` to establish the commands, then `pnpm run bot` to start the bot.
