@@ -11,5 +11,6 @@ TODO:
 - app.post("/keyword") - Creates a keyword
 - app.put("/user/keyword") - Associates a user with a keyword
 - app.delete("/user/keyword") - Disassociates a user with a keyword
+- app.
 
 - May also need to make index.ts more modular(make routes/controllers) if time permits.

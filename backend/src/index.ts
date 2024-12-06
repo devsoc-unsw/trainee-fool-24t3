@@ -403,24 +403,29 @@ app.get("/user/societies", async (req, res: Response) => {
 
   const userID = sessionFromDB.userId;
 
-  const societies = await prisma.society.findMany({
+  const societies_joined = await prisma.society.findMany({
     where: {
-      OR: [
-        {
-          members: {
-            some: {
-              id: userID,
-            },
-          },
+      members: {
+        some: {
+          id: userID,
         },
-        {
-          admin: {
-            id: userID
-          }
-        }
-      ]
+      },
     },
   });
+
+  const societies_administering = await prisma.society.findMany({
+    where: {
+      admin: {
+        id: userID
+      }
+    }
+  });
+
+  const societies = {
+    joined: societies_joined,
+    administering: societies_administering,
+  };
+  
 
   return res.status(200).json(societies);
 });
