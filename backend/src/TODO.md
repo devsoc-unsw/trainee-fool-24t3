@@ -9,7 +9,7 @@ TODO:
 --- Vincent ---
 - app.get("/user/keywords") - Keywords a user is associated with
 - app.post("/keyword") - Creates a keyword
-- app.put("/user/keyword") - Associates a user with a keyword
+- app.post("/user/keyword") - Associates a user with a keyword
 - app.delete("/user/keyword") - Disassociates a user with a keyword
 - app.
 
