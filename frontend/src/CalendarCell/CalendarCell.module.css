@@ -1,0 +1,21 @@
+.calendarCellWrapper {
+    width: 180px;
+    height: 140px;
+}
+
+.calendarCellHeader {
+    height: 40px;
+    width: 100%;
+    border-top: 2px solid hsl(0, 0%, 85%);
+    border-bottom: 2px solid hsl(0, 0%, 85%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dateElement {
+    font-size: 14px;
+}
+.eventSpace{
+    height: 100%;
+}
