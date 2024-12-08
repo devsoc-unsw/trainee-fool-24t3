@@ -20,8 +20,8 @@ enum UserType {
 
 model User {
     id             Int       @id @default(autoincrement())
-    username       String
-    email          String
+    username       String    @unique
+    email          String    @unique
     password       String
     userType       UserType
     salt           String

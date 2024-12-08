@@ -38,6 +38,7 @@ describe("Tests", () => {
         const response = await request(app).post("/auth/otp/generate").send({
             email: "pyramidstestdump@gmail.com"
         });
+        console.log(response.body);
         expect(response.status).toBe(200);
 
         const hash  = await redisClient.get(newUser.email);
@@ -45,7 +46,7 @@ describe("Tests", () => {
         expect(hash).not.toBeNull();
 
         if(hash) {
-            console.log(hash);
+            //console.log(hash);
 
             await new Promise(resolve => setTimeout(resolve, 70000));
 

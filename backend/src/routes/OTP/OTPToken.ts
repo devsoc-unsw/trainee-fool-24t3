@@ -10,11 +10,15 @@ export interface OTPToken {
 
 
 export const getUserFromEmail = async (emailAddress: string) => {
+  try {
     const result = await prisma.user.findUnique({
-        where: {
-          email: emailAddress,
-        },
-      });
+      where: {
+        email: emailAddress,
+      },
+    });
+    return result;
+  } catch (error) {
+    throw new Error("Error finding user");
+  }
 
-      return result;
 }
