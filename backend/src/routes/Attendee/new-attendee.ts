@@ -7,7 +7,6 @@ export const newAttendee = async (newAttendee: Attendee) => {
     const createdAttendee = await db.attendee.create( {
         data: {
             name: newAttendee.name,
-            picture: newAttendee.picture,
         }
     } );
 

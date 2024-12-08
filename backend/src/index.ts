@@ -17,6 +17,9 @@ import prisma from "./prisma";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import dayjs, { Dayjs } from "dayjs";
+import { generateOTP } from "./routes/OTP/generateOTP";
+import { verifyOTP } from "./routes/OTP/verifyOTP";
+
 declare module "express-session" {
   interface SessionData {
     userId: number;
@@ -25,6 +28,7 @@ declare module "express-session" {
 
 // Initialize client.
 if (process.env["REDIS_PORT"] === undefined) {
+  console.log(process.env);
   console.error("Redis port not provided in .env file");
   process.exit(1);
 }
@@ -42,6 +46,7 @@ let redisStore = new RedisStore({
 
 const app = express();
 const SERVER_PORT = 5180;
+const SALT_ROUNDS = 10;
 
 app.use(cors());
 app.use(express.json());
@@ -99,7 +104,7 @@ app.post(
       return res.status(400).json(errorCheck);
     }
 
-    const saltRounds: number = 10;
+    const saltRounds: number = SALT_ROUNDS;
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -125,6 +130,57 @@ app.post(
     });
   }
 );
+
+app.post("/auth/otp/generate", async(req: Request, res: Response) => {
+  try {
+    const { email } : { email: string} = req.body;
+    
+    if(!email) {
+      throw new Error("Email address expected.");
+    }
+
+    const token = await generateOTP(email, SALT_ROUNDS); 
+
+    if (token) {
+      await redisClient.set(email, token, { EX: 60 });
+      return res.status(200).json({ message: "ok" });
+    } else {
+      return res.status(400).json( {message: "Unexpected error while generating OTP."} );
+    }
+
+  } catch(error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+});
+
+app.post("/auth/otp/verify", async(req: Request, res: Response) => {
+  try {
+    const { email, token } = req.body;
+    
+    if(!email) {
+      throw new Error("Email address expected.");
+    }
+
+    if(!token) {
+      throw new Error("One time code expected.");
+    }
+    
+    const hash  = await redisClient.get(email);
+
+    if(!hash) {
+      throw new Error("One time code is invalid or expired.");
+    }
+
+    await verifyOTP(token, hash);
+
+    await redisClient.del(email);
+
+    return res.status(200).json({message: "ok" });
+
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+});
 
 app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {

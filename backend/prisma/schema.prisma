@@ -19,19 +19,19 @@ enum UserType {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  username       String
-  email          String
-  password       String
-  userType       UserType
-  salt           String
-  dateJoined     DateTime
-  profilePicture String?
-  societies      Society[] @relation(name: "membertosociety")
-  keywords       Keyword[]
-  adminsocieties Society[]
-  events         Event[]
-}
+    id             Int       @id @default(autoincrement())
+    username       String    @unique
+    email          String    @unique
+    password       String
+    userType       UserType
+    salt           String
+    dateJoined     DateTime
+    profilePicture String?
+    societies      Society[] @relation(name: "membertosociety")
+    keywords       Keyword[]
+    adminsocieties Society[]
+    events         Event[]
+ }
 
 model Society {
   id             Int     @id @default(autoincrement())
@@ -61,8 +61,8 @@ model Event {
 }
 
 model Keyword {
-  id        Int     @id @default(autoincrement())
-  text      String  @unique
+  id Int @id @default(autoincrement())
+  text String @unique
   subscribers User[]
-  events    Event[]
+  events Event[]
 }
