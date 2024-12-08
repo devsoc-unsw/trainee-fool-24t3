@@ -6,7 +6,6 @@ import { getAttendeeFromID } from "./get-attendee";
 async function main() {
     const attendee1: Attendee = {
         name: "tim drake",
-        picture: "www.google.com",
         keywords: [],
         societies: []
     };

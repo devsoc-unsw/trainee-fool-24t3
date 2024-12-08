@@ -17,6 +17,5 @@ export const getAttendeeFromID = async (id: number): Promise<Attendee | null> =>
     return {
         id: data?.id,
         name: data?.name,
-        picture: data?.picture
     }
 }
