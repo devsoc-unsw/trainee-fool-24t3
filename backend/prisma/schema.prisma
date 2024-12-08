@@ -30,7 +30,6 @@ model User {
     salt String 
     dateJoined DateTime
     profilePicture String?
-    oneTimeToken OtpToken?
  }
 
 model Attendee {
@@ -69,13 +68,4 @@ model Keyword {
   text String @unique
   attendees Attendee[]
   events Event[]
-}
-
-model OtpToken {
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int @unique
-  token String
-  timeCreated DateTime
-  expiryTime DateTime
 }

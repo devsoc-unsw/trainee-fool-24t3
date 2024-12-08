@@ -3,7 +3,6 @@ import { expect, test, vi, describe } from "vitest"; // 👈🏻 Added the `vi` 
 import request from "supertest";
 import app from "../src/index";
 import { createClient } from "redis";
-import { afterEach, beforeEach } from "node:test";
 import prisma from "../src/prisma";
 
 describe("Tests", () => {

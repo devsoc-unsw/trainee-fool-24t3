@@ -1,5 +1,3 @@
-import prisma from "../../prisma";
-import { getTokenFromEmail } from "./OTPToken";
 import bcrypt from 'bcrypt';
 
 export const verifyOTP = async (token: string, hash: string) => {
@@ -11,4 +9,3 @@ export const verifyOTP = async (token: string, hash: string) => {
     
     return verify;
 }
-

@@ -16,7 +16,7 @@ export const sendEmail = async (emailAddress: string, userName: string, code: st
         throw new Error("invalid email key");
     }
 
-    console.log(`emailing ${userName} at ${emailAddress} with otp ${code}.`);
+    //console.log(`emailing ${userName} at ${emailAddress} with otp ${code}.`);
     const senderDomain = "mg.pyrmds.app";
 
     try {
@@ -30,7 +30,7 @@ export const sendEmail = async (emailAddress: string, userName: string, code: st
                 <p>Dear ${userName},</p>
                 <p>We have received a request from you to reset your password for Pyramids.</p>
                 <p>Your one time code is: <strong>${code}</strong>.</p>
-                <p>Please note that this code will expire in 5 minutes.</p>
+                <p>Please note that this code will expire in 60 seconds.</p>
                 <br/>
                 <p>Thank you.</p>
             </div>`
