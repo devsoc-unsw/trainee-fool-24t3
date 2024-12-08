@@ -1,15 +1,31 @@
 .calendarPage {
     height: 100%;
     gap: 16px;
-  }
-  
-  .calendarPage,
-  .header,
-  .main,
-  .footer {
+}
+
+.test{
+    display: flex
+}
+
+.calendarHeader{
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
+}
+
+.navButton {
+    height: 24px;
+    width: 24px;
+}
+
+.weekdayRow {
+    width: 98vw;
+    display: flex;
+}
+
+.days {
+    width: 98vw;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    margin: 0;
+}
   
