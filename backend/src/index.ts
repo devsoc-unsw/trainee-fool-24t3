@@ -18,7 +18,6 @@ import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import dayjs, { Dayjs } from "dayjs";
 import { generateOTP } from "./routes/OTP/generateOTP";
-import { removeExpiredOTPs } from "./routes/OTP/deleteExpired";
 import { verifyOTP } from "./routes/OTP/verifyOTP";
 
 declare module "express-session" {
@@ -74,9 +73,6 @@ app.use(
     secret: process.env["SESSION_SECRET"],
   })
 );
-
-// OTP removing cron job
-removeExpiredOTPs.start();
 
 app.get("/", (req: Request, res: Response) => {
   console.log("Hello, TypeScript with Express :)))!");
@@ -172,10 +168,12 @@ app.post("/auth/otp/verify", async(req: Request, res: Response) => {
     const hash  = await redisClient.get(email);
 
     if(!hash) {
-      throw Error("One time code has expired.");
+      throw new Error("One time code is invalid or expired.");
     }
 
     await verifyOTP(token, hash);
+
+    await redisClient.del(email);
 
     return res.status(200).json({message: "ok" });
 
