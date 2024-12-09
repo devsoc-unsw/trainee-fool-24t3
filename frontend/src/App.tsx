@@ -32,7 +32,7 @@ function App() {
       <Button type={ButtonOptions.Plus}></Button>
       <Button type={ButtonOptions.Bookmark}></Button>
       <Button type={ButtonOptions.String}>Log in</Button>
-      {/* <CreateEvent></CreateEvent> */}
+      <CreateEvent></CreateEvent>
       <EventDetails
         image="https://pbs.twimg.com/media/F2y8Ehbb0AA-ch9.jpg"
         backgroundPositionY="-400px"
@@ -42,7 +42,7 @@ function App() {
         startTime="11am"
         endTime="3pm"
         location="florida"
-        locationUrl="https://www.google.com/maps?sca_esv=8d771920c62c0cac&rlz=1C1CHBF_en-GBAU886AU888&output=search&q=florida&source=lnms&fbs=AEQNm0Aa4sjWe7Rqy32pFwRj0UkW1DRbm01j6DCVS0r1sTxn7h_rt6mVhwDmwtd3hPZjM8zl8B526v4C-56SyLN7G5Ea4EGxGedorwsop3jjqDfEtgbxrE3Rl8OFITVEjXnG7_9mq32LUciwz4RySbr93RffVK3fp__GP9MQPfgY7PvpJnN-oWalaa3XWZfuE-7M99PadvB5QLqsVdNpULB4D_w_VjTUNQ&entry=mc&ved=1t:200715&ictx=111"
+        locationUrl="https://g.co/kgs/XpHCNMC"
         attending={1}
         description="According to all known laws of aviation there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway"
         keywords={["rizz", "florida"]}

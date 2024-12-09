@@ -39,38 +39,43 @@ function EventDetails(props: EventDetailsProps) {
 
       <div className={classes.info}>
         <div className={classes.details}>
-          <h1>{props.name}</h1>
+          <h1 className={classes.name}>{props.name}</h1>
           <div className={classes.detail}>
-            <UserIcon></UserIcon>
+            <UserIcon className={classes.icon}></UserIcon>
             <p className={classes.detailInfo}>{props.society}</p>
           </div>
           <div className={classes.detail}>
-            <CalendarIcon></CalendarIcon>
+            <CalendarIcon className={classes.icon}></CalendarIcon>
             <p className={classes.detailInfo}>{props.date}</p>
           </div>
           <div className={classes.detail}>
-            <ClockIcon></ClockIcon>
+            <ClockIcon className={classes.icon}></ClockIcon>
             <p
               className={classes.detailInfo}
             >{`${props.startTime} - ${props.endTime}`}</p>
           </div>
           <div className={classes.detail}>
-            <MapPinIcon></MapPinIcon>
+            <MapPinIcon className={classes.icon}></MapPinIcon>
             <p className={classes.detailInfo}>{props.location}</p>
             {props.locationUrl && (
-              <a href={`url(${props.locationUrl})`}>
-                <ArrowTopRightOnSquareIcon></ArrowTopRightOnSquareIcon>
+              <a href={`${props.locationUrl}`}>
+                <ArrowTopRightOnSquareIcon className={`${classes.icon} ${classes.locationLink}`}></ArrowTopRightOnSquareIcon>
               </a>
             )}
           </div>
           <div className={classes.detail}>
-            <CheckIcon></CheckIcon>
+            <CheckIcon className={classes.icon}></CheckIcon>
             <p className={classes.detailInfo}>{props.attending} attending</p>
           </div>
 
           <div className={classes.actions}>
-            <Button type={ButtonOptions.Bookmark}></Button>
-            <ShareIcon></ShareIcon>
+            <Button
+              type={ButtonOptions.Bookmark}
+              className={classes.actionIcon}
+            ></Button>
+            <button className={classes.actionIcon}>
+              <ShareIcon></ShareIcon>
+            </button>
           </div>
         </div>
 
