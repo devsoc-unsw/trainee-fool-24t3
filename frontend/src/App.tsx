@@ -7,6 +7,7 @@ import { Settings } from './Settings/Settings';
 import { ProfilePage } from './Settings/SettingsPage/ProfilePage/ProfilePage';
 import { EventManagementPage } from './Settings/SettingsPage/EventManagementPage/EventManagementPage';
 import { CreateNewEventPage } from './Settings/SettingsPage/EventManagementPage/CreateNewEvent/CreateNewEvent';
+import { DiscordPage } from './Settings/SettingsPage/DiscordPage/DiscordPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="events" element={<EventManagementPage />} />
             <Route path="events/new" element={<CreateNewEventPage />} />
+            <Route path="discord" element={<DiscordPage />} />
           </Route>
         </Routes>
       </div>

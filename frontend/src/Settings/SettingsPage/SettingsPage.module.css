@@ -8,6 +8,7 @@
   align-items: center;
   padding-bottom: 32px;
   gap: 32px;
+  height: 96px;
 }
 
 .headerButtons {

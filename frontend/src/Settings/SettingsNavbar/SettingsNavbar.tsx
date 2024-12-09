@@ -1,5 +1,6 @@
 import {
   CalendarIcon,
+  KeyIcon,
   MegaphoneIcon,
   StarIcon,
   UserCircleIcon,
@@ -11,6 +12,7 @@ interface Row {
   icon: React.ReactNode;
   name: string;
   to?: string;
+  onClick?: () => void;
 }
 
 const rows: Row[][] = [
@@ -32,10 +34,21 @@ const rows: Row[][] = [
       name: 'Create a new event',
       to: '/settings/events/new',
     },
+  ],
+  [
     {
       icon: <MegaphoneIcon />,
       name: 'Discord integration',
       to: '/settings/discord',
+    },
+  ],
+  [
+    {
+      icon: <KeyIcon />,
+      name: 'Log out',
+      onClick: () => {
+        alert('hello');
+      },
     },
   ],
 ];
@@ -48,7 +61,15 @@ export function SettingsNavbar() {
       {rows.map((section, i) => (
         <section key={i} className={classes.section}>
           {section.map((row, j) => (
-            <div key={j} className={classes.row}>
+            <div
+              key={j}
+              className={
+                row.onClick
+                  ? `${classes.row} ${classes.interactable}`
+                  : classes.row
+              }
+              {...(row.onClick && { onClick: row.onClick })}
+            >
               <div className={classes.icon}>{row.icon}</div>
               {row.to ? (
                 <NavLink

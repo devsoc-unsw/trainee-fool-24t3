@@ -16,6 +16,7 @@
 
 .button:hover {
   outline: 2px solid #dbdbdb;
+  cursor: pointer;
 }
 
 .primary {

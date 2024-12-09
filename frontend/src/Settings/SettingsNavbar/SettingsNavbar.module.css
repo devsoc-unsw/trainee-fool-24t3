@@ -42,3 +42,7 @@
 .link.active {
   border-bottom: 2px solid hsl(203, 88%, 27%);
 }
+
+.interactable:hover {
+  cursor: pointer;
+}
