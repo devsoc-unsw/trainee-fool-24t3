@@ -24,19 +24,22 @@
   box-shadow: 0px 0px 4px hsla(203, 88%, 27%, 0.25);
 }
 
-.secondary {
+.secondary,
+.round-secondary {
   background: hsl(0, 0%, 86%);
   color: hsla(0, 0%, 0%);
   box-shadow: 0px 0px 4px hsla(0, 0%, 76%, 0.25);
 }
 
 .primary,
-.secondary {
+.secondary,
+.round-secondary {
   outline: none;
 }
 
 .primary:hover,
-.secondary:hover {
+.secondary:hover,
+.round-secondary:hover {
   background: hsl(202, 49%, 90%);
   color: hsla(0, 0%, 0%);
   box-shadow: 0px 0px 4px hsla(202, 49%, 80%, 0.25);
@@ -50,4 +53,8 @@
 
 .string {
   padding: 12px 28px;
+}
+
+.round-secondary {
+  border-radius: 50%;
 }

@@ -40,6 +40,5 @@
 }
 
 .link.active {
-  margin-top: 2px;
   border-bottom: 2px solid hsl(203, 88%, 27%);
 }

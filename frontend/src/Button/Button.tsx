@@ -1,16 +1,22 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import classes from './Button.module.css';
-import { BookmarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import {
+  BookmarkIcon,
+  ChevronLeftIcon,
+  MagnifyingGlassIcon,
+} from '@heroicons/react/24/outline';
 
 export enum ButtonIcons {
   Plus = 'plus',
   Bookmark = 'bookmark',
   Search = 'search',
+  Back = 'back',
 }
 
 export enum ButtonVariants {
   Primary = 'primary',
   Secondary = 'secondary',
+  RoundSecondary = 'round-secondary',
 }
 
 type ButtonProps = {
@@ -24,45 +30,25 @@ type ButtonProps = {
 function Button(props: ButtonProps) {
   return (
     <button
-      className={
-        props.variant
-          ? `${classes.button} ${classes[props.variant]}`
-          : classes.button
-      }
+      className={`${classes.button} ${
+        props.variant ? classes[props.variant] : ''
+      } ${props.className ? props.className : ''}`}
       type={props.type}
     >
       {props.icon === ButtonIcons.Plus && (
-        <PlusIcon
-          className={`${classes.icon} ${
-            props.className ? props.className : ''
-          }`}
-        ></PlusIcon>
+        <PlusIcon className={classes.icon}></PlusIcon>
       )}
-
       {props.icon === ButtonIcons.Bookmark && (
-        <BookmarkIcon
-          className={`${classes.icon} ${
-            props.className ? props.className : ''
-          }`}
-        ></BookmarkIcon>
+        <BookmarkIcon className={classes.icon}></BookmarkIcon>
       )}
-
       {props.icon === ButtonIcons.Search && (
-        <MagnifyingGlassIcon
-          className={`${classes.icon} ${
-            props.className ? props.className : ''
-          }`}
-        ></MagnifyingGlassIcon>
+        <MagnifyingGlassIcon className={classes.icon}></MagnifyingGlassIcon>
       )}
-
+      {props.icon === ButtonIcons.Back && (
+        <ChevronLeftIcon className={classes.icon}></ChevronLeftIcon>
+      )}
       {props.children && (
-        <span
-          className={`${classes.string} ${
-            props.className ? props.className : ''
-          }`}
-        >
-          {props.children}
-        </span>
+        <span className={classes.string}>{props.children}</span>
       )}
     </button>
   );

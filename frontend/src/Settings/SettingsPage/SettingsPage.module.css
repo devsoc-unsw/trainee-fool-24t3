@@ -5,12 +5,17 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding-bottom: 32px;
+  gap: 32px;
 }
 
 .headerButtons {
   display: flex;
+  margin-left: auto;
   gap: 32px;
+}
+
+.backButton {
+  margin-left: -96px;
 }

@@ -5,7 +5,7 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 import classes from './SettingsNavbar.module.css';
-import { NavLink } from 'react-router';
+import { NavLink, useLocation } from 'react-router';
 
 interface Row {
   icon: React.ReactNode;
@@ -41,6 +41,8 @@ const rows: Row[][] = [
 ];
 
 export function SettingsNavbar() {
+  const { pathname } = useLocation();
+
   return (
     <nav className={classes.container}>
       {rows.map((section, i) => (
@@ -50,8 +52,8 @@ export function SettingsNavbar() {
               <div className={classes.icon}>{row.icon}</div>
               {row.to ? (
                 <NavLink
-                  className={({ isActive }) =>
-                    isActive
+                  className={
+                    pathname === row.to
                       ? `${classes.link} ${classes.active}`
                       : classes.link
                   }

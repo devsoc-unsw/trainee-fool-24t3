@@ -6,6 +6,7 @@ import AboutPage from './About/About';
 import { Settings } from './Settings/Settings';
 import { ProfilePage } from './Settings/SettingsPage/ProfilePage/ProfilePage';
 import { EventManagementPage } from './Settings/SettingsPage/EventManagementPage/EventManagementPage';
+import { CreateNewEventPage } from './Settings/SettingsPage/EventManagementPage/CreateNewEvent/CreateNewEvent';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/settings" element={<Settings />}>
             <Route path="profile" element={<ProfilePage />} />
             <Route path="events" element={<EventManagementPage />} />
+            <Route path="events/new" element={<CreateNewEventPage />} />
           </Route>
         </Routes>
       </div>
