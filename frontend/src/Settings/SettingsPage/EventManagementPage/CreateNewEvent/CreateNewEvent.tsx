@@ -6,7 +6,7 @@ export function CreateNewEventPage() {
   return (
     <SettingsPage
       title="Create a new event"
-      pageAbovePath="/events"
+      pageAbovePath="/settings/events"
       headerButtons={[
         <Button
           variant={ButtonVariants.Primary}

@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import Button, { ButtonIcons, ButtonVariants } from '../../Button/Button';
 import classes from './SettingsPage.module.css';
 
@@ -14,12 +15,13 @@ export function SettingsPage(props: SettingsPageProps) {
       <div className={classes.headerContainer}>
         <header className={classes.header}>
           {props.pageAbovePath && (
-            <Button
-              className={classes.backButton}
-              icon={ButtonIcons.Back}
-              type="button"
-              variant={ButtonVariants.RoundSecondary}
-            />
+            <Link className={classes.backButton} to={props.pageAbovePath}>
+              <Button
+                icon={ButtonIcons.Back}
+                type="button"
+                variant={ButtonVariants.RoundSecondary}
+              />
+            </Link>
           )}
           <h1>{props.title}</h1>
           {props.headerButtons && (
