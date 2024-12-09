@@ -6,10 +6,10 @@ import {
   CheckIcon,
   ClockIcon,
   MapPinIcon,
-  ShareIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { Keyword, KeywordOptions } from "../Keyword/Keyword";
+import ShareButton from "../ShareButton/ShareButton";
 
 type EventDetailsProps = {
   image: string;
@@ -73,9 +73,7 @@ function EventDetails(props: EventDetailsProps) {
               type={ButtonOptions.Bookmark}
               className={classes.actionIcon}
             ></Button>
-            <button className={classes.actionIcon}>
-              <ShareIcon></ShareIcon>
-            </button>
+            <ShareButton className={classes.actionIcon}></ShareButton>
           </div>
         </div>
 

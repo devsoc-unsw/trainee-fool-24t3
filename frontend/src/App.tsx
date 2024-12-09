@@ -6,6 +6,7 @@ import NavBar from "./NavBar/NavBar";
 import Button, { ButtonOptions } from "./Button/Button";
 import CreateEvent from "./CreateEvent/CreateEvent";
 import EventDetails from "./EventDetails/EventDetails";
+import ShareButton from "./ShareButton/ShareButton";
 
 function App() {
   return (

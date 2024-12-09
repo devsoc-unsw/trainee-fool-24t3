@@ -1,0 +1,21 @@
+.share {
+  color: hsl(0, 0%, 0%);
+  background-color: hsl(0, 0%, 85%);
+  border: 0px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  margin: 0px;
+  transition: background 0.2s linear, color 0.2s linear; 
+}
+
+.share:hover {
+  background-color: hsl(0, 0%, 93%);
+  color: hsl(0, 0%, 18%);
+}
+
+.shareIcon {
+  height: 64px;
+}
