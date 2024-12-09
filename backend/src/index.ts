@@ -8,7 +8,8 @@ import {
   CreateSocietyBody,
   CreateEventBody,
   societyIdBody,
-  eventIdBody
+  eventIdBody,
+  RegisterBody
 } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors, SanitisedUser } from "./interfaces";
@@ -76,10 +77,10 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post(
   "/auth/register",
-  async (req: TypedRequest<LoginBody>, res: Response) => {
-    const { username, email, password, userType } = req.body;
+  async (req: TypedRequest<RegisterBody>, res: Response) => {
+    const { username, email, password } = req.body;
 
-    if (!username || !email || !password || !userType) {
+    if (!username || !email || !password) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -110,7 +111,7 @@ app.post(
         email,
         password: hashedPassword,
         salt,
-        userType,
+        userType:"ATTENDEE",
         dateJoined: new Date(),
         profilePicture: null,
       },

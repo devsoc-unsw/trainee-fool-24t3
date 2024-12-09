@@ -16,9 +16,11 @@ export interface TypedResponse<T> extends Express.Response {
 
 export interface LoginBody {
   username: string;
-  email: string;
   password: string;
-  userType: UserType;
+}
+
+export interface RegisterBody extends LoginBody {
+  email: string;
 }
 
 export interface UserIdBody {

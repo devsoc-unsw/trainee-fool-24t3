@@ -6,12 +6,19 @@ import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { useState, FormEvent } from "react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    console.log(email);
-    console.log(password);
+    const res = await fetch("http://localhost:5180/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+    });
+    const json = await res.json();
+    console.log(json);
   }
 
   return (
@@ -22,10 +29,10 @@ export default function LoginPage() {
         text={<span>New to Pyramids?</span>}
         inputs={[
           <TextInput
-            placeholder="Email"
-            name="email"
+            placeholder="Username"
+            name="username"
             icon={<AtSymbolIcon />}
-            onChange={setEmail}
+            onChange={setUsername}
             type={TextOptions.Text}
           />,
           <TextInput
