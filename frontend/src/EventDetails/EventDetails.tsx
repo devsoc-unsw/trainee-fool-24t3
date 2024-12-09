@@ -70,7 +70,8 @@ function EventDetails(props: EventDetailsProps) {
 
           <div className={classes.actions}>
             <Button
-              type={ButtonOptions.Bookmark}
+              type={"button"}
+              variant={ButtonOptions.Bookmark}
               className={classes.actionIcon}
             ></Button>
             <ShareButton className={classes.actionIcon}></ShareButton>
@@ -82,7 +83,7 @@ function EventDetails(props: EventDetailsProps) {
           {props.keywords && (
             <div className={classes.keywords}>
               {props.keywords?.map((keyword) => (
-                <Keyword type={KeywordOptions.Add}>{keyword}</Keyword>
+                <Keyword type={KeywordOptions.None}>{keyword}</Keyword>
               ))}
             </div>
           )}

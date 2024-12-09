@@ -60,7 +60,7 @@
   display: flex;
   height: 24px;
   margin-bottom: 12px;
-  width: 40vw;
+  width: 30vw;
   gap: 8px;
 }
 
@@ -85,9 +85,13 @@ button.actionIcon {
   width: 40vw;
   margin-top: 24px;
   padding-left: 24px;
+  line-height: 1.8;
   height: auto;
 }
 
 .keywords {
   display: flex;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  gap: 12px;
 }

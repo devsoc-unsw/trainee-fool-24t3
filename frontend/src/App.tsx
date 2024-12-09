@@ -3,8 +3,6 @@ import NavBar from "./NavBar/NavBar";
 import { BrowserRouter, Route, Routes } from "react-router";
 import HomePage from "./HomePage/HomePage";
 import AboutPage from "./About/About";
-import EventDetails from "./EventDetails/EventDetails";
-import ShareButton from "./ShareButton/ShareButton";
 
 function App() {
   return (
