@@ -1,3 +1,9 @@
+import { SettingsPage } from '../SettingsPage';
+
 export function ProfilePage() {
-  return <h2>Profile</h2>;
+  return (
+    <SettingsPage title="Profile" headerButtons={[]}>
+      <div>Hello</div>
+    </SettingsPage>
+  );
 }
