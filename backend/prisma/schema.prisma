@@ -9,63 +9,60 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 enum UserType {
   ATTENDEE
-  SOCIETY
 }
 
 model User {
-    id Int @id @default(autoincrement())
-    username String 
-    email String 
-    password String
-    userType UserType
-    attendee Attendee?
-    society Society?
-    salt String 
-    dateJoined DateTime
-    profilePicture String?
- }
-
-model Attendee {
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
-  name String
-  keywords Keyword[]
-  societies Society[]
+  id             Int       @id @default(autoincrement())
+  username       String
+  email          String
+  password       String
+  userType       UserType
+  salt           String
+  dateJoined     DateTime
+  profilePicture String?
+  societies      Society[] @relation(name: "membertosociety")
+  keywords       Keyword[]
+  adminsocieties Society[]
+  events         Event[]
 }
 
 model Society {
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
-  name String @unique
-  events Event[]
-  members Attendee[]
-  discordId String @unique
+  id             Int     @id @default(autoincrement())
+  admin          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
+  name           String  @unique
+  events         Event[]
+  members        User[]  @relation(name: "membertosociety")
+  discordId      String? @unique
+  profilePicture String?
 }
 
 model Event {
-  id Int @id @default(autoincrement())
-  banner String
-  name String
+  id            Int       @id @default(autoincrement())
+  banner        String
+  name          String
   startDateTime DateTime
-  endDateTime DateTime
-  location String
-  description String
-  societies Society[]
-  keywords Keyword[]
+  endDateTime   DateTime
+  location      String
+  description   String
+  societyId     Int
+  society       Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
+  keywords      Keyword[]
+  attendees     User[]
+  
+  @@unique(name: "eventID", [societyId, name, startDateTime, endDateTime])
 }
 
 model Keyword {
-  id Int @id @default(autoincrement())
-  text String @unique
-  attendees Attendee[]
-  events Event[]
+  id        Int     @id @default(autoincrement())
+  text      String  @unique
+  subscribers User[]
+  events    Event[]
 }

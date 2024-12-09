@@ -1,7 +1,24 @@
-html {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+html,
+body {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .event {
   color: green;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.page {
+  height: 90vh;
+  overflow-y: auto;
+}
+
+h1 a {
+  color: inherit;
+  text-decoration: none;
 }

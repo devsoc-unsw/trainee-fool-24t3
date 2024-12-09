@@ -11,31 +11,37 @@ export enum ButtonOptions {
 
 type ButtonProps = {
   children?: string;
-  type: ButtonOptions;
+  variant: ButtonOptions;
   className?: string;
+  type: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
 };
 
 function Button(props: ButtonProps) {
   return (
     <button 
+      type={props.type}
       className={`${classes.button} ${
         props.className ? props.className : ""
       }`
     }>
-      {props.type === ButtonOptions.Plus && (
+      {props.variant === ButtonOptions.Plus && (
         <PlusIcon
           className={classes.icon}
         ></PlusIcon>
       )}
 
-      {props.type === ButtonOptions.Bookmark && (
+      {props.variant === ButtonOptions.Bookmark && (
         <BookmarkIcon
           className={classes.icon}
         ></BookmarkIcon>
       )}
 
-      {props.type === ButtonOptions.String && (
-        <span className={classes.string}>
+      {props.variant === ButtonOptions.String && (
+        <span
+          className={`${classes.string} ${
+            props.className ? props.className : ""
+          }`}
+        >
           {props.children}
         </span>
       )}
