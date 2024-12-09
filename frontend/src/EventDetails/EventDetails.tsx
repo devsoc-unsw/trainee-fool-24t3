@@ -59,7 +59,9 @@ function EventDetails(props: EventDetailsProps) {
             <p className={classes.detailInfo}>{props.location}</p>
             {props.locationUrl && (
               <a href={`${props.locationUrl}`}>
-                <ArrowTopRightOnSquareIcon className={`${classes.icon} ${classes.locationLink}`}></ArrowTopRightOnSquareIcon>
+                <ArrowTopRightOnSquareIcon
+                  className={`${classes.icon} ${classes.locationLink}`}
+                ></ArrowTopRightOnSquareIcon>
               </a>
             )}
           </div>

@@ -7,11 +7,9 @@ type ShareButtonProps = {
 
 function ShareButton(props: ShareButtonProps) {
   return (
-    <button 
-      className={`${classes.share} ${
-        props.className ? props.className : ""
-      }`
-    }>
+    <button
+      className={`${classes.share} ${props.className ? props.className : ""}`}
+    >
       <ShareIcon className={classes.shareIcon}></ShareIcon>
     </button>
   );

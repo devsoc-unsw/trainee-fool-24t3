@@ -18,22 +18,16 @@ type ButtonProps = {
 
 function Button(props: ButtonProps) {
   return (
-    <button 
+    <button
       type={props.type}
-      className={`${classes.button} ${
-        props.className ? props.className : ""
-      }`
-    }>
+      className={`${classes.button} ${props.className ? props.className : ""}`}
+    >
       {props.variant === ButtonOptions.Plus && (
-        <PlusIcon
-          className={classes.icon}
-        ></PlusIcon>
+        <PlusIcon className={classes.icon}></PlusIcon>
       )}
 
       {props.variant === ButtonOptions.Bookmark && (
-        <BookmarkIcon
-          className={classes.icon}
-        ></BookmarkIcon>
+        <BookmarkIcon className={classes.icon}></BookmarkIcon>
       )}
 
       {props.variant === ButtonOptions.String && (
