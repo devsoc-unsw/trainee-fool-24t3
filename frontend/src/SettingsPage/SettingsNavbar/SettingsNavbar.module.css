@@ -1,0 +1,27 @@
+.container {
+  background: hsl(0, 0%, 91%);
+  padding: 32px;
+  padding-left: 24px;
+  border-radius: 0px 16px 16px 0px;
+}
+
+.row {
+  display: flex;
+  padding-bottom: 16px;
+  gap: 8px;
+  align-items: center;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.section .row:first-child {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.section .row:last-child {
+  padding-bottom: 0;
+}
