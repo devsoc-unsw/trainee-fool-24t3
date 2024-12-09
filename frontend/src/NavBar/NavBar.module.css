@@ -65,15 +65,16 @@
   background-size: cover;
 }
 
-a.loginLink.active {
-  margin-top: 0px;
-  border: none;
-  outline: 2px solid hsl(203, 88%, 27%);
-}
-
 a.loginLink:hover {
   margin-top: 0px;
   border: none;
   outline: 2px solid hsl(203, 88%, 47%);
   transition: outline 0.03s linear;
 }
+
+a.loginLink.active {
+  margin-top: 0px;
+  border: none;
+  outline: 2px solid hsl(203, 88%, 27%);
+}
+

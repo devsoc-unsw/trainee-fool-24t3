@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, FormEvent } from "react";
 import classes from "./AuthScreen.module.css";
 import Button, { ButtonOptions } from "../Button/Button";
 
@@ -8,6 +8,7 @@ type AuthScreenProp = {
   inputs: ReactNode[];
   buttonText: string;
   footer?: ReactNode;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 };
 
 export function AuthScreen(props: AuthScreenProp) {
@@ -18,7 +19,7 @@ export function AuthScreen(props: AuthScreenProp) {
         <p className={classes.headerText}>{props.text}</p>
       </header>
       <main>
-        <form className={classes.form}>
+        <form className={classes.form} onSubmit={props.onSubmit}>
           {props.inputs.map((input: ReactNode) => input)}
           <Button
             type="submit"
