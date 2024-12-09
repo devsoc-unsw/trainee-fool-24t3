@@ -14,7 +14,7 @@ export function EventManagementPage() {
         />,
       ]}
     >
-      <p>Hello</p>
+      <p>TODO</p>
     </SettingsPage>
   );
 }
