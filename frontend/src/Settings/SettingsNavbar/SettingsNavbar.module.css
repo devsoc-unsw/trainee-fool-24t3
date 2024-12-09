@@ -17,11 +17,29 @@
   height: 24px;
 }
 
+.section {
+  padding-bottom: 24px;
+}
+
 .section .row:first-child {
   font-weight: bold;
   font-size: 1.2rem;
 }
 
-.section .row:last-child {
+.container .section:last-child {
   padding-bottom: 0;
+}
+
+.container .section:last-child .row:last-child {
+  padding-bottom: 0;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link.active {
+  margin-top: 2px;
+  border-bottom: 2px solid hsl(203, 88%, 27%);
 }

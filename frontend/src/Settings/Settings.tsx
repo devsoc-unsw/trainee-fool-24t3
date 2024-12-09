@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router';
 import { SettingsNavbar } from './SettingsNavbar/SettingsNavbar';
-import classes from './SettingsPage.module.css';
+import classes from './Settings.module.css';
 
-export function SettingsPage() {
+export function Settings() {
   return (
-    <div className={classes.page}>
+    <div className={classes.settings}>
       <SettingsNavbar />
       <Outlet />
     </div>

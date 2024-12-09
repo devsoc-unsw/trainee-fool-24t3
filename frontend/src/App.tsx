@@ -3,8 +3,9 @@ import NavBar from './NavBar/NavBar';
 import { BrowserRouter, Route, Routes } from 'react-router';
 import HomePage from './HomePage/HomePage';
 import AboutPage from './About/About';
-import { SettingsPage } from './SettingsPage/SettingsPage';
-import { ProfilePage } from './ProfilePage/ProfilePage';
+import { Settings } from './Settings/Settings';
+import { ProfilePage } from './Settings/SettingsPage/ProfilePage/ProfilePage';
+import { EventManagementPage } from './Settings/SettingsPage/EventManagementPage/EventManagementPage';
 
 function App() {
   return (
@@ -13,8 +14,9 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/settings" element={<SettingsPage />}>
+          <Route path="/settings" element={<Settings />}>
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="events" element={<EventManagementPage />} />
           </Route>
         </Routes>
       </div>
