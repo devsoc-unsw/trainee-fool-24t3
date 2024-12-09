@@ -62,10 +62,15 @@
   margin-bottom: 12px;
   width: 30vw;
   gap: 8px;
+  color: hsl(0, 0%, 20%);
 }
 
 .detailInfo {
   margin: 0px;
+}
+
+.attending {
+  color: hsl(0, 0%, 40%);
 }
 
 .actions {

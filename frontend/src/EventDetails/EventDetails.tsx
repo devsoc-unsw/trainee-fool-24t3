@@ -65,7 +65,7 @@ function EventDetails(props: EventDetailsProps) {
               </a>
             )}
           </div>
-          <div className={classes.detail}>
+          <div className={`${classes.detail} ${classes.attending}`}>
             <CheckIcon className={classes.icon}></CheckIcon>
             <p className={classes.detailInfo}>{props.attending} attending</p>
           </div>
