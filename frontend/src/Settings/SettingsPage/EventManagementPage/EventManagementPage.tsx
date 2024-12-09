@@ -6,8 +6,9 @@ export function EventManagementPage() {
     <SettingsPage
       title="Events you manage"
       headerButtons={[
+        <Button icon={ButtonIcons.Search} type="button" />,
         <Button
-          variant={ButtonVariants.Primary}
+          variant={ButtonVariants.Secondary}
           icon={ButtonIcons.Plus}
           type="button"
         />,

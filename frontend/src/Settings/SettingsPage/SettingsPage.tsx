@@ -14,7 +14,11 @@ export function SettingsPage(props: SettingsPageProps) {
         {props.pageAbovePath && <button>Back</button>}
         <header className={classes.header}>
           <h1>{props.title}</h1>
-          {props.headerButtons && props.headerButtons.map((button) => button)}
+          {props.headerButtons && (
+            <div className={classes.headerButtons}>
+              {props.headerButtons.map((button) => button)}
+            </div>
+          )}
         </header>
       </div>
       <main>{props.children}</main>

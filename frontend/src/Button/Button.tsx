@@ -1,10 +1,11 @@
 import { PlusIcon } from '@heroicons/react/24/solid';
 import classes from './Button.module.css';
-import { BookmarkIcon } from '@heroicons/react/24/outline';
+import { BookmarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 export enum ButtonIcons {
   Plus = 'plus',
   Bookmark = 'bookmark',
+  Search = 'search',
 }
 
 export enum ButtonVariants {
@@ -44,6 +45,14 @@ function Button(props: ButtonProps) {
             props.className ? props.className : ''
           }`}
         ></BookmarkIcon>
+      )}
+
+      {props.icon === ButtonIcons.Search && (
+        <MagnifyingGlassIcon
+          className={`${classes.icon} ${
+            props.className ? props.className : ''
+          }`}
+        ></MagnifyingGlassIcon>
       )}
 
       {props.children && (
