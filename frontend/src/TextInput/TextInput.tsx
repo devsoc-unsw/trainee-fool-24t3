@@ -4,6 +4,7 @@ import classes from "./TextInput.module.css";
 export enum TextOptions {
   Text = "text",
   Password = "password",
+  Email = "email",
 }
 
 type TextInputProp = {

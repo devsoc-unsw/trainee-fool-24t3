@@ -1,4 +1,4 @@
-import classes from "./Login.module.css";
+import classes from "./Register.module.css";
 import { AuthScreen } from "../AuthScreen/AuthScreen";
 import { TextInput, TextOptions } from "../TextInput/TextInput";
 import { AtSymbolIcon, UserCircleIcon } from "@heroicons/react/24/outline";
@@ -6,12 +6,13 @@ import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { useState, FormEvent } from "react";
 import { Link } from "react-router";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const res = await fetch("http://localhost:5180/auth/login", {
+    const res = await fetch("http://localhost:5180/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,6 +20,7 @@ export default function LoginPage() {
       body: JSON.stringify({
         username,
         password,
+        email,
       }),
     });
     const json = await res.json();
@@ -29,11 +31,11 @@ export default function LoginPage() {
     <main className={classes.container}>
       <div className={classes.upper} />
       <AuthScreen
-        heading="Log in"
+        heading="Sign Up"
         text={
           <span>
-            New to Pyramids? {}
-            <Link to="/register">Sign Up</Link>
+            Got an account? {}
+            <Link to="/login">Log In</Link>
           </span>
         }
         inputs={[
@@ -45,6 +47,13 @@ export default function LoginPage() {
             type={TextOptions.Text}
           />,
           <TextInput
+            placeholder="Email"
+            name="email"
+            icon={<AtSymbolIcon />}
+            onChange={setEmail}
+            type={TextOptions.Email}
+          />,
+          <TextInput
             placeholder="Password"
             name="password"
             icon={<LockClosedIcon />}
@@ -52,8 +61,7 @@ export default function LoginPage() {
             type={TextOptions.Password}
           />,
         ]}
-        buttonText="Log in"
-        footer={<p>Forgot Password</p>}
+        buttonText="Sign up"
         onSubmit={handleSubmit}
       />
       <div className={classes.lower} />
