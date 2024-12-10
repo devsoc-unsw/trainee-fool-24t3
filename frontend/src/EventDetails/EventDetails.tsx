@@ -1,5 +1,5 @@
 import classes from "./EventDetails.module.css";
-import Button, { ButtonOptions } from "../Button/Button";
+import Button from "../Button/Button";
 import {
   ArrowTopRightOnSquareIcon,
   CalendarIcon,
@@ -8,8 +8,9 @@ import {
   MapPinIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { Keyword, KeywordOptions } from "../Keyword/Keyword";
+import Keyword from "../Keyword/Keyword";
 import ShareButton from "../ShareButton/ShareButton";
+import { ButtonIcons, ButtonVariants } from "../Button/ButtonTypes";
 
 type EventDetailsProps = {
   image: string;
@@ -73,7 +74,8 @@ function EventDetails(props: EventDetailsProps) {
           <div className={classes.actions}>
             <Button
               type={"button"}
-              variant={ButtonOptions.Bookmark}
+              variant={ButtonVariants.Primary}
+              icon={ButtonIcons.Bookmark}
               className={classes.actionIcon}
             ></Button>
             <ShareButton className={classes.actionIcon}></ShareButton>
@@ -85,7 +87,7 @@ function EventDetails(props: EventDetailsProps) {
           {props.keywords && (
             <div className={classes.keywords}>
               {props.keywords?.map((keyword) => (
-                <Keyword type={KeywordOptions.None}>{keyword}</Keyword>
+                <Keyword>{keyword}</Keyword>
               ))}
             </div>
           )}

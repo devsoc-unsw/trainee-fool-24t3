@@ -7,7 +7,7 @@ type KeywordProps = {
   type?: KeywordOptions;
 };
 
-export function Keyword(props: KeywordProps) {
+export default function Keyword(props: KeywordProps) {
   return (
     <div
       className={`${classes.keyword} ${
