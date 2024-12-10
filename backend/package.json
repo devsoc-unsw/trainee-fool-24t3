@@ -30,7 +30,6 @@
     "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.1",
     "@types/node": "^22.10.1",
-    "jest-mock-extended": "2.0.4",
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
