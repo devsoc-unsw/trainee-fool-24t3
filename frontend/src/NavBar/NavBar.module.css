@@ -34,15 +34,6 @@
   min-width: 300px;
 }
 
-.profile {
-  border-radius: 12px;
-  height: 32px;
-  width: 32px;
-  margin-right: 3%;
-  margin-left: 5%;
-  background-size: cover;
-}
-
 .container a {
   text-decoration: none;
   font-weight: bold;
@@ -52,6 +43,7 @@
 .container a:hover {
   margin-top: 1.5px;
   border-bottom: 2px solid hsl(203, 88%, 47%);
+  transition: border 0.03s ease-in;
 }
 
 .container a.active {
@@ -63,3 +55,26 @@
   margin-top: 0;
   border: none;
 }
+
+.loginLink {
+  border-radius: 12px;
+  height: 32px;
+  width: 32px;
+  margin-right: 3%;
+  margin-left: 5%;
+  background-size: cover;
+}
+
+a.loginLink:hover {
+  margin-top: 0px;
+  border: none;
+  outline: 2px solid hsl(203, 88%, 47%);
+  transition: outline 0.03s linear;
+}
+
+a.loginLink.active {
+  margin-top: 0px;
+  border: none;
+  outline: 2px solid hsl(203, 88%, 27%);
+}
+

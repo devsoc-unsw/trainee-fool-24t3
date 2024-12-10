@@ -8,7 +8,8 @@ import {
   CreateSocietyBody,
   CreateEventBody,
   societyIdBody,
-  eventIdBody
+  eventIdBody,
+  RegisterBody
 } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors, SanitisedUser } from "./interfaces";
@@ -76,18 +77,14 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post(
   "/auth/register",
-  async (req: TypedRequest<LoginBody>, res: Response) => {
-    const { username, email, password, userType } = req.body;
+  async (req: TypedRequest<RegisterBody>, res: Response) => {
+    const { username, email, password } = req.body;
 
-    if (!username || !email || !password || !userType) {
+    if (!username || !email || !password) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // check database for existing user with same username
-    const errorCheck: LoginErrors = {
-      matchingCredentials: true,
-    };
-
+    
     const results = await prisma.user.findFirst({
       where: {
         OR: [{ username: username }, { email: email }],
@@ -95,8 +92,7 @@ app.post(
     });
 
     if (results) {
-      errorCheck.matchingCredentials = true;
-      return res.status(400).json(errorCheck);
+      return res.status(400).json({ error: "Account with same credentials already exists"});
     }
 
     const saltRounds: number = 10;
@@ -110,7 +106,7 @@ app.post(
         email,
         password: hashedPassword,
         salt,
-        userType,
+        userType:"ATTENDEE",
         dateJoined: new Date(),
         profilePicture: null,
       },

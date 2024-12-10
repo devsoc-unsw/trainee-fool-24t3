@@ -1,8 +1,12 @@
 .container{
-    width: 500px;
+    width: 20%;
+    height: 50%;
     background-color: hsl(0, 0%, 100%);
     border-radius: 10px;
     margin: auto;
+    padding: 30px;
+    min-width: 500px;
+    min-height: 300px;
 }
 
 .form{
@@ -10,4 +14,24 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+}
+
+.headerText{
+    padding-top: 34px;
+    padding-bottom: 46px;
+}
+
+.footer{
+    text-align: center;
+    color: hsl(0, 0%, 62%);
+}
+
+.footer div:first-child {
+    padding-top: 50px;
+}
+
+.error{
+    padding: 10px;
+    color: hsl(0, 100%, 64%);
+    font-weight: bold;
 }
