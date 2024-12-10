@@ -23,11 +23,7 @@ export function AuthScreen(props: AuthScreenProp) {
       <main>
         <form className={classes.form} onSubmit={props.onSubmit}>
           {props.inputs.map((input: ReactNode) => input)}
-          <Button
-            type="submit"
-            variant={ButtonOptions.String}
-            className={classes.button}
-          >
+          <Button type="submit" className={classes.button}>
             {props.buttonText}
           </Button>
         </form>
