@@ -1,7 +1,7 @@
 import classes from "./Login.module.css";
 import { AuthScreen } from "../AuthScreen/AuthScreen";
 import { TextInput, TextOptions } from "../TextInput/TextInput";
-import { AtSymbolIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { useState, FormEvent } from "react";
 import { Link } from "react-router";
