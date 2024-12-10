@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
-import classes from "./AuthScreen.module.css";
-import Button, { ButtonOptions } from "../Button/Button";
+import { ReactNode } from 'react';
+import classes from './AuthScreen.module.css';
+import Button from '../Button/Button';
 
 type AuthScreenProp = {
   heading: string;
@@ -20,11 +20,7 @@ export function AuthScreen(props: AuthScreenProp) {
       <main>
         <form className={classes.form}>
           {props.inputs.map((input: ReactNode) => input)}
-          <Button
-            type="submit"
-            variant={ButtonOptions.String}
-            className={classes.button}
-          >
+          <Button type="submit" className={classes.button}>
             {props.buttonText}
           </Button>
         </form>
