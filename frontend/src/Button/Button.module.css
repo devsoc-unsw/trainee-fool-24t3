@@ -1,22 +1,50 @@
 .button {
-  background: hsl(203, 88%, 27%);
   border: 0px;
   border-radius: 8px;
   width: fit-content;
   font-size: 24px;
-  color: hsl(202, 49%, 90%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0px;
   margin: 0px;
-  box-shadow: 0px 0px 4px hsla(0, 0%, 0%, 0.25);
-  transition: background 0.2s linear, color 0.2s linear; 
+  background: none;
+  outline: 2px solid white;
+  transition: background 0.2s linear, color 0.2s linear, box-shadow 0.2s linear,
+    outline-color 0.2s linear;
 }
 
 .button:hover {
-  background-color: hsl(202, 49%, 90%);
+  outline: 2px solid #dbdbdb;
+  cursor: pointer;
+}
+
+.primary {
+  background: hsl(203, 88%, 27%);
+  color: hsl(202, 49%, 90%);
+  box-shadow: 0px 0px 4px hsla(203, 88%, 27%, 0.25);
+}
+
+.secondary,
+.round-secondary {
+  background: hsl(0, 0%, 86%);
   color: hsla(0, 0%, 0%);
+  box-shadow: 0px 0px 4px hsla(0, 0%, 76%, 0.25);
+}
+
+.primary,
+.secondary,
+.round-secondary {
+  outline: none;
+}
+
+.primary:hover,
+.secondary:hover,
+.round-secondary:hover {
+  background: hsl(202, 49%, 90%);
+  color: hsla(0, 0%, 0%);
+  box-shadow: 0px 0px 4px hsla(202, 49%, 80%, 0.25);
+  outline: none;
 }
 
 .icon {
@@ -26,4 +54,8 @@
 
 .string {
   padding: 12px 28px;
+}
+
+.round-secondary {
+  border-radius: 50%;
 }

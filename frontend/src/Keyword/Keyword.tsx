@@ -1,10 +1,6 @@
-import classes from "./Keyword.module.css";
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
-
-export enum KeywordOptions {
-  Delete,
-  Add,
-}
+import classes from './Keyword.module.css';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { KeywordOptions } from './KeywordTypes';
 
 type KeywordProps = {
   children: string;
