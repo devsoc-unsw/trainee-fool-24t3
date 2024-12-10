@@ -6,6 +6,7 @@ export enum ButtonOptions {
   String,
   Plus,
   Bookmark,
+  Share,
 }
 
 type ButtonProps = {
@@ -17,21 +18,16 @@ type ButtonProps = {
 
 function Button(props: ButtonProps) {
   return (
-    <button className={classes.button} type={props.type}>
+    <button
+      type={props.type}
+      className={`${classes.button} ${props.className ? props.className : ""}`}
+    >
       {props.variant === ButtonOptions.Plus && (
-        <PlusIcon
-          className={`${classes.icon} ${
-            props.className ? props.className : ""
-          }`}
-        ></PlusIcon>
+        <PlusIcon className={classes.icon}></PlusIcon>
       )}
 
       {props.variant === ButtonOptions.Bookmark && (
-        <BookmarkIcon
-          className={`${classes.icon} ${
-            props.className ? props.className : ""
-          }`}
-        ></BookmarkIcon>
+        <BookmarkIcon className={classes.icon}></BookmarkIcon>
       )}
 
       {props.variant === ButtonOptions.String && (
