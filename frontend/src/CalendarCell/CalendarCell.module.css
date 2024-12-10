@@ -1,10 +1,10 @@
 .calendarCellWrapper {
     width: 14vw;
-    height: 140px;
+    height: calc(75vh/6);
 }
 
 .calendarCellHeader {
-    height: 40px;
+    height: calc((75vh/6)/3);
     width: 100%;
     border-top: 2px solid hsl(0, 0%, 85%);
     border-bottom: 2px solid hsl(0, 0%, 85%);
