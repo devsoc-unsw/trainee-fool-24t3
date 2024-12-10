@@ -23,6 +23,15 @@
 
 .footer{
     text-align: center;
-    padding-top: 50px;
     color: hsl(0, 0%, 62%);
+}
+
+.footer div:first-child {
+    padding-top: 50px;
+}
+
+.error{
+    padding: 10px;
+    color: hsl(0, 100%, 64%);
+    font-weight: bold;
 }

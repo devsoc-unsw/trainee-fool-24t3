@@ -13,6 +13,7 @@ type TextInputProp = {
   name: string;
   onChange: React.Dispatch<React.SetStateAction<string>>;
   type: TextOptions;
+  error: boolean;
 };
 
 export function TextInput(props: TextInputProp) {
@@ -26,7 +27,11 @@ export function TextInput(props: TextInputProp) {
   }
 
   return (
-    <div className={`${classes.container} ${focus ? classes.focus : ""}`}>
+    <div
+      className={`${classes.container} ${focus ? classes.focus : ""} ${
+        props.error ? classes.error : ""
+      }`}
+    >
       <input
         type={props.type}
         name={props.name}

@@ -5,3 +5,7 @@
     height: fit-content;
     padding: 2%;
 }
+
+.link{
+    color: hsl(208, 100%, 50%);
+}

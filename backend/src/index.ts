@@ -84,11 +84,7 @@ app.post(
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // check database for existing user with same username
-    const errorCheck: LoginErrors = {
-      matchingCredentials: true,
-    };
-
+    
     const results = await prisma.user.findFirst({
       where: {
         OR: [{ username: username }, { email: email }],
@@ -96,8 +92,7 @@ app.post(
     });
 
     if (results) {
-      errorCheck.matchingCredentials = true;
-      return res.status(400).json(errorCheck);
+      return res.status(400).json({ error: "Account with same credentials already exists"});
     }
 
     const saltRounds: number = 10;

@@ -1,6 +1,7 @@
 import { ReactNode, FormEvent } from "react";
 import classes from "./AuthScreen.module.css";
 import Button, { ButtonOptions } from "../Button/Button";
+import { AuthError } from "../errorHandler";
 
 type AuthScreenProp = {
   heading: string;
@@ -9,6 +10,7 @@ type AuthScreenProp = {
   buttonText: string;
   footer?: ReactNode;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  error?: AuthError;
 };
 
 export function AuthScreen(props: AuthScreenProp) {
@@ -30,9 +32,15 @@ export function AuthScreen(props: AuthScreenProp) {
           </Button>
         </form>
       </main>
-      {props.footer && (
-        <footer className={classes.footer}>{props.footer}</footer>
-      )}
+
+      <footer className={classes.footer}>
+        {props.footer && <div>{props.footer}</div>}{" "}
+        {props.error && (
+          <div>
+            <p className={classes.error}>{props.error.message}</p>
+          </div>
+        )}
+      </footer>
     </div>
   );
 }

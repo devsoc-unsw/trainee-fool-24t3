@@ -5,10 +5,12 @@ import { AtSymbolIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { useState, FormEvent } from "react";
 import { Link } from "react-router";
+import { errorHandler, AuthError } from "../errorHandler";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<AuthError | undefined>(undefined);
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const res = await fetch("http://localhost:5180/auth/login", {
@@ -22,7 +24,12 @@ export default function LoginPage() {
       }),
     });
     const json = await res.json();
-    console.log(json);
+
+    if (!res.ok) {
+      setError(errorHandler(json.error));
+    } else {
+      setError(undefined);
+    }
   }
 
   return (
@@ -33,7 +40,9 @@ export default function LoginPage() {
         text={
           <span>
             New to Pyramids? {}
-            <Link to="/register">Sign Up</Link>
+            <Link className={classes.link} to="/register">
+              Sign Up
+            </Link>
           </span>
         }
         inputs={[
@@ -43,6 +52,7 @@ export default function LoginPage() {
             icon={<UserCircleIcon />}
             onChange={setUsername}
             type={TextOptions.Text}
+            error={(error && error.usernameError) || false}
           />,
           <TextInput
             placeholder="Password"
@@ -50,11 +60,13 @@ export default function LoginPage() {
             icon={<LockClosedIcon />}
             onChange={setPassword}
             type={TextOptions.Password}
+            error={(error && error.passwordError) || false}
           />,
         ]}
         buttonText="Log in"
         footer={<p>Forgot Password</p>}
         onSubmit={handleSubmit}
+        error={error}
       />
       <div className={classes.lower} />
     </main>

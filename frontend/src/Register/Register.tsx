@@ -5,11 +5,13 @@ import { AtSymbolIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { useState, FormEvent } from "react";
 import { Link } from "react-router";
+import { errorHandler, AuthError } from "../errorHandler";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState<AuthError | undefined>(undefined);
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const res = await fetch("http://localhost:5180/auth/register", {
@@ -24,7 +26,12 @@ export default function RegisterPage() {
       }),
     });
     const json = await res.json();
-    console.log(json);
+
+    if (!res.ok) {
+      setError(errorHandler(json.error));
+    } else {
+      setError(undefined);
+    }
   }
 
   return (
@@ -35,7 +42,9 @@ export default function RegisterPage() {
         text={
           <span>
             Got an account? {}
-            <Link to="/login">Log In</Link>
+            <Link className={classes.link} to="/login">
+              Log In
+            </Link>
           </span>
         }
         inputs={[
@@ -45,6 +54,7 @@ export default function RegisterPage() {
             icon={<UserCircleIcon />}
             onChange={setUsername}
             type={TextOptions.Text}
+            error={(error && error.usernameError) || false}
           />,
           <TextInput
             placeholder="Email"
@@ -52,6 +62,7 @@ export default function RegisterPage() {
             icon={<AtSymbolIcon />}
             onChange={setEmail}
             type={TextOptions.Email}
+            error={(error && error.emailError) || false}
           />,
           <TextInput
             placeholder="Password"
@@ -59,10 +70,12 @@ export default function RegisterPage() {
             icon={<LockClosedIcon />}
             onChange={setPassword}
             type={TextOptions.Password}
+            error={(error && error.passwordError) || false}
           />,
         ]}
         buttonText="Sign up"
         onSubmit={handleSubmit}
+        error={error}
       />
       <div className={classes.lower} />
     </main>
