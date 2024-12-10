@@ -5,19 +5,7 @@ import {
   ChevronLeftIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-
-export enum ButtonIcons {
-  Plus = 'plus',
-  Bookmark = 'bookmark',
-  Search = 'search',
-  Back = 'back',
-}
-
-export enum ButtonVariants {
-  Primary = 'primary',
-  Secondary = 'secondary',
-  RoundSecondary = 'round-secondary',
-}
+import { ButtonIcons, ButtonVariants } from './ButtonTypes';
 
 type ButtonProps = {
   children?: string;

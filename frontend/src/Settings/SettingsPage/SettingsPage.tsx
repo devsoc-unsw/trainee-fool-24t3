@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
-import Button, { ButtonIcons, ButtonVariants } from '../../Button/Button';
+import Button from '../../Button/Button';
 import classes from './SettingsPage.module.css';
+import { ButtonIcons, ButtonVariants } from '../../Button/ButtonTypes';
 
 export interface SettingsPageProps {
   title: string;

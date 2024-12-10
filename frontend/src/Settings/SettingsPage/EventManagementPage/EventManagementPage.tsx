@@ -1,4 +1,5 @@
-import Button, { ButtonIcons, ButtonVariants } from '../../../Button/Button';
+import Button from '../../../Button/Button';
+import { ButtonIcons, ButtonVariants } from '../../../Button/ButtonTypes';
 import { SettingsPage } from '../SettingsPage';
 
 export function EventManagementPage() {
