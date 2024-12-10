@@ -10,7 +10,6 @@ describe("'/society/create endpoint", () => {
       username: "shinjisatoo",
       password: "testpassword",
       email: "longseason1996@gmail.com",
-      userType: "ATTENDEE",
     });
 
     const newUser = await prisma.user.findFirst({
@@ -39,14 +38,14 @@ describe("'/society/create endpoint", () => {
       });
     expect(response2.status).toBe(200);
 
-    
-    const societyRes = await request(app).post("/society/create")
-    .set("Cookie", sessionID)
-    .send({
-      name: "Rizzsoc",
-      userId: newUser.id,
-    });
-    
+    const societyRes = await request(app)
+      .post("/society/create")
+      .set("Cookie", sessionID)
+      .send({
+        name: "Rizzsoc",
+        userId: newUser.id,
+      });
+
     expect(societyRes.status).toBe(200);
   });
 });

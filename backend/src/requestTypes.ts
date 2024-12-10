@@ -1,7 +1,3 @@
-import { UserType } from "@prisma/client";
-import { Dayjs } from "dayjs";
-
-
 export interface TypedRequest<T> extends Express.Request {
   body: T;
 }
@@ -24,14 +20,14 @@ export interface RegisterBody extends LoginBody {
 }
 
 export interface UserIdBody {
-  userId: number
+  userId: number;
 }
 
 export interface CreateEventBody {
   banner: string;
   name: string;
-  startDateTime: Date; 
-  endDateTime: Date; 
+  startDateTime: Date;
+  endDateTime: Date;
   location: string;
   description: string;
   societyId: number;
@@ -39,8 +35,8 @@ export interface CreateEventBody {
 
 //strictNullChecks being set to false broke some more code, so I'm just gonna make it string|null
 export interface CreateSocietyBody {
-  name:string
-  profilePicture: string|null
+  name: string;
+  profilePicture: string | null;
 }
 
 export interface DiscordLoginBody {
@@ -55,6 +51,4 @@ export interface eventIdBody {
   eventId: number;
 }
 
-export interface eventDetailsBody {
-  
-}
+export interface eventDetailsBody {}
