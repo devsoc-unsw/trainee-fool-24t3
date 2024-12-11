@@ -30,12 +30,12 @@ export const sendEmail = async (emailAddress: string, userName: string, code: st
                 <p>Dear ${userName},</p>
                 <p>We have received a request from you to reset your password for Pyramids.</p>
                 <p>Your one time code is: <strong>${code}</strong>.</p>
-                <p>Please note that this code will expire in 60 seconds.</p>
+                <p>Please note that this code will expire in 10 minutes.</p>
                 <br/>
                 <p>Thank you.</p>
             </div>`
         });
-        console.log(res);
+        //console.log(res);
     } catch (error) {
         throw new Error(`sending of email failed due to ${(error as Error).message}`);
     }

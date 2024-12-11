@@ -1,11 +1,9 @@
-import bcrypt from 'bcrypt';
-
-export const verifyOTP = async (token: string, hash: string) => {
-    const verify = await bcrypt.compare(token, hash);
-
-    if(!verify) {
+export const verifyOTP = (token: string, otp: string | null) => {
+    if(!otp) {
+        throw new Error("One time code is invalid or expired.");
+      }
+  
+      if(otp !== token) {
         throw new Error("Incorrect code.");
-    }
-    
-    return verify;
+      }
 }
