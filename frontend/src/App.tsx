@@ -1,8 +1,10 @@
-import './App.css';
-import NavBar from './NavBar/NavBar';
-import { BrowserRouter, Route, Routes } from 'react-router';
-import HomePage from './HomePage/HomePage';
-import AboutPage from './About/About';
+import "./App.css";
+import NavBar from "./NavBar/NavBar";
+import { BrowserRouter, Route, Routes } from "react-router";
+import HomePage from "./HomePage/HomePage";
+import AboutPage from "./About/About";
+import LoginPage from "./Login/Login";
+import RegisterPage from "./Register/Register";
 import { Settings } from './Settings/Settings';
 import { ProfilePage } from './Settings/SettingsPage/ProfilePage/ProfilePage';
 import { EventManagementPage } from './Settings/SettingsPage/EventManagementPage/EventManagementPage';
@@ -16,6 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/settings" element={<Settings />}>
             <Route path="profile" element={<ProfilePage />} />
             <Route path="events" element={<EventManagementPage />} />

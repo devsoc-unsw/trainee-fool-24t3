@@ -1,5 +1,3 @@
-import { UserType } from '@prisma/client';
-
 // BaseUsers are not themselves stored in the database and
 // should not be used by you. They serve as a starting ground
 // for the other two user types.
@@ -11,7 +9,6 @@ interface BaseUser {
   username: string;
   email: string;
   dateJoined: Date;
-  userType: UserType;
   profilePicture: string | null;
   //attendee: Attendee?
   //society: Society?
