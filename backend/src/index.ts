@@ -378,6 +378,27 @@ app.post(
   }
 );
 
+app.get("/event", async (req: Request, res: Response) => {
+  const sessionFromDB = await validateSession(req.session ? req.session : null);
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  const eventID = Number(req.query["id"]);
+
+  const event = await prisma.event.findFirst({
+    where: {
+      id: eventID,
+    },
+  });
+
+  if (!event) {
+    return res.status(404).json({ message: "Event not found." });
+  }
+
+  return res.status(200).json(event);
+});
+
 function isValidDate(startDate: Date, endDate: Date): boolean {
   const parsedStartDate = dayjs(startDate);
   const parsedEndDate = dayjs(endDate);
