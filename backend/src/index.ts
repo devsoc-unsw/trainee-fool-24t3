@@ -338,7 +338,7 @@ app.post(
 );
 
 app.post(
-  "/event/create",
+  "/event",
   async (req: TypedRequest<CreateEventBody>, res: Response) => {
     //Session validation
     const event = req.body;
@@ -413,6 +413,25 @@ function isValidDate(startDate: Date, endDate: Date): boolean {
     parsedStartDate.isBefore(dayjs(), "day")
   );
 }
+
+app.get("/events", async (req, res: Response) => {
+  const page = Number(req.query["page"]) - 1 || 0;
+
+  if (page < 0 || isNaN(page)) {
+    return res.status(400).json({
+      message: "Invalid page specified. Note that a page must be 1 or greater.",
+    });
+  }
+
+  const events = await prisma.event.findMany({
+    orderBy: {
+      startDateTime: "asc",
+    },
+    skip: page * 10,
+    take: 10,
+  });
+  return res.status(200).json(events);
+});
 
 app.get("/user/societies", async (req, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);

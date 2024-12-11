@@ -40,7 +40,7 @@ describe("/event endpoint", () => {
     const start = new Date();
 
     const response = await request(app)
-      .post("/event/create")
+      .post("/event")
       .set("Cookie", sessionID)
       .send({
         banner:

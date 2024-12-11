@@ -19,8 +19,6 @@ export default {
       return;
     }
 
-    console.log(user);
-
     // get a user's societies
     const societies = fetch(BACKEND_URL + "/user/societies", {
       method: "GET",

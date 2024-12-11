@@ -9,7 +9,7 @@ describe("/event endpoint", () => {
   test("Session Invalid", async () => {
     const start = new Date();
     const { status, body } = await request(app)
-      .post("/event/create")
+      .post("/event")
       .send({
         banner: "asdasd",
         name: "tiktokrizzparty",
@@ -59,7 +59,7 @@ describe("/event endpoint", () => {
     const start = new Date();
 
     const response = await request(app)
-      .post("/event/create")
+      .post("/event")
       .set("Cookie", sessionID)
       .send({
         banner:
@@ -90,7 +90,7 @@ describe("/event endpoint", () => {
     let sessionID = loginres.headers["set-cookie"];
 
     const response = await request(app)
-      .post("/event/create")
+      .post("/event")
       .set("Cookie", sessionID)
       .send({
         banner:
