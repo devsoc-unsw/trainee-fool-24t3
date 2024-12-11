@@ -1,4 +1,4 @@
-.calendarPage {
+.container {
     height: 100%;
     gap: 16px;
     display: flex;
@@ -7,14 +7,11 @@
     align-items: center;
 }
 
-.calendarElem {
+.calendar {
     height: 90vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-.test{
-    display: flex
 }
 
 .calendarHeader{
@@ -53,6 +50,6 @@
 }
 
 .monthYearName {
-    font-size: 24px;
+    font-size: 1.5rem;
 }
   

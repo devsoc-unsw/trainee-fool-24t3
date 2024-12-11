@@ -8,7 +8,7 @@ function CalendarCell(props: CalendarCellProps) {
   return (
     <div className={classes.calendarCellWrapper}>
         <div className={classes.calendarCellHeader}>
-            <h1 className={classes.dateElement}>{props.date ? props.date : ''}</h1>
+            <p className={classes.dateElement}>{props.date ? props.date : ''}</p>
         </div>
         <div className={classes.eventSpace}>
 
