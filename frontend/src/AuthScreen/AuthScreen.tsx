@@ -1,7 +1,8 @@
 import { ReactNode, FormEvent } from "react";
 import classes from "./AuthScreen.module.css";
-import Button, { ButtonOptions } from "../Button/Button";
+import Button from "../Button/Button";
 import { AuthError } from "../errorHandler";
+import { ButtonVariants } from "../Button/ButtonTypes";
 
 type AuthScreenProp = {
   heading: string;
@@ -23,7 +24,11 @@ export function AuthScreen(props: AuthScreenProp) {
       <main>
         <form className={classes.form} onSubmit={props.onSubmit}>
           {props.inputs.map((input: ReactNode) => input)}
-          <Button type="submit" className={classes.button}>
+          <Button
+            variant={ButtonVariants.Primary}
+            type="submit"
+            className={classes.button}
+          >
             {props.buttonText}
           </Button>
         </form>
