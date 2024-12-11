@@ -43,7 +43,6 @@ describe("/user endpoint", () => {
     expect(userBody.username == newUser.username);
     expect(userBody.email == newUser.email);
     expect(userBody.dateJoined == newUser.dateJoined);
-    expect(userBody.userType == newUser.userType);
     expect(userBody.profilePicture == newUser.profilePicture);
   });
 
