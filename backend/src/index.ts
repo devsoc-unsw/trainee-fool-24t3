@@ -371,7 +371,7 @@ app.post(
           },
         },
       });
-      return res.status(200).json({ eventRes });
+      return res.status(200).json(eventRes);
     } catch (e) {
       return res.status(400).json({ message: "Invalid event input" });
     }
@@ -382,6 +382,10 @@ app.get("/event", async (req: Request, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
     return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  if (!req.query["id"]) {
+    return res.status(400).json({ message: "Missing `id` query parameter." });
   }
 
   const eventID = Number(req.query["id"]);
