@@ -34,10 +34,10 @@ describe("/attend endpoint", () => {
       .set("Cookie", sessionID)
       .send({
         name: "Rizzsoc",
-        userId: newUser.id,
       });
 
     const socId = societyRes.body.id;
+    console.log(societyRes.body);
     expect(societyRes.status).toBe(200);
     const start = new Date();
 

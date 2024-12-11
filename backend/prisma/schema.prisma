@@ -14,16 +14,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum UserType {
-  ATTENDEE
-}
-
 model User {
   id             Int       @id @default(autoincrement())
   username       String
   email          String
   password       String
-  userType       UserType
   salt           String
   dateJoined     DateTime
   profilePicture String?
