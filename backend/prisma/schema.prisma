@@ -14,24 +14,19 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum UserType {
-  ATTENDEE
-}
-
 model User {
-    id             Int       @id @default(autoincrement())
-    username       String    @unique
-    email          String    @unique
-    password       String
-    userType       UserType
-    salt           String
-    dateJoined     DateTime
-    profilePicture String?
-    societies      Society[] @relation(name: "membertosociety")
-    keywords       Keyword[]
-    adminsocieties Society[]
-    events         Event[]
- }
+  id             Int       @id @default(autoincrement())
+  username       String
+  email          String
+  password       String
+  salt           String
+  dateJoined     DateTime
+  profilePicture String?
+  societies      Society[] @relation(name: "membertosociety")
+  keywords       Keyword[]
+  adminsocieties Society[]
+  events         Event[]
+}
 
 model Society {
   id             Int     @id @default(autoincrement())

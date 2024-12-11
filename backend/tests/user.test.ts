@@ -1,17 +1,16 @@
 //test/sample.test.ts
-import { expect, test, vi, describe } from 'vitest';
-import prisma from '../src/prisma';
-import request from 'supertest';
-import app from '../src/index';
-import { SanitisedUser } from '../src/interfaces';
+import { expect, test, vi, describe } from "vitest";
+import prisma from "../src/prisma";
+import request from "supertest";
+import app from "../src/index";
+import { SanitisedUser } from "../src/interfaces";
 
-describe('/user endpoint', () => {
-  test('login success, fetch /user', async () => {
-    const { status, body } = await request(app).post('/auth/register').send({
-      username: 'shinjisatoo',
-      password: 'testpassword',
-      email: 'longseason1996@gmail.com',
-      userType: 'ATTENDEE',
+describe("/user endpoint", () => {
+  test("login success, fetch /user", async () => {
+    const { status, body } = await request(app).post("/auth/register").send({
+      username: "shinjisatoo",
+      password: "testpassword",
+      email: "longseason1996@gmail.com",
     });
 
     const newUser = await prisma.user.findFirst({
@@ -24,17 +23,17 @@ describe('/user endpoint', () => {
     expect(newUser).not.toBeNull();
     if (newUser == null) return;
 
-    const loginResponse = await request(app).post('/auth/login').send({
+    const loginResponse = await request(app).post("/auth/login").send({
       username: newUser.username,
-      password: 'testpassword',
+      password: "testpassword",
     });
 
     expect(loginResponse.status).toBe(200);
 
-    const sessionID = loginResponse.headers['set-cookie'];
+    const sessionID = loginResponse.headers["set-cookie"];
     const userResponse = await request(app)
-      .get('/user')
-      .set('Cookie', sessionID);
+      .get("/user")
+      .set("Cookie", sessionID);
 
     expect(userResponse.status).toBe(200);
 
@@ -44,19 +43,18 @@ describe('/user endpoint', () => {
     expect(userBody.username == newUser.username);
     expect(userBody.email == newUser.email);
     expect(userBody.dateJoined == newUser.dateJoined);
-    expect(userBody.userType == newUser.userType);
     expect(userBody.profilePicture == newUser.profilePicture);
   });
 
-  test('fetch /user without session', async () => {
-    const response2 = await request(app).get('/user');
+  test("fetch /user without session", async () => {
+    const response2 = await request(app).get("/user");
     expect(response2.status).toBe(401);
   });
 
-  test('fetch /user with invalid session', async () => {
+  test("fetch /user with invalid session", async () => {
     const response2 = await request(app)
-      .get('/user')
-      .set('Cookie', 'invalid_session');
+      .get("/user")
+      .set("Cookie", "invalid_session");
     expect(response2.status).toBe(401);
   });
 });

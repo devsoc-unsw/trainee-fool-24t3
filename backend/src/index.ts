@@ -8,11 +8,12 @@ import {
   CreateSocietyBody,
   CreateEventBody,
   societyIdBody,
-  eventIdBody
+  eventIdBody,
+  RegisterBody,
 } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors, SanitisedUser } from "./interfaces";
-import { PrismaClient, Prisma, UserType, User } from "@prisma/client";
+import { PrismaClient, Prisma, User } from "@prisma/client";
 import prisma from "./prisma";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
@@ -81,17 +82,12 @@ app.get("/", (req: Request, res: Response) => {
 
 app.post(
   "/auth/register",
-  async (req: TypedRequest<LoginBody>, res: Response) => {
-    const { username, email, password, userType } = req.body;
+  async (req: TypedRequest<RegisterBody>, res: Response) => {
+    const { username, email, password } = req.body;
 
-    if (!username || !email || !password || !userType) {
+    if (!username || !email || !password) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-
-    // check database for existing user with same username
-    const errorCheck: LoginErrors = {
-      matchingCredentials: true,
-    };
 
     const results = await prisma.user.findFirst({
       where: {
@@ -100,8 +96,9 @@ app.post(
     });
 
     if (results) {
-      errorCheck.matchingCredentials = true;
-      return res.status(400).json(errorCheck);
+      return res
+        .status(400)
+        .json({ error: "Account with same credentials already exists" });
     }
 
     const saltRounds: number = SALT_ROUNDS;
@@ -115,7 +112,6 @@ app.post(
         email,
         password: hashedPassword,
         salt,
-        userType,
         dateJoined: new Date(),
         profilePicture: null,
       },
@@ -319,7 +315,6 @@ const getUserFromID = async (userID: number): Promise<SanitisedUser | null> => {
       id: user.id,
       username: user.username,
       email: user.email,
-      userType: user.userType,
       dateJoined: user.dateJoined,
       profilePicture: user.profilePicture,
     };
@@ -354,7 +349,6 @@ app.get("/user", async (req, res: Response) => {
     id: user.id,
     username: user.username,
     email: user.email,
-    userType: user.userType,
     dateJoined: user.dateJoined,
     profilePicture: user.profilePicture,
   });
@@ -394,7 +388,7 @@ app.post(
 
       return res.status(200).json(newSociety);
     } catch (e) {
-      return res.status(400).json({message:"invalid society input"});
+      return res.status(400).json({ message: "invalid society input" });
     }
   }
 );
@@ -435,7 +429,7 @@ app.post(
       });
       return res.status(200).json({ eventRes });
     } catch (e) {
-      return res.status(400).json({message:"Invalid event input"})
+      return res.status(400).json({ message: "Invalid event input" });
     }
   }
 );
@@ -447,7 +441,7 @@ function isValidDate(startDate: Date, endDate: Date): boolean {
   return !(
     parsedStartDate.isAfter(parsedEndDate) ||
     parsedStartDate.isSame(parsedEndDate) ||
-    parsedStartDate.isBefore(dayjs(), 'day')
+    parsedStartDate.isBefore(dayjs(), "day")
   );
 }
 
@@ -472,16 +466,15 @@ app.get("/user/societies", async (req, res: Response) => {
   const societies_administering = await prisma.society.findMany({
     where: {
       admin: {
-        id: userID
-      }
-    }
+        id: userID,
+      },
+    },
   });
 
   const societies = {
     joined: societies_joined,
     administering: societies_administering,
   };
-  
 
   return res.status(200).json(societies);
 });
@@ -496,7 +489,8 @@ app.get("/societies", async (req, res: Response) => {
 });
 
 //Lets a user join a society
-app.post("/user/society/join",
+app.post(
+  "/user/society/join",
   async (req: TypedRequest<societyIdBody>, res: Response) => {
     //get userid from session
     const sessionFromDB = await validateSession(
@@ -511,15 +505,15 @@ app.post("/user/society/join",
     //Make sure a society actually exists
     const societyId = await prisma.society.findFirst({
       where: {
-        id: req.body.societyId
+        id: req.body.societyId,
       },
       select: {
-        id: true
-      }
-    })
+        id: true,
+      },
+    });
 
     if (!societyId) {
-      return res.status(400).json({message: "Invalid society"})
+      return res.status(400).json({ message: "Invalid society" });
     }
 
     //Connect society and user
@@ -536,166 +530,176 @@ app.post("/user/society/join",
       },
     });
 
-    return res.status(200).json({message: "ok"});
+    return res.status(200).json({ message: "ok" });
   }
 );
 
-app.delete("/user/society", async (req: TypedRequest<societyIdBody>, res: Response) => {
-  const sessionFromDB = await validateSession(
-    req.session ? req.session : null
-  );
-  if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
-  }
-
-  const userID = sessionFromDB.userId;
-
-  const societyId = await prisma.society.findFirst({
-    where: {
-      id: req.body.societyId
-    },
-    select: {
-      id: true
+app.delete(
+  "/user/society",
+  async (req: TypedRequest<societyIdBody>, res: Response) => {
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
     }
-  })
 
-  if (!societyId) {
-    return res.status(400).json({message: "Invalid society"})
-  }
+    const userID = sessionFromDB.userId;
 
-  const result = await prisma.society.update({
-    where: {
-      id: societyId.id,
-    },
-    data: {
-      members: {
-        disconnect: {
-          id: userID,
+    const societyId = await prisma.society.findFirst({
+      where: {
+        id: req.body.societyId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!societyId) {
+      return res.status(400).json({ message: "Invalid society" });
+    }
+
+    const result = await prisma.society.update({
+      where: {
+        id: societyId.id,
+      },
+      data: {
+        members: {
+          disconnect: {
+            id: userID,
+          },
         },
       },
-    },
-  });
+    });
 
-  return res.status(200).json({message: "ok"});
-})
-
-app.post("/user/event/attend", async (req: TypedRequest<eventIdBody>, res:Response) => {
-  const sessionFromDB = await validateSession(
-    req.session ? req.session : null
-  );
-  if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
+    return res.status(200).json({ message: "ok" });
   }
+);
 
-  const userID = sessionFromDB.userId;
-
-  const event = await prisma.event.findFirst({
-    where: {
-      id: req.body.eventId
-    },
-    select: {
-      id: true
+app.post(
+  "/user/event/attend",
+  async (req: TypedRequest<eventIdBody>, res: Response) => {
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
     }
-  })
 
-  if (!event) {
-    return res.status(400).json({message: "Invalid Event"})
-  }
+    const userID = sessionFromDB.userId;
 
-  const result = await prisma.event.update({
-    where: {
-      id: event.id,
-    },
-    data: {
-      attendees: {
-        connect: {
-          id: userID,
-        },
-      }
-    },
-  });
+    const event = await prisma.event.findFirst({
+      where: {
+        id: req.body.eventId,
+      },
+      select: {
+        id: true,
+      },
+    });
 
-  return res.status(200).json({message: "ok"})
-})
-
-app.delete("/user/event", async (req: TypedRequest<eventIdBody>, res:Response) => {
-  const sessionFromDB = await validateSession(
-    req.session ? req.session : null
-  );
-  if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
-  }
-
-  const userID = sessionFromDB.userId;
-
-  const event = await prisma.event.findFirst({
-    where: {
-      id: req.body.eventId
-    },
-    select: {
-      id: true
+    if (!event) {
+      return res.status(400).json({ message: "Invalid Event" });
     }
-  })
 
-  if (!event) {
-    return res.status(400).json({message: "Invalid Event"})
-  }
-
-  const result = await prisma.event.update({
-    where: {
-      id: event.id,
-    },
-    data: {
-      attendees: {
-        disconnect: {
-          id: userID,
+    const result = await prisma.event.update({
+      where: {
+        id: event.id,
+      },
+      data: {
+        attendees: {
+          connect: {
+            id: userID,
+          },
         },
       },
-    },
-  });
+    });
 
-  return res.status(200).json({message: "ok"})
-});
+    return res.status(200).json({ message: "ok" });
+  }
+);
+
+app.delete(
+  "/user/event",
+  async (req: TypedRequest<eventIdBody>, res: Response) => {
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    const userID = sessionFromDB.userId;
+
+    const event = await prisma.event.findFirst({
+      where: {
+        id: req.body.eventId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!event) {
+      return res.status(400).json({ message: "Invalid Event" });
+    }
+
+    const result = await prisma.event.update({
+      where: {
+        id: event.id,
+      },
+      data: {
+        attendees: {
+          disconnect: {
+            id: userID,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({ message: "ok" });
+  }
+);
 
 //For retrieving the data in the individual event view card
-app.get("/event/details", async (req: TypedRequest<eventIdBody>, res:Response) => {
-  const event = await prisma.event.findFirst({
-    where:{
-      id: req.body.eventId
+app.get(
+  "/event/details",
+  async (req: TypedRequest<eventIdBody>, res: Response) => {
+    const event = await prisma.event.findFirst({
+      where: {
+        id: req.body.eventId,
+      },
+    });
+
+    if (!event) {
+      return res.status(400).json({ message: "invalid society" });
     }
-  })
 
-  if (!event) {
-    return res.status(400).json({message: "invalid society"});
+    return res.status(200).json(event);
   }
-
-  return res.status(200).json(event)
-});
+);
 
 //this is a bit messy
-app.delete("/event", async(req: TypedRequest<eventIdBody>, res:Response) => {
-  const sessionFromDB = await validateSession(
-    req.session ? req.session : null
-  );
+app.delete("/event", async (req: TypedRequest<eventIdBody>, res: Response) => {
+  const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
     return res.status(401).json({ message: "Invalid session provided." });
   }
 
   const userID = sessionFromDB.userId;
-  
+
   //400 if event doesn't exist
   const event = await prisma.event.findFirst({
     where: {
-      id: req.body.eventId
+      id: req.body.eventId,
     },
     select: {
-      id: true, 
-      societyId: true
-    }
-  })
+      id: true,
+      societyId: true,
+    },
+  });
 
   if (!event) {
-    return res.status(400).json({message: "event doesn't exist"});
+    return res.status(400).json({ message: "event doesn't exist" });
   }
 
   //find society associated with event, then check to see if the user is an admin, return 401.
@@ -703,71 +707,73 @@ app.delete("/event", async(req: TypedRequest<eventIdBody>, res:Response) => {
     where: {
       id: event.societyId,
       admin: {
-        id: userID
-      }
+        id: userID,
+      },
     },
     select: {
-      id: true
-    }
-  })
+      id: true,
+    },
+  });
 
   if (!society) {
-    return res.status(401).json({message:"User is not an admin!"});
+    return res.status(401).json({ message: "User is not an admin!" });
   }
 
   //200 if deletion is successful
   try {
     await prisma.event.delete({
       where: {
-        id: event.id
-      }
-    })
+        id: event.id,
+      },
+    });
   } catch (e) {
-    return res.status(400).json({message: "Deletion failed"});
+    return res.status(400).json({ message: "Deletion failed" });
   }
 
-  return res.status(200).json({message:"ok"});
-})
+  return res.status(200).json({ message: "ok" });
+});
 
-app.delete("/society", async(req: TypedRequest<societyIdBody>, res: Response) => {
-  const sessionFromDB = await validateSession(
-    req.session ? req.session : null
-  );
-  if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
-  }
-
-  const userID = sessionFromDB.userId;
-  const society = await prisma.society.findFirst({
-    where: {
-      id: req.body.societyId,
-      admin: {
-        id: userID
-      }
-    },
-    select: {
-      id: true
+app.delete(
+  "/society",
+  async (req: TypedRequest<societyIdBody>, res: Response) => {
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
     }
-  })
 
-  if (!society) {
-    return res.status(401).json({message:"User is not an admin!"});
-  }
-
-  //200 if deletion is successful
-  try {
-    await prisma.society.delete({
+    const userID = sessionFromDB.userId;
+    const society = await prisma.society.findFirst({
       where: {
-        id: society.id
-      }
-    })
-  } catch (e) {
-    return res.status(400).json({message: "Deletion failed"});
+        id: req.body.societyId,
+        admin: {
+          id: userID,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!society) {
+      return res.status(401).json({ message: "User is not an admin!" });
+    }
+
+    //200 if deletion is successful
+    try {
+      await prisma.society.delete({
+        where: {
+          id: society.id,
+        },
+      });
+    } catch (e) {
+      return res.status(400).json({ message: "Deletion failed" });
+    }
+
+    return res.status(200).json({ message: "ok" });
   }
-
-  return res.status(200).json({message:"ok"});
-})
-
+);
 
 app.get("/hello", () => {
   console.log("Hello World!");
