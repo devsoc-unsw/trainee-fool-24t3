@@ -298,6 +298,26 @@ app.get("/user", async (req, res: Response) => {
   });
 });
 
+app.get("/society", async (req, res: Response) => {
+  if (!req.query["id"]) {
+    return res.status(400).json({ message: "Missing `id` query parameter." });
+  }
+
+  const societyID = Number(req.query["id"]);
+
+  const society = await prisma.society.findFirst({
+    where: {
+      id: societyID,
+    },
+  });
+
+  if (!society) {
+    return res.status(404).json({ message: "Society not found." });
+  }
+
+  return res.status(200).json(society);
+});
+
 app.post(
   "/society/create",
   async (req: TypedRequest<CreateSocietyBody>, res: Response) => {
