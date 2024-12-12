@@ -359,15 +359,16 @@ app.get('/society/events', async (req, res: Response) => {
         },
       }),
     },
+    orderBy: {
+      startDateTime: 'asc',
+    },
   });
 
   if (!events || events.length === 0) {
-    return res
-      .status(404)
-      .json({
-        message:
-          'The society does not have any events, or none exist within the provided filters.',
-      });
+    return res.status(404).json({
+      message:
+        'The society does not have any events, or none exist within the provided filters.',
+    });
   }
 
   return res.status(200).json(events);
@@ -498,7 +499,26 @@ app.get('/events', async (req, res: Response) => {
     });
   }
 
+  const before = req.query['before']
+    ? new Date(req.query['before'] as string)
+    : undefined;
+  const after = req.query['after']
+    ? new Date(req.query['after'] as string)
+    : undefined;
+
   const events = await prisma.event.findMany({
+    where: {
+      ...(before && {
+        startDateTime: {
+          lte: before,
+        },
+      }),
+      ...(after && {
+        startDateTime: {
+          gte: after,
+        },
+      }),
+    },
     orderBy: {
       startDateTime: 'asc',
     },
