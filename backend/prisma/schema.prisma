@@ -14,16 +14,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum UserType {
-  ATTENDEE
-}
-
 model User {
   id             Int       @id @default(autoincrement())
-  username       String
-  email          String
+  username       String    @unique
+  email          String    @unique
   password       String
-  userType       UserType
   salt           String
   dateJoined     DateTime
   profilePicture String?
@@ -61,8 +56,8 @@ model Event {
 }
 
 model Keyword {
-  id        Int     @id @default(autoincrement())
-  text      String  @unique
+  id Int @id @default(autoincrement())
+  text String @unique
   subscribers User[]
-  events    Event[]
+  events Event[]
 }
