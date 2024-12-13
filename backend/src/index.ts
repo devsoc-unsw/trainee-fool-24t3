@@ -533,6 +533,56 @@ app.get("/events", async (req, res: Response) => {
   return res.status(200).json(events);
 });
 
+app.get("/user/events", async (req, res: Response) => {
+  const sessionFromDB = await validateSession(req.session ? req.session : null);
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  const userID = sessionFromDB.userId;
+
+  const page = Number(req.query["page"]) - 1 || 0;
+
+  if (page < 0 || isNaN(page)) {
+    return res.status(400).json({
+      message: "Invalid page specified. Note that a page must be 1 or greater.",
+    });
+  }
+
+  const before = req.query["before"]
+    ? new Date(req.query["before"] as string)
+    : undefined;
+  const after = req.query["after"]
+    ? new Date(req.query["after"] as string)
+    : undefined;
+
+  const events = await prisma.event.findMany({
+    where: {
+      ...(before && {
+        startDateTime: {
+          lte: before,
+        },
+      }),
+      ...(after && {
+        startDateTime: {
+          gte: after,
+        },
+      }),
+    },
+    orderBy: {
+      startDateTime: "asc",
+    },
+    skip: page * 10,
+    take: 10,
+  });
+
+  if (!events || events.length === 0) {
+    return res.status(404).json({ message: "No events found." });
+  }
+
+  return res.status(200).json(events);
+});
+
 app.get("/user/societies", async (req, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {

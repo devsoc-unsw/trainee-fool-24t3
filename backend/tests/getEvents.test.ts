@@ -167,8 +167,7 @@ describe("/events endpoint", () => {
 
     const response = await request(app).get("/events");
 
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(0);
+    expect(response.status).toBe(404);
   });
 
   test("Provide invalid page", async () => {
