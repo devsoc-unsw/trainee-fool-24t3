@@ -541,9 +541,10 @@ app.get("/user/events", async (req, res: Response) => {
 
   const userID = sessionFromDB.userId;
 
-  const page = Number(req.query["page"]) - 1 || 0;
+  // pagination is optional for /user/events
+  const page = Number(req.query["page"]) - 1 || undefined;
 
-  if (page < 0 || isNaN(page)) {
+  if (page && (page < 0 || isNaN(page))) {
     return res.status(400).json({
       message: "Invalid page specified. Note that a page must be 1 or greater.",
     });
@@ -568,12 +569,19 @@ app.get("/user/events", async (req, res: Response) => {
           gte: after,
         },
       }),
+      attendees: {
+        some: {
+          id: userID,
+        },
+      },
     },
     orderBy: {
       startDateTime: "asc",
     },
-    skip: page * 10,
-    take: 10,
+    ...(page && {
+      skip: page * 10,
+      take: 10,
+    }),
   });
 
   if (!events || events.length === 0) {
