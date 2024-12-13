@@ -21,7 +21,8 @@ function Button(props: ButtonProps) {
     <button
       className={`${classes.button} ${
         props.variant ? classes[props.variant] : ""
-      } ${props.className ? props.className : ""}`}
+      } ${props.className ? props.className : ""
+      } ${props.children ? classes.stringButton : ""}`}
       type={props.type}
     >
       {props.icon === ButtonIcons.Plus && (
@@ -40,7 +41,7 @@ function Button(props: ButtonProps) {
         <ShareIcon className={classes.icon}></ShareIcon>
       )}
       {props.children && (
-        <span className={classes.string}>{props.children}</span>
+        <span>{props.children}</span>
       )}
     </button>
   );

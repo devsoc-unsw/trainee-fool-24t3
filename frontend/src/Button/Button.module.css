@@ -19,6 +19,10 @@
   cursor: pointer;
 }
 
+.stringButton {
+  padding: 12px 28px;
+}
+
 .primary {
   background: hsl(203, 88%, 27%);
   color: hsl(202, 49%, 90%);
@@ -49,10 +53,6 @@
 
 .icon {
   height: 64px;
-}
-
-.string {
-  padding: 0px 16px;
 }
 
 .round-secondary {
