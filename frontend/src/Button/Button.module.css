@@ -1,12 +1,11 @@
 .button {
   border: 0px;
   border-radius: 8px;
-  width: fit-content;
+  width: 64px;
   font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
   margin: 0px;
   background: none;
   outline: 2px solid white;
@@ -21,6 +20,7 @@
 
 .stringButton {
   padding: 12px 28px;
+  width: fit-content;
 }
 
 .primary {
@@ -53,6 +53,7 @@
 
 .icon {
   height: 64px;
+  padding: 16px;
 }
 
 .round-secondary {

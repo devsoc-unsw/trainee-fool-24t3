@@ -46,7 +46,7 @@ describe("Delete Event Endpoint", () => {
     const start = new Date();
 
     const createRes = await request(app)
-      .post("/event/create")
+      .post("/event")
       .set("Cookie", sessionID)
       .send({
         banner:
@@ -113,7 +113,7 @@ describe("Delete Event Endpoint", () => {
     const start = new Date();
 
     const createRes = await request(app)
-      .post("/event/create")
+      .post("/event")
       .set("Cookie", sessionID)
       .send({
         banner:
