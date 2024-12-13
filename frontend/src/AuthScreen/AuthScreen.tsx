@@ -12,6 +12,7 @@ type AuthScreenProp = {
   footer?: ReactNode;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   error?: AuthError;
+  success?: string;
 };
 
 export function AuthScreen(props: AuthScreenProp) {
@@ -36,6 +37,11 @@ export function AuthScreen(props: AuthScreenProp) {
 
       <footer className={classes.footer}>
         {props.footer && <div>{props.footer}</div>}{" "}
+        {props.success && (
+          <div className={classes.success}>
+            <p>{props.success}</p>
+          </div>
+        )}
         {props.error && (
           <div>
             <p className={classes.error}>{props.error.message}</p>

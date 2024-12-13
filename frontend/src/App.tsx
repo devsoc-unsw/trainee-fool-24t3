@@ -21,13 +21,16 @@ function App() {
   useEffect(() => {
     fetch("http://localhost:5180/user", {
       method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
     }).then((res) => {
       if (res.ok) {
         res.json().then((data) => {
           console.log(data);
         });
       } else {
-        console.log("Not logged in or problem");
         res.json().then((data) => {
           console.log(data);
         });

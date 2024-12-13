@@ -4,13 +4,15 @@ import { TextInput, TextOptions } from "../TextInput/TextInput";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { useState, FormEvent } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { errorHandler, AuthError } from "../errorHandler";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<AuthError | undefined>(undefined);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const res = await fetch("http://localhost:5180/auth/login", {
@@ -18,6 +20,7 @@ export default function LoginPage() {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         username,
         password,
@@ -29,6 +32,10 @@ export default function LoginPage() {
       setError(errorHandler(json.error));
     } else {
       setError(undefined);
+      setSuccess("Logged in successfully! Redirecting...");
+      setTimeout(() => {
+        navigate("/timeline");
+      }, 1000);
     }
   }
 
@@ -67,6 +74,7 @@ export default function LoginPage() {
         footer={<p>Forgot Password</p>}
         onSubmit={handleSubmit}
         error={error}
+        success={success}
       />
       <div className={classes.lower} />
     </main>
