@@ -1,29 +1,10 @@
-import { expect, test, describe } from "vitest";
-import prisma from "../src/prisma";
+import { describe, expect, test } from "vitest";
 import request from "supertest";
 import app from "../src/index";
-import { beforeEach } from "node:test";
-import dayjs from "dayjs";
+import prisma from "../src/prisma";
 
 describe("/event endpoint", () => {
-  test("Session Invalid", async () => {
-    const start = new Date();
-    const { status, body } = await request(app)
-      .post("/event")
-      .send({
-        banner: "asdasd",
-        name: "tiktokrizzparty",
-        startDateTime: start,
-        endDateTime: new Date(start.getTime() + 86400000),
-        location: "tampa, florida",
-        description: "fein! fein! fein! fein! fein so good she honor roll",
-      });
-
-    expect(status).toBe(401);
-    expect(body.message).toBe("Invalid session provided.");
-  });
-
-  test("Create Record", async () => {
+  test("Create and get event successfully", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
@@ -73,15 +54,32 @@ describe("/event endpoint", () => {
       });
 
     expect(response.status).toBe(200);
-    expect(response.body.name).toBe("tiktokrizzparty");
+
+    const getRes = await request(app)
+      .get("/event")
+      .set("Cookie", sessionID)
+      .query({
+        id: response.body.id,
+      });
+
+    expect(getRes.status).toBe(200);
+    expect(getRes.body.name).toBe("tiktokrizzparty");
   });
 
-  test("Invalid Date(end before start)", async () => {
+  test("Get nonexistent event", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
       email: "longseason1996@gmail.com",
     });
+
+    const newUser = await prisma.user.findFirst({
+      where: {
+        id: body.newUser.id,
+      },
+    });
+
+    expect(status).toBe(201);
 
     const loginres = await request(app).post("/auth/login").send({
       username: "shinjisatoo",
@@ -90,17 +88,38 @@ describe("/event endpoint", () => {
     let sessionID = loginres.headers["set-cookie"];
 
     const response = await request(app)
-      .post("/event")
+      .get("/event")
       .set("Cookie", sessionID)
-      .send({
-        banner:
-          "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-        name: "tiktokrizzparty",
-        startDateTime: dayjs().add(30, "m"),
-        endDateTime: dayjs().add(15, "m"),
-        location: "tampa, florida",
-        description: "fein! fein! fein! fein! fein so good she honor roll",
+      .query({
+        id: 1,
       });
+
+    expect(response.status).toBe(404);
+  });
+
+  test("Don't provide event id", async () => {
+    const { status, body } = await request(app).post("/auth/register").send({
+      username: "shinjisatoo",
+      password: "testpassword",
+      email: "longseason1996@gmail.com",
+    });
+
+    const newUser = await prisma.user.findFirst({
+      where: {
+        id: body.newUser.id,
+      },
+    });
+
+    expect(status).toBe(201);
+    expect(newUser).not.toBeNull();
+
+    const loginres = await request(app).post("/auth/login").send({
+      username: "shinjisatoo",
+      password: "testpassword",
+    });
+    let sessionID = loginres.headers["set-cookie"];
+
+    const response = await request(app).get("/event").set("Cookie", sessionID);
 
     expect(response.status).toBe(400);
   });

@@ -33,6 +33,10 @@ export interface CreateEventBody {
   societyId: number;
 }
 
+export interface UpdateEventBody extends CreateEventBody {
+  id: number;
+}
+
 //strictNullChecks being set to false broke some more code, so I'm just gonna make it string|null
 export interface CreateSocietyBody {
   name: string;
