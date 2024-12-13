@@ -3,7 +3,11 @@ import { AuthScreen } from "../AuthScreen/AuthScreen";
 import { TextInput, TextOptions } from "../TextInput/TextInput";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
+<<<<<<< HEAD
 import { useState, FormEvent, useContext } from "react";
+=======
+import { useState, FormEvent } from "react";
+>>>>>>> c0fca79 (added redirection upon registration and logging in)
 import { Link, useNavigate } from "react-router";
 import { errorHandler, AuthError } from "../errorHandler";
 import { UserContext, User } from "../UserContext/UserContext";
@@ -12,10 +16,14 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<AuthError | undefined>(undefined);
+<<<<<<< HEAD
   const [success, setSuccess] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
 
+=======
+  const navigate = useNavigate();
+>>>>>>> c0fca79 (added redirection upon registration and logging in)
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const res = await fetch("http://localhost:5180/auth/login", {
