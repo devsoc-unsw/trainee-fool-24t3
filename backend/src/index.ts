@@ -723,7 +723,7 @@ app.delete(
 );
 
 app.post(
-  "/user/event/attend",
+  "/user/event",
   async (req: TypedRequest<eventIdBody>, res: Response) => {
     const sessionFromDB = await validateSession(
       req.session ? req.session : null

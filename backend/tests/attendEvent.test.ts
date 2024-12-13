@@ -2,10 +2,8 @@ import { expect, test, vi, describe } from "vitest"; // 👈🏻 Added the `vi` 
 import prisma from "../src/prisma";
 import request from "supertest";
 import app from "../src/index";
-import { beforeEach } from "node:test";
-import dayjs from "dayjs";
 
-describe("/attend endpoint", () => {
+describe("POST /user/event (attend) endpoint", () => {
   test("Attend successful", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
@@ -55,7 +53,7 @@ describe("/attend endpoint", () => {
       });
 
     const attendRes = await request(app)
-      .post("/user/event/attend")
+      .post("/user/event")
       .set("Cookie", sessionID)
       .send({
         eventId: eventRes.body.numId,
@@ -114,7 +112,7 @@ describe("/attend endpoint", () => {
       });
 
     const attendRes = await request(app)
-      .post("/user/event/attend")
+      .post("/user/event")
       .set("Cookie", sessionID)
       .send({
         eventId: -123,
