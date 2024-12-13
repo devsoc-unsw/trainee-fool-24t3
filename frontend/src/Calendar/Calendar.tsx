@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, subMonths, getDaysInMonth } from 'date-fns'
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline"
 import classes from './Calendar.module.css'
@@ -12,11 +12,12 @@ function Calendar() {
     
     const addMonth = (currentDate:Date) => {
         setCurrentDate(addMonths(currentDate, 1));
+        fetchEvents();
     }
 
     const subMonth = (currentDate:Date) => {
-        console.log(subMonth);
         setCurrentDate(subMonths(currentDate, 1));
+        fetchEvents();
     }
     
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -29,8 +30,41 @@ function Calendar() {
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const startDayIndex = mapDayIndex(getDay(firstDay));
     const dayBuffer = (42-(getDaysInMonth(currentDate)+startDayIndex));
-    //const [eventsInMonth, setEventsInMonth] = useState([]);
 
+    const getEventsInMonth = async(firstDay:Date, lastDay:Date) => {
+        const params = new URLSearchParams({
+            after: format(firstDay, 'yyyy-MM-dd'),
+            before: format(lastDay, 'yyyy-MM-dd'),
+        });
+
+        try {
+            //not gonna use user/events for now as idk if login is working with the frontedn
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL + '/events?' + params}`)
+
+            if (res.ok) {
+                const data = await res.json(); 
+                return data; 
+            } else {
+                return []; 
+            }
+
+        } catch(error) {
+            console.error(error);
+            return []
+        }
+    } 
+    const [eventsInMonth, setEventsInMonth] = useState([]);
+  
+    const fetchEvents = async () => {
+        const events = await getEventsInMonth(firstDay, lastDay);
+        setEventsInMonth(events); 
+    };
+
+    useEffect(() => {
+        fetchEvents();
+    }, [currentDate]);
+    
+    console.log(eventsInMonth);
     return (
         <div className={classes.container}>
             <div className={classes.calendar}>
