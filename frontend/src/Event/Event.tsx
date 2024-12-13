@@ -1,4 +1,4 @@
-import classes from './Event.module.css';
+import classes from "./Event.module.css";
 
 type EventProps = {
   image: string;
