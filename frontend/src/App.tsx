@@ -1,6 +1,6 @@
 import "./App.css";
 import NavBar from "./NavBar/NavBar";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import HomePage from "./HomePage/HomePage";
 import AboutPage from "./About/About";
 import Calendar from "./Calendar/Calendar";
@@ -51,7 +51,10 @@ function App() {
             path="/settings"
             element={
               // this propagates to all child routes
-              <ProtectedRoute isAuthenticated={true}>
+              <ProtectedRoute
+                isAuthenticated={false}
+                fallback={<Navigate to="/login" />}
+              >
                 <Settings />
               </ProtectedRoute>
             }

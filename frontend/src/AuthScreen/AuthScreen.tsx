@@ -1,4 +1,4 @@
-import { ReactNode, FormEvent } from "react";
+import { ReactNode, FormEvent, Fragment } from "react";
 import classes from "./AuthScreen.module.css";
 import Button from "../Button/Button";
 import { AuthError } from "../errorHandler";
@@ -24,7 +24,9 @@ export function AuthScreen(props: AuthScreenProp) {
       </header>
       <main>
         <form className={classes.form} onSubmit={props.onSubmit}>
-          {props.inputs.map((input: ReactNode) => input)}
+          {props.inputs.map((input: ReactNode, index) => (
+            <Fragment key={index}>{input}</Fragment>
+          ))}
           <Button
             variant={ButtonVariants.Primary}
             type="submit"
