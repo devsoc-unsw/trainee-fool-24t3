@@ -8,6 +8,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { ButtonIcons, ButtonVariants } from './ButtonTypes';
+import { MouseEventHandler } from 'react';
 
 type ButtonProps = {
   children?: string;
@@ -15,6 +16,7 @@ type ButtonProps = {
   variant?: ButtonVariants;
   className?: string;
   type: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
+  onClick?: MouseEventHandler<HTMLButtonElement>
 };
 
 function Button(props: ButtonProps) {
@@ -26,6 +28,7 @@ function Button(props: ButtonProps) {
         props.children ? classes.stringButton : ""
       }`}
       type={props.type}
+      onClick={props.onClick ? props.onClick : () => {}}
     >
       {props.icon === ButtonIcons.Plus && (
         <PlusIcon className={classes.icon}></PlusIcon>
