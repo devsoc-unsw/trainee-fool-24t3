@@ -712,6 +712,10 @@ app.delete("/society", async(req: TypedRequest<societyIdBody>, res: Response) =>
   return res.status(200).json({message:"ok"});
 })
 
+// - app.get("/user/keywords") - Keywords a user is associated with
+// - app.post("/keyword") - Creates a keyword
+// - app.post("/user/keyword") - Associates a user with a keyword
+// - app.delete("/user/keyword") - Disassociates a user with a keyword
 
 app.get("/hello", () => {
   console.log("Hello World!");
