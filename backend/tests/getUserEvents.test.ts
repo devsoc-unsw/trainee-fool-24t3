@@ -86,12 +86,9 @@ describe("GET /user/events endpoint", () => {
 
     // attend five of the events
     for (let i = 0; i < 5; i++) {
-      await request(app)
-        .post("/user/events/attend")
-        .set("Cookie", sessionID)
-        .send({
-          eventId: events[i],
-        });
+      await request(app).post("/user/event").set("Cookie", sessionID).send({
+        eventId: events[i],
+      });
     }
 
     const getRes = await request(app)
