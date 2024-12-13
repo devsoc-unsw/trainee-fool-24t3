@@ -99,7 +99,102 @@ describe("GET /user/events endpoint", () => {
     expect(getRes.body.length).toBe(5);
   });
 
-  test("Create and get events successfully, events are provided by pages", async () => {
+  test("Attend many events", async () => {
+    const { status, body } = await request(app).post("/auth/register").send({
+      username: "shinjisatoo",
+      password: "testpassword",
+      email: "longseason1996@gmail.com",
+    });
+
+    const newUser = await prisma.user.findFirst({
+      where: {
+        id: body.newUser.id,
+      },
+    });
+
+    if (newUser == null) return;
+    expect(status).toBe(201);
+    expect(newUser).not.toBeNull();
+
+    // create a second user, who will be attending the events
+    const { status: status2, body: body2 } = await request(app)
+      .post("/auth/register")
+      .send({
+        username: "shinjisatoo2",
+        password: "testpassword",
+        email: "longseason1997@gmail.com",
+      });
+
+    const newUser2 = await prisma.user.findFirst({
+      where: {
+        id: body2.newUser.id,
+      },
+    });
+
+    expect(status2).toBe(201);
+
+    const loginres = await request(app).post("/auth/login").send({
+      username: "shinjisatoo",
+      password: "testpassword",
+    });
+    let sessionID = loginres.headers["set-cookie"];
+
+    const societyRes = await request(app)
+      .post("/society/create")
+      .set("Cookie", sessionID)
+      .send({
+        name: "Rizzsoc",
+        userId: newUser.id,
+      });
+
+    const socId = societyRes.body.id;
+    expect(societyRes.status).toBe(200);
+    const start = new Date();
+
+    const events: Number[] = [];
+    for (let i = 0; i < 20; i++) {
+      const response = await request(app)
+        .post("/event")
+        .set("Cookie", sessionID)
+        .send({
+          banner:
+            "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
+          name: "tiktokrizzparty" + i,
+          startDateTime: new Date(),
+          endDateTime: new Date(start.getTime() + 864000 + i),
+          location: "tampa, florida",
+          description: "fein! fein! fein! fein! fein so good she honor roll",
+          societyId: socId,
+        });
+
+      expect(response.status).toBe(200);
+      events.push(response.body.id);
+    }
+
+    // log in as second user
+    const loginres2 = await request(app).post("/auth/login").send({
+      username: "shinjisatoo2",
+      password: "testpassword",
+    });
+    expect(loginres2.status).toBe(200);
+    sessionID = loginres2.headers["set-cookie"];
+
+    // attend fifteen of the events
+    for (let i = 0; i < 15; i++) {
+      await request(app).post("/user/event").set("Cookie", sessionID).send({
+        eventId: events[i],
+      });
+    }
+
+    const getRes = await request(app)
+      .get("/user/events")
+      .set("Cookie", sessionID);
+
+    expect(getRes.status).toBe(200);
+    expect(getRes.body.length).toBe(15);
+  });
+
+  test("Create and get events successfully, user events are provided by pages", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
@@ -122,6 +217,16 @@ describe("GET /user/events endpoint", () => {
     });
     let sessionID = loginres.headers["set-cookie"];
 
+    const { status: status2, body: body2 } = await request(app)
+      .post("/auth/register")
+      .send({
+        username: "shinjisatoo2",
+        password: "testpassword",
+        email: "longseason1997@gmail.com",
+      });
+
+    expect(status2).toBe(201);
+
     const societyRes = await request(app)
       .post("/society/create")
       .set("Cookie", sessionID)
@@ -133,6 +238,8 @@ describe("GET /user/events endpoint", () => {
     const socId = societyRes.body.id;
     expect(societyRes.status).toBe(200);
     const start = new Date();
+
+    const events: Number[] = [];
 
     for (let i = 0; i < 25; i++) {
       const response = await request(app)
@@ -150,34 +257,54 @@ describe("GET /user/events endpoint", () => {
         });
 
       expect(response.status).toBe(200);
+      events.push(response.body.id);
     }
 
-    const getRes = await request(app).get("/events");
-
-    expect(getRes.status).toBe(200);
-    expect(getRes.body.length).toBe(10);
-
-    const pageOne = await request(app).get("/events").query({
-      page: 1,
+    // log in as second user
+    const loginres2 = await request(app).post("/auth/login").send({
+      username: "shinjisatoo2",
+      password: "testpassword",
     });
+    expect(loginres2.status).toBe(200);
+    sessionID = loginres2.headers["set-cookie"];
+
+    // attend 22 of the events
+    for (let i = 0; i < 22; i++) {
+      await request(app).post("/user/event").set("Cookie", sessionID).send({
+        eventId: events[i],
+      });
+    }
+
+    const pageOne = await request(app)
+      .get("/user/events")
+      .set("Cookie", sessionID)
+      .query({
+        page: 1,
+      });
 
     expect(pageOne.status).toBe(200);
-    expect(pageOne.body).toStrictEqual(getRes.body);
+    expect(pageOne.body.length).toBe(10);
 
-    const pageTwo = await request(app).get("/events").query({
-      page: 2,
-    });
+    const pageTwo = await request(app)
+      .get("/user/events")
+      .set("Cookie", sessionID)
+      .query({
+        page: 2,
+      });
 
     expect(pageTwo.status).toBe(200);
-    expect(pageTwo.body).not.toStrictEqual(pageOne.body);
     expect(pageTwo.body.length).toBe(10);
+    expect(pageTwo.body).not.toStrictEqual(pageOne.body);
 
-    const pageThree = await request(app).get("/events").query({
-      page: 3,
-    });
+    const pageThree = await request(app)
+      .get("/user/events")
+      .set("Cookie", sessionID)
+      .query({
+        page: 3,
+      });
 
     expect(pageThree.status).toBe(200);
-    expect(pageThree.body.length).toBe(5);
+    expect(pageThree.body.length).toBe(2);
   }, 20000);
 
   test("Get events when none exist", async () => {

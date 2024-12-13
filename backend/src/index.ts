@@ -542,12 +542,16 @@ app.get("/user/events", async (req, res: Response) => {
   const userID = sessionFromDB.userId;
 
   // pagination is optional for /user/events
-  const page = Number(req.query["page"]) - 1 || undefined;
 
-  if (page && (page < 0 || isNaN(page))) {
-    return res.status(400).json({
-      message: "Invalid page specified. Note that a page must be 1 or greater.",
-    });
+  let page = undefined;
+  if (req.query["page"]) {
+    page = Number(req.query["page"]) - 1;
+    if (page < 0 || isNaN(page)) {
+      return res.status(400).json({
+        message:
+          "Invalid page specified. Note that a page must be 1 or greater.",
+      });
+    }
   }
 
   const before = req.query["before"]
@@ -578,7 +582,7 @@ app.get("/user/events", async (req, res: Response) => {
     orderBy: {
       startDateTime: "asc",
     },
-    ...(page && {
+    ...(page !== undefined && {
       skip: page * 10,
       take: 10,
     }),
