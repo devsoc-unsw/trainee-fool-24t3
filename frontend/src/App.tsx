@@ -14,10 +14,10 @@ import { DiscordPage } from "./Settings/SettingsPage/DiscordPage/DiscordPage";
 import { Unauthenticated } from "./Unauthenticated/Unauthenticated";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
 import { useEffect, useState } from "react";
-import { UserContext } from "./UserContext/UserContext";
+import { User, UserContext } from "./UserContext/UserContext";
 
 function App() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:5180/user", {
@@ -37,20 +37,40 @@ function App() {
 
   return (
     <BrowserRouter>
-      <UserContext.Provider value={user}>
+      <UserContext.Provider value={{ user, setUser }}>
         <div className="page">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/timeline" element={<Calendar />} /> //
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user === null}
+                  fallback={<Navigate to="/settings/profile" />}
+                >
+                  <LoginPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user === null}
+                  fallback={<Navigate to="/settings/profile" />}
+                >
+                  <RegisterPage />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/settings"
               element={
                 // this propagates to all child routes
                 <ProtectedRoute
-                  isAuthenticated={user.id !== undefined}
+                  isAuthenticated={user !== null && user.id !== undefined}
                   fallback={<Navigate to="/login" />}
                 >
                   <Settings />
