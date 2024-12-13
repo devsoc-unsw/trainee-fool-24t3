@@ -625,6 +625,10 @@ app.put("/event", async (req: TypedRequest<UpdateEventBody>, res: Response) => {
     return res.status(404).json({ message: "Event not found." });
   }
 
+  if (!isValidDate(req.body.startDateTime, req.body.endDateTime)) {
+    return res.status(400).json({ message: "Invalid date" });
+  }
+
   try {
     const eventRes = await prisma.event.update({
       where: {
