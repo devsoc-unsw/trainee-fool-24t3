@@ -5,6 +5,7 @@ import {
   ChevronLeftIcon,
   MagnifyingGlassIcon,
   ShareIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { ButtonIcons, ButtonVariants } from './ButtonTypes';
 
@@ -21,8 +22,9 @@ function Button(props: ButtonProps) {
     <button
       className={`${classes.button} ${
         props.variant ? classes[props.variant] : ""
-      } ${props.className ? props.className : ""
-      } ${props.children ? classes.stringButton : ""}`}
+      } ${props.className ? props.className : ""} ${
+        props.children ? classes.stringButton : ""
+      }`}
       type={props.type}
     >
       {props.icon === ButtonIcons.Plus && (
@@ -40,9 +42,10 @@ function Button(props: ButtonProps) {
       {props.icon === ButtonIcons.Share && (
         <ShareIcon className={classes.icon}></ShareIcon>
       )}
-      {props.children && (
-        <span>{props.children}</span>
+      {props.icon === ButtonIcons.Cross && (
+        <XMarkIcon className={classes.icon}></XMarkIcon>
       )}
+      {props.children && <span>{props.children}</span>}
     </button>
   );
 }

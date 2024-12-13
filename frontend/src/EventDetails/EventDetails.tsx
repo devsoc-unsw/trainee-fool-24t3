@@ -1,5 +1,6 @@
 import classes from "./EventDetails.module.css";
-import Button, { ButtonOptions } from "../Button/Button";
+import Button from "../Button/Button";
+import { ButtonIcons, ButtonVariants } from "../Button/ButtonTypes"
 import {
   ArrowTopRightOnSquareIcon,
   CalendarIcon,
@@ -8,8 +9,8 @@ import {
   MapPinIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { Keyword, KeywordOptions } from "../Keyword/Keyword";
-import ShareButton from "../ShareButton/ShareButton";
+import { Keyword } from "../Keyword/Keyword";
+import { KeywordOptions } from "../Keyword/KeywordTypes"
 
 type EventDetailsProps = {
   image: string;
@@ -35,7 +36,14 @@ function EventDetails(props: EventDetailsProps) {
           backgroundImage: `url(${props.image})`,
           backgroundPositionY: props.backgroundPositionY,
         }}
-      ></div>
+      >
+        <Button
+          type={"button"}
+          icon={ButtonIcons.Cross}
+          variant={ButtonVariants.Primary}
+          className={classes.exitIcon}
+        ></Button>
+      </div>
 
       <div className={classes.info}>
         <div className={classes.details}>
@@ -73,10 +81,16 @@ function EventDetails(props: EventDetailsProps) {
           <div className={classes.actions}>
             <Button
               type={"button"}
-              variant={ButtonOptions.Bookmark}
+              icon={ButtonIcons.Bookmark}
+              variant={ButtonVariants.Primary}
               className={classes.actionIcon}
             ></Button>
-            <ShareButton className={classes.actionIcon}></ShareButton>
+            <Button
+              type={"button"}
+              icon={ButtonIcons.Share}
+              variant={ButtonVariants.Secondary}
+              className={classes.actionIcon}
+            ></Button>
           </div>
         </div>
 
