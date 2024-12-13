@@ -3,6 +3,7 @@ export enum ButtonIcons {
   Bookmark = 'bookmark',
   Search = 'search',
   Back = 'back',
+  Share = 'share',
 }
 
 export enum ButtonVariants {
