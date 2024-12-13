@@ -28,7 +28,11 @@ export default function GenerateOTP() {
       setError(errorHandler(json.message));
     } else {
       setError(undefined);
-      navigate('/changepassword/verify');
+      navigate('/changepassword/verify', {
+        state: {
+          email,
+        },
+      });
     }
   }
   return (

@@ -51,6 +51,13 @@ export function errorHandler(error: string): AuthError {
         passwordError: true,
         emailError: true,
       };
+    case 'One time code is invalid or expired.':
+      return {
+        message: error,
+        usernameError: false,
+        passwordError: false,
+        emailError: false,
+      };
     default:
       return {
         message: `An unexpected error occured: ${error}`,
