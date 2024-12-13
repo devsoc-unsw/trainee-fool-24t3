@@ -11,6 +11,7 @@ import {
   eventIdBody,
   RegisterBody,
   UpdateEventBody,
+  CreateKeywordBody,
 } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors, SanitisedUser } from "./interfaces";
@@ -34,11 +35,26 @@ declare module "express-session" {
 }
 
 // Initialize client.
-if (process.env["REDIS_PORT"] === undefined) {
+if (
+  process.env["REDIS_PORT"] === undefined ||
+  process.env["REDIS_PORT"] === ""
+) {
   console.log(process.env);
   console.error("Redis port not provided in .env file");
   process.exit(1);
 }
+
+let allowed_origins;
+if (
+  process.env["ALLOWED_ORIGINS"] === undefined ||
+  process.env["ALLOWED_ORIGINS"] === ""
+) {
+  console.log("Warning: ALLOWED_ORIGINS not specified. Using wildcard *.");
+  allowed_origins = ["*"];
+} else {
+  allowed_origins = process.env["ALLOWED_ORIGINS"]?.split(",");
+}
+
 let redisClient = createClient({
   url: `redis://localhost:${process.env["REDIS_PORT"]}`,
 });
@@ -55,7 +71,12 @@ const app = express();
 const SERVER_PORT = 5180;
 const SALT_ROUNDS = 10;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: allowed_origins,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 if (process.env["SESSION_SECRET"] === undefined) {
@@ -1116,9 +1137,77 @@ app.delete(
       return res.status(400).json({ message: "Deletion failed" });
     }
 
-    return res.status(200).json({ message: "ok" });
-  }
-);
+  return res.status(200).json({message:"ok"});
+})
+
+// gets keywords a user is associated with
+app.get(
+  "/user/keywords", 
+  async (req, res: Response) => {
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    const userID = sessionFromDB.userId;
+
+    const userKeywords = await prisma.user.findFirst({
+      where: {
+        id: userID,
+      },
+      select: {
+        keywords: {
+          select: {text: true}
+        },
+      }
+    })
+
+  return res.status(200).json(userKeywords);
+});
+
+// creates a keyword
+app.post(
+  "/keyword", 
+  async (req: TypedRequest<CreateKeywordBody>, res: Response) => {
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ message: "Invalid input." });
+    }
+
+    const keywordExists = await prisma.keyword.findFirst({
+      where: {
+        text: text,
+      }
+    });
+
+    if (keywordExists) {
+      return res.status(400).json({ message: "Keyword already exists." });
+    }
+
+    try {
+      const newKeyword = await prisma.keyword.create({
+        data: {
+          text: text,
+        },
+      });
+      return res.status(200).json(newKeyword);
+    } catch (e) {
+      return res.status(400).json({ message: "invalid keyword input" });
+    }
+});
+
+// - app.post("/user/keyword") - Associates a user with a keyword
+// - app.delete("/user/keyword") - Disassociates a user with a keyword
 
 app.get("/hello", () => {
   console.log("Hello World!");

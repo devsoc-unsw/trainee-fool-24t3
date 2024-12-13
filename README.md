@@ -10,7 +10,7 @@
 ```bash
 SESSION_SECRET=
 NODE_ENV=development
-ALLOWED_ORIGINS=commaseparated,regexes,slashesnotrequired
+ALLOWED_ORIGINS=commaseparated,urls,or,regexes
 DATABASE_URL="postgresql://.../postgres?pgbouncer=true"
 DIRECT_URL="postgresql://.../postgres"
 REDIS_PORT=6379

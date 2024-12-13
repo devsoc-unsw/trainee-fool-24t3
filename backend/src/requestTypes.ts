@@ -43,6 +43,10 @@ export interface CreateSocietyBody {
   profilePicture: string | null;
 }
 
+export interface CreateKeywordBody {
+  text: string;
+}
+
 export interface DiscordLoginBody {
   discordID: number;
 }
