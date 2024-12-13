@@ -1,0 +1,19 @@
+.dropdown {
+
+}
+
+.container {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background: hsl(0, 0%, 91%);
+    padding: 32px;
+    padding-left: 24px;
+    border-radius: 16px 0px 0px 16px;
+  }
+
+.label {
+    font-weight: bold;
+}
