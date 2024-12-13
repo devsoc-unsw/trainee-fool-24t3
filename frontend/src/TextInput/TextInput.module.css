@@ -29,6 +29,13 @@
     transition: outline 0.07s linear;
 }
 
+.error{
+    outline: 3px hsl(0, 100%, 64%) solid;
+}
+
 .focus{
     outline: 3px hsl(203, 88%, 27%) solid;
 }
+
+
+
