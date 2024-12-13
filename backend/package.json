@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=dev ts-node src/index.ts",
-    "start_win": "set NODE_ENV=dev && ts-node src/index.ts",
-    "test": "vitest",
+    "test": "vitest --inspect-brk --no-file-parallelism --disable-console-intercept",
     "test:int": "./scripts/run-integration.sh"
   },
   "keywords": [],
@@ -20,6 +19,8 @@
     "dayjs": "^1.11.13",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
+    "form-data": "^4.0.1",
+    "mailgun.js": "^10.2.3",
     "prisma": "^5.22.0",
     "redis": "^4.7.0",
     "zod": "^3.23.8",

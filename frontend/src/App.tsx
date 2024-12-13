@@ -3,6 +3,7 @@ import NavBar from "./NavBar/NavBar";
 import { BrowserRouter, Route, Routes } from "react-router";
 import HomePage from "./HomePage/HomePage";
 import AboutPage from "./About/About";
+import Calendar from "./Calendar/Calendar"
 import LoginPage from "./Login/Login";
 import RegisterPage from "./Register/Register";
 import { Settings } from './Settings/Settings';
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/timeline" element={<Calendar/>}/> //
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/settings" element={<Settings />}>
