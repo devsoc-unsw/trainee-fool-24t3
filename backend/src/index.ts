@@ -10,6 +10,7 @@ import {
   societyIdBody,
   eventIdBody,
   RegisterBody,
+  UpdateEventBody,
 } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors, SanitisedUser } from "./interfaces";
@@ -21,7 +22,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { generateOTP } from "./routes/OTP/generateOTP";
 import assert from "assert";
 import { verifyOTP } from "./routes/OTP/verifyOTP";
-import { findUserFromId, updateUserPasswordFromEmail } from "./routes/User/user";
+import {
+  findUserFromId,
+  updateUserPasswordFromEmail,
+} from "./routes/User/user";
 
 declare module "express-session" {
   interface SessionData {
@@ -129,82 +133,86 @@ app.post(
   }
 );
 
-app.post("/auth/otp/generate", async(req: Request, res: Response) => {
+app.post("/auth/otp/generate", async (req: Request, res: Response) => {
   try {
-    const { email } : { email: string} = req.body;
-    
-    if(!email) {
+    const { email }: { email: string } = req.body;
+
+    if (!email) {
       throw new Error("Email address expected.");
     }
 
-    const token = await generateOTP(email); 
+    const token = await generateOTP(email);
 
     if (token) {
       const expiryTime = process.env["OTP_EXPIRES"];
 
       try {
-        await redisClient.set(email, token, { EX: parseInt(expiryTime as string) });
+        await redisClient.set(email, token, {
+          EX: parseInt(expiryTime as string),
+        });
       } catch {
         console.error("OTP expiration time not set in environment variable.");
       }
 
-      if(process.env["CI"]) {
-        return res.status(200).json({message: token});
+      if (process.env["CI"]) {
+        return res.status(200).json({ message: token });
       }
       return res.status(200).json({ message: "ok" });
     } else {
-      return res.status(400).json( {message: "Unexpected error while generating OTP."} );
+      return res
+        .status(400)
+        .json({ message: "Unexpected error while generating OTP." });
     }
-
-  } catch(error) {
+  } catch (error) {
     return res.status(400).json({ message: (error as Error).message });
   }
 });
 
-app.post("/auth/otp/verify", async(req: Request, res: Response) => {
+app.post("/auth/otp/verify", async (req: Request, res: Response) => {
   try {
     const { email, token } = req.body;
-    
-    if(!email) {
+
+    if (!email) {
       throw new Error("Email address expected.");
     }
 
-    if(!token) {
+    if (!token) {
       throw new Error("One time code expected.");
     }
-    
-    const otp  = await redisClient.get(email);
+
+    const otp = await redisClient.get(email);
 
     verifyOTP(token, otp);
 
     const expiryTime = process.env["OTP_EXPIRES"];
 
     try {
-      await redisClient.set(email, token, { EX: parseInt(expiryTime as string) });
+      await redisClient.set(email, token, {
+        EX: parseInt(expiryTime as string),
+      });
     } catch {
       console.error("OTP expiration time not set in environment variable.");
     }
 
-    return res.status(200).json({message: "ok" });
-
+    return res.status(200).json({ message: "ok" });
   } catch (error) {
     return res.status(400).json({ message: (error as Error).message });
   }
 });
 
-app.post("/auth/password/forgot", async(req: Request, res: Response) => {
+app.post("/auth/password/forgot", async (req: Request, res: Response) => {
   try {
     const { email, token, newPassword } = req.body;
 
-    if(!email) {
+    if (!email) {
       throw new Error("Email is expected.");
     }
 
-    if(!token) {
+    if (!token) {
       throw new Error("One time code required to reset password.");
     }
 
-    if(!newPassword) {
+    if (!newPassword) {
       throw new Error("New password is invalid.");
     }
 
@@ -214,31 +222,31 @@ app.post("/auth/password/forgot", async(req: Request, res: Response) => {
 
     await updateUserPasswordFromEmail(email, newPassword, SALT_ROUNDS);
 
-    return res.status(200).json({message: "ok"});
-
+    return res.status(200).json({ message: "ok" });
   } catch (error) {
-    return res.status(400).json({ message: `Unable to update password. ${(error as Error).message}`});
+    return res.status(400).json({
+      message: `Unable to update password. ${(error as Error).message}`,
+    });
   }
 });
 
-app.post("/auth/password/update", async(req: Request, res: Response) => {
+app.post("/auth/password/update", async (req: Request, res: Response) => {
   try {
     const { oldPassword, newPassword } = req.body;
 
-    if(!oldPassword) {
+    if (!oldPassword) {
       throw new Error("Unable to validate existing password.");
     }
 
-    if(!newPassword) {
+    if (!newPassword) {
       throw new Error("Invalid new password.");
     }
 
     const currentId = req.session.userId;
 
-    if(!currentId) {
+    if (!currentId) {
       throw new Error("Invalid session.");
     }
-
 
     // validate old password
     const user = await findUserFromId(currentId);
@@ -255,12 +263,13 @@ app.post("/auth/password/update", async(req: Request, res: Response) => {
     req.session.cookie.expires = dayjs().add(1, "week").toDate();
     req.session.save();
 
-    return res.status(200).json({message: "ok"});
-     
+    return res.status(200).json({ message: "ok" });
   } catch (error) {
-    return res.status(400).json({ message: `Unable to update password. ${(error as Error).message}`});
+    return res.status(400).json({
+      message: `Unable to update password. ${(error as Error).message}`,
+    });
   }
-})
+});
 
 app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {
@@ -593,6 +602,48 @@ app.post(
     }
   }
 );
+
+app.put("/event", async (req: TypedRequest<UpdateEventBody>, res: Response) => {
+  const sessionFromDB = await validateSession(req.session ? req.session : null);
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: "Invalid session provided." });
+  }
+
+  if (!req.body["id"]) {
+    return res.status(400).json({ message: "Missing `id` query parameter." });
+  }
+
+  const eventID = Number(req.body["id"]);
+
+  const event = await prisma.event.findFirst({
+    where: {
+      id: eventID,
+    },
+  });
+
+  if (!event) {
+    return res.status(404).json({ message: "Event not found." });
+  }
+
+  try {
+    const eventRes = await prisma.event.update({
+      where: {
+        id: eventID,
+      },
+      data: {
+        banner: req.body.banner,
+        name: req.body.name,
+        startDateTime: dayjs(req.body.startDateTime).toISOString(),
+        endDateTime: dayjs(req.body.endDateTime).toISOString(),
+        location: req.body.location,
+        description: req.body.description,
+      },
+    });
+    return res.status(200).json(eventRes);
+  } catch (e) {
+    return res.status(400).json({ message: "Invalid event input" });
+  }
+});
 
 app.get("/event", async (req: Request, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
