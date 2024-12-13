@@ -7,6 +7,7 @@ on:
       - feature/login
       - feature/event
       - feature/societyJoin
+      - feature/forgot-password
   pull_request:
     branches:
       - main
