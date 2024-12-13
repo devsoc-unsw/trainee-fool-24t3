@@ -35,11 +35,26 @@ declare module "express-session" {
 }
 
 // Initialize client.
-if (process.env["REDIS_PORT"] === undefined) {
+if (
+  process.env["REDIS_PORT"] === undefined ||
+  process.env["REDIS_PORT"] === ""
+) {
   console.log(process.env);
   console.error("Redis port not provided in .env file");
   process.exit(1);
 }
+
+let allowed_origins;
+if (
+  process.env["ALLOWED_ORIGINS"] === undefined ||
+  process.env["ALLOWED_ORIGINS"] === ""
+) {
+  console.log("Warning: ALLOWED_ORIGINS not specified. Using wildcard *.");
+  allowed_origins = ["*"];
+} else {
+  allowed_origins = process.env["ALLOWED_ORIGINS"]?.split(",");
+}
+
 let redisClient = createClient({
   url: `redis://localhost:${process.env["REDIS_PORT"]}`,
 });
@@ -56,7 +71,12 @@ const app = express();
 const SERVER_PORT = 5180;
 const SALT_ROUNDS = 10;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: allowed_origins,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 if (process.env["SESSION_SECRET"] === undefined) {

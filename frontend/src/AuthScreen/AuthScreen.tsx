@@ -1,4 +1,4 @@
-import { ReactNode, FormEvent } from "react";
+import { ReactNode, FormEvent, Fragment } from "react";
 import classes from "./AuthScreen.module.css";
 import Button from "../Button/Button";
 import { AuthError } from "../errorHandler";
@@ -12,6 +12,7 @@ type AuthScreenProp = {
   footer?: ReactNode;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   error?: AuthError;
+  success?: string;
 };
 
 export function AuthScreen(props: AuthScreenProp) {
@@ -23,7 +24,9 @@ export function AuthScreen(props: AuthScreenProp) {
       </header>
       <main>
         <form className={classes.form} onSubmit={props.onSubmit}>
-          {props.inputs.map((input: ReactNode) => input)}
+          {props.inputs.map((input: ReactNode, index) => (
+            <Fragment key={index}>{input}</Fragment>
+          ))}
           <Button
             variant={ButtonVariants.Primary}
             type="submit"
@@ -36,6 +39,11 @@ export function AuthScreen(props: AuthScreenProp) {
 
       <footer className={classes.footer}>
         {props.footer && <div>{props.footer}</div>}{" "}
+        {props.success && (
+          <div className={classes.success}>
+            <p>{props.success}</p>
+          </div>
+        )}
         {props.error && (
           <div>
             <p className={classes.error}>{props.error.message}</p>
