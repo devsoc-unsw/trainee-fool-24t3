@@ -307,7 +307,7 @@ describe("GET /user/events endpoint", () => {
     expect(pageThree.body.length).toBe(2);
   }, 20000);
 
-  test("Get events when none exist", async () => {
+  test("Get user events when not attending any", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
@@ -328,20 +328,22 @@ describe("GET /user/events endpoint", () => {
     });
     let sessionID = loginres.headers["set-cookie"];
 
-    const response = await request(app).get("/events");
+    const response = await request(app)
+      .get("/user/events")
+      .set("Cookie", sessionID);
 
     expect(response.status).toBe(404);
   });
 
-  test("Provide invalid page", async () => {
-    const response = await request(app).get("/events").query({
+  test("Unauthenticated request", async () => {
+    const response = await request(app).get("/user/events").query({
       page: 0,
     });
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(401);
   });
 
-  test("Get events before when query param specified", async () => {
+  test("Get user events when before query param specified", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
@@ -375,18 +377,16 @@ describe("GET /user/events endpoint", () => {
     expect(society.status).toBe(200);
     const socId = society.body.id;
 
-    const society2 = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
-      .send({
-        name: "Rizzsoc2",
-        userId: newUser.id,
-      });
+    // make a second user
+    const loginRes2 = await request(app).post("/auth/register").send({
+      username: "shinjisatoo2",
+      password: "testpassword",
+      email: "longseason1997@gmail.com",
+    });
 
-    expect(society2.status).toBe(200);
-    const socId2 = society2.body.id;
+    expect(loginRes2.status).toBe(201);
 
-    const endDates: Date[] = [];
+    const events: Number[] = [];
 
     for (let i = 0; i < 5; i++) {
       const startDate = new Date(new Date().getTime() + 864000 * i);
@@ -407,39 +407,46 @@ describe("GET /user/events endpoint", () => {
           societyId: socId,
         });
 
-      const response2 = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
-        .send({
-          banner:
-            "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-          name: "tiktokrizziestparty" + i,
-          startDateTime: startDate,
-          endDateTime: new Date(startDate.getTime() + 960000 + i),
-          location: "tampa, florida",
-          description: "fein! fein! fein! fein! fein so good she honor roll",
-          societyId: socId2,
-        });
-
-      endDates.push(endDate);
       expect(response.status).toBe(200);
-      expect(response2.status).toBe(200);
+      events.push(response.body.id);
     }
 
-    const getRes = await request(app).get("/events").query({
-      before: endDates[3],
+    // log in as second user
+    const loginres2 = await request(app).post("/auth/login").send({
+      username: "shinjisatoo2",
+      password: "testpassword",
     });
+    let sessionID2 = loginres2.headers["set-cookie"];
+
+    // attend all the events
+    for (let i = 0; i < 5; i++) {
+      await request(app).post("/user/event").set("Cookie", sessionID2).send({
+        eventId: events[i],
+      });
+    }
+
+    const future = new Date(Date.now());
+    future.setDate(future.getDate() + 200);
+
+    const getRes = await request(app)
+      .get("/user/events")
+      .set("Cookie", sessionID2)
+      .query({
+        before: future,
+      });
+
+    expect(getRes.status).toBe(200);
 
     getRes.body.forEach((event) => {
       expect(new Date(event.endDateTime).getTime()).toBeLessThanOrEqual(
-        endDates[3].getTime()
+        future.getTime()
       );
     });
 
-    expect(getRes.body.length).toBe(10);
+    expect(getRes.body.length).toBe(5);
   });
 
-  test("Get events before when query param specified, but no relevant events exist", async () => {
+  test("Get user events before when query param specified, but no relevant events exist", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
@@ -473,6 +480,17 @@ describe("GET /user/events endpoint", () => {
     expect(society.status).toBe(200);
     const socId = society.body.id;
 
+    // make a second user
+    const loginRes2 = await request(app).post("/auth/register").send({
+      username: "shinjisatoo2",
+      password: "testpassword",
+      email: "longseason1997@gmail.com",
+    });
+
+    expect(loginRes2.status).toBe(201);
+
+    const events: Number[] = [];
+
     for (let i = 0; i < 5; i++) {
       const startDate = new Date(new Date().getTime() + 864000 * i);
       const endDate = new Date(startDate);
@@ -486,26 +504,44 @@ describe("GET /user/events endpoint", () => {
             "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
           name: "tiktokrizzyparty" + i,
           startDateTime: startDate,
-          endDateTime: endDate,
+          endDateTime: new Date(startDate.getTime() + 960000 + i),
           location: "tampa, florida",
           description: "fein! fein! fein! fein! fein so good she honor roll",
           societyId: socId,
         });
 
       expect(response.status).toBe(200);
+      events.push(response.body.id);
     }
 
+    // log in as second user
+    const loginres2 = await request(app).post("/auth/login").send({
+      username: "shinjisatoo2",
+      password: "testpassword",
+    });
+    let sessionID2 = loginres2.headers["set-cookie"];
+
+    // attend all the events
+    for (let i = 0; i < 5; i++) {
+      await request(app).post("/user/event").set("Cookie", sessionID2).send({
+        eventId: events[i],
+      });
+    }
+
+    const before = new Date(Date.now());
+    before.setDate(before.getDate() - 200);
+
     const getRes = await request(app)
-      .get("/events")
+      .get("/user/events")
+      .set("Cookie", sessionID2)
       .query({
-        id: socId,
-        before: new Date(Date.parse("2022-01-01")),
+        before,
       });
 
     expect(getRes.status).toBe(404);
   });
 
-  test("Get events after when query param specified, don't include events from before", async () => {
+  test("Get user events after when query param specified, don't include events from before", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "aftereventsuser",
       password: "testpassword",
@@ -521,6 +557,13 @@ describe("GET /user/events endpoint", () => {
     if (newUser == null) return;
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
+
+    // create second user
+    const loginRes2 = await request(app).post("/auth/register").send({
+      username: "beforeeventsuser",
+      password: "testpassword",
+      email: "beforeevents@example.com",
+    });
 
     const loginres = await request(app).post("/auth/login").send({
       username: "aftereventsuser",
@@ -540,6 +583,7 @@ describe("GET /user/events endpoint", () => {
     const socId = society.body.id;
 
     // Create 5 events with increasing date ranges
+    const events: Number[] = [];
     for (let i = 0; i < 5; i++) {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() + i + 1);
@@ -560,16 +604,34 @@ describe("GET /user/events endpoint", () => {
         });
 
       expect(response.status).toBe(200);
+      events.push(response.body.id);
+    }
+
+    // login as second user
+    const loginres2 = await request(app).post("/auth/login").send({
+      username: "beforeeventsuser",
+      password: "testpassword",
+    });
+    let sessionID2 = loginres2.headers["set-cookie"];
+
+    // attend all the events
+    for (let i = 0; i < 5; i++) {
+      await request(app).post("/user/event").set("Cookie", sessionID2).send({
+        eventId: events[i],
+      });
     }
 
     // Query for events after the second event's start date
     const threeDaysLater = new Date();
     threeDaysLater.setDate(threeDaysLater.getDate() + 3);
 
-    const getRes = await request(app).get("/events").query({
-      id: socId,
-      after: threeDaysLater,
-    });
+    const getRes = await request(app)
+      .get("/user/events")
+      .set("Cookie", sessionID2)
+      .query({
+        id: socId,
+        after: threeDaysLater,
+      });
 
     expect(getRes.status).toBe(200);
     expect(getRes.body.length).toEqual(2);
@@ -596,6 +658,13 @@ describe("GET /user/events endpoint", () => {
     if (newUser == null) return;
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
+
+    // create second user
+    const loginRes2 = await request(app).post("/auth/register").send({
+      username: "beforeeventsuser",
+      password: "testpassword",
+      email: "beforeevents@example.com",
+    });
 
     const loginres = await request(app).post("/auth/login").send({
       username: "aftereventsuser",
@@ -625,6 +694,7 @@ describe("GET /user/events endpoint", () => {
     const socId2 = society2.body.id;
 
     // Create 5 events with increasing date ranges
+    const events: Number[] = [];
     for (let i = 0; i < 5; i++) {
       const startDate = new Date();
       const endDate = new Date(startDate);
@@ -658,11 +728,28 @@ describe("GET /user/events endpoint", () => {
 
       expect(response.status).toBe(200);
       expect(response2.status).toBe(200);
+      events.push(response.body.id);
+      events.push(response2.body.id);
+    }
+
+    // login as second user
+    const loginres2 = await request(app).post("/auth/login").send({
+      username: "beforeeventsuser",
+      password: "testpassword",
+    });
+    let sessionID2 = loginres2.headers["set-cookie"];
+
+    // attend all of the events
+    for (let i = 0; i < 10; i++) {
+      await request(app).post("/user/event").set("Cookie", sessionID2).send({
+        eventId: events[i],
+      });
     }
 
     // Query for events after the second event's start date
     const getRes = await request(app)
-      .get("/events")
+      .get("/user/events")
+      .set("Cookie", sessionID2)
       .query({
         after: new Date(Date.parse("2020-01-01")),
       });
@@ -678,7 +765,7 @@ describe("GET /user/events endpoint", () => {
     });
   });
 
-  test("Get events before and after when query params specify, covers all events, use pagination", async () => {
+  test("Get user events before and after when query params specify, covers all events being attended, use pagination", async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "aftereventsuser",
       password: "testpassword",
@@ -694,6 +781,13 @@ describe("GET /user/events endpoint", () => {
     if (newUser == null) return;
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
+
+    // create second user
+    const loginRes2 = await request(app).post("/auth/register").send({
+      username: "beforeeventsuser",
+      password: "testpassword",
+      email: "beforeevents@example.com",
+    });
 
     const loginres = await request(app).post("/auth/login").send({
       username: "aftereventsuser",
@@ -722,6 +816,7 @@ describe("GET /user/events endpoint", () => {
     expect(society2.status).toBe(200);
     const socId2 = society2.body.id;
 
+    const events: Number[] = [];
     for (let i = 0; i < 6; i++) {
       const startDate = new Date();
       const endDate = new Date(startDate);
@@ -755,16 +850,34 @@ describe("GET /user/events endpoint", () => {
 
       expect(response.status).toBe(200);
       expect(response2.status).toBe(200);
+      events.push(response.body.id);
+      events.push(response2.body.id);
+    }
+
+    // login as second user
+    const loginres2 = await request(app).post("/auth/login").send({
+      username: "beforeeventsuser",
+      password: "testpassword",
+    });
+    let sessionID2 = loginres2.headers["set-cookie"];
+
+    // attend all the events
+    for (let i = 0; i < 12; i++) {
+      await request(app).post("/user/event").set("Cookie", sessionID2).send({
+        eventId: events[i],
+      });
     }
 
     const beforeThisDate = new Date();
     beforeThisDate.setDate(beforeThisDate.getDate() + 99);
 
     const getRes = await request(app)
-      .get("/events")
+      .get("/user/events")
+      .set("Cookie", sessionID2)
       .query({
         before: beforeThisDate,
         after: new Date(Date.parse("2020-01-01")),
+        page: 1,
       });
 
     expect(getRes.status).toBe(200);
@@ -782,7 +895,8 @@ describe("GET /user/events endpoint", () => {
     });
 
     const getRes2 = await request(app)
-      .get("/events")
+      .get("/user/events")
+      .set("Cookie", sessionID2)
       .query({
         before: beforeThisDate,
         after: new Date(Date.parse("2020-01-01")),
@@ -831,7 +945,8 @@ describe("GET /user/events endpoint", () => {
     beforeThisDate.setDate(beforeThisDate.getDate() + 99);
 
     const getRes = await request(app)
-      .get("/events")
+      .get("/user/events")
+      .set("Cookie", sessionID)
       .query({
         before: beforeThisDate,
         after: new Date(Date.parse("2020-01-01")),
