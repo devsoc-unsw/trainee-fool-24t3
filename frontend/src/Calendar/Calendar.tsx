@@ -4,6 +4,10 @@ import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline"
 import classes from './Calendar.module.css'
 import CalendarCell from '../CalendarCell/CalendarCell'
 import CalendarDayName from '../CalendarDayName/CalendarDayName'
+interface Event {
+    startDateTime: Date;
+    [key: string]: any; 
+};
 
 function Calendar() {
     const mapDayIndex = (dayIndex:number) => {
@@ -54,17 +58,31 @@ function Calendar() {
         }
     } 
     const [eventsInMonth, setEventsInMonth] = useState([]);
-  
+    const [eventsByDate, setEventsByDate] = useState<Record<number, Event[]>>({});
+
     const fetchEvents = async () => {
         const events = await getEventsInMonth(firstDay, lastDay);
         setEventsInMonth(events); 
     };
 
+    const buildEventsDict = async (events: Event[]) => {
+        const dict: Record<number, any> = {}
+        events.forEach((item: Event) => {
+            const date = item.startDateTime.getTime();
+            if(!dict[date]) {
+                dict[date] = []
+            }
+            dict[date].push(item);
+        });
+        setEventsByDate(dict);
+    }
+
     useEffect(() => {
         fetchEvents();
+        buildEventsDict(eventsInMonth);
     }, [currentDate]);
     
-    console.log(eventsInMonth);
+    console.log(eventsByDate);
     return (
         <div className={classes.container}>
             <div className={classes.calendar}>
@@ -87,7 +105,7 @@ function Calendar() {
                         })}
 
                         { daysOfMonth.map((day) => {
-                            return <CalendarCell date={format(day, 'dd/MM')}/>
+                            return <CalendarCell date={format(day, 'dd/MM')} events={eventsByDate[day.getTime()]}/>
                         })}
 
                         {Array.from({length:dayBuffer}).map((_, ) => {
