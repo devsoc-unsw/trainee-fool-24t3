@@ -1,12 +1,14 @@
 import classes from './CalendarCell.module.css';
+import CalendarEventElem from '../CalendarEventElem/CalendarEventElem';
 interface Event {
   startDateTime: Date;
   [key: string]: any; 
 };
 
 type CalendarCellProps = {
-  date?: string,
+  date: string,
   events?: Event[]
+  [key: string]: any; //gonna fix this and fill it out with whatever the backend sends soon
 };
 
 function CalendarCell(props: CalendarCellProps) {
@@ -16,7 +18,6 @@ function CalendarCell(props: CalendarCellProps) {
             <p className={classes.dateElement}>{props.date ? props.date : ''}</p>
         </div>
         <div className={classes.eventSpace}>
-          
         </div>
     </div>
   )

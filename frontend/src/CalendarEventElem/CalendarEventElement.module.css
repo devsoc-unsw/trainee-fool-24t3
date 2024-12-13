@@ -1,0 +1,27 @@
+.CalEventElemWrapper{
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    height: 20px;
+    padding: 2%;
+    background-color: hsl(201, 39%, 87%);
+}
+
+.title {
+    margin-left: 2%;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+    color: hsl(216.4,78%,24.9%);
+    font-weight:bold;
+    max-width: 70%;
+    text-overflow: ellipsis;
+}
+
+.startTime{
+    margin-right: 2%;
+    font-size: 12px;
+    color: hsl(216, 50%, 35%);
+}
