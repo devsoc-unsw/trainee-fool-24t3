@@ -2,6 +2,25 @@
   display: flex;
 }
 
+.description {
+  line-height: 160%;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+
+.error{
+  padding: 10px;
+  color: hsl(0, 100%, 64%);
+  font-weight: bold;
+}
+
+.fileName{
+  margin-top: 0;
+  margin-left: 0;
+  font-size: 15px;
+}
+
 .main {
   width: 40vw;
   min-width: 400px;
@@ -22,6 +41,10 @@
   padding: 10px;
 }
 
+.photoArea {
+  margin-bottom: 36px;
+}
+
 .photo {
   border: 4px hsl(0, 0%, 85%) dashed;
   height: 120px;
@@ -30,10 +53,9 @@
   justify-content: center;
   align-items: center;
   color: hsl(0, 0%, 60%);
-  margin-bottom: 36px;
 }
 
-.photo:active, .photo:focus, .photo:hover {
+.photo:active, .photo:focus, .photo:hover, .photoDragged {
   border-color: hsl(249, 88%, 60%);
   color: hsl(249, 88%, 60%);
 }
@@ -62,6 +84,11 @@
   margin-bottom: 34px;
 }
 
+.thumbnail {
+  width: 100px;
+  margin-top: 10px;
+}
+
 .times {
   display: flex;
   justify-content: space-between;
@@ -70,10 +97,4 @@
 
 .timeInput {
   width: 23vh;
-}
-
-.description {
-  line-height: 160%;
-  padding-left: 20px;
-  padding-right: 20px;
 }
