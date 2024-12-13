@@ -18,6 +18,11 @@ import prisma from "./prisma";
 import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import dayjs, { Dayjs } from "dayjs";
+import { generateOTP } from "./routes/OTP/generateOTP";
+import assert from "assert";
+import { verifyOTP } from "./routes/OTP/verifyOTP";
+import { findUserFromId, updateUserPasswordFromEmail } from "./routes/User/user";
+
 declare module "express-session" {
   interface SessionData {
     userId: number;
@@ -26,6 +31,7 @@ declare module "express-session" {
 
 // Initialize client.
 if (process.env["REDIS_PORT"] === undefined) {
+  console.log(process.env);
   console.error("Redis port not provided in .env file");
   process.exit(1);
 }
@@ -43,6 +49,7 @@ let redisStore = new RedisStore({
 
 const app = express();
 const SERVER_PORT = 5180;
+const SALT_ROUNDS = 10;
 
 app.use(cors());
 app.use(express.json());
@@ -96,7 +103,7 @@ app.post(
         .json({ error: "Account with same credentials already exists" });
     }
 
-    const saltRounds: number = 10;
+    const saltRounds: number = SALT_ROUNDS;
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -121,6 +128,139 @@ app.post(
     });
   }
 );
+
+app.post("/auth/otp/generate", async(req: Request, res: Response) => {
+  try {
+    const { email } : { email: string} = req.body;
+    
+    if(!email) {
+      throw new Error("Email address expected.");
+    }
+
+    const token = await generateOTP(email); 
+
+    if (token) {
+      const expiryTime = process.env["OTP_EXPIRES"];
+
+      try {
+        await redisClient.set(email, token, { EX: parseInt(expiryTime as string) });
+      } catch {
+        console.error("OTP expiration time not set in environment variable.");
+      }
+
+      if(process.env["CI"]) {
+        return res.status(200).json({message: token});
+      }
+      return res.status(200).json({ message: "ok" });
+    } else {
+      return res.status(400).json( {message: "Unexpected error while generating OTP."} );
+    }
+
+  } catch(error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+});
+
+app.post("/auth/otp/verify", async(req: Request, res: Response) => {
+  try {
+    const { email, token } = req.body;
+    
+    if(!email) {
+      throw new Error("Email address expected.");
+    }
+
+    if(!token) {
+      throw new Error("One time code expected.");
+    }
+    
+    const otp  = await redisClient.get(email);
+
+    verifyOTP(token, otp);
+
+    const expiryTime = process.env["OTP_EXPIRES"];
+
+    try {
+      await redisClient.set(email, token, { EX: parseInt(expiryTime as string) });
+    } catch {
+      console.error("OTP expiration time not set in environment variable.");
+    }
+
+    return res.status(200).json({message: "ok" });
+
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+});
+
+app.post("/auth/password/forgot", async(req: Request, res: Response) => {
+  try {
+    const { email, token, newPassword } = req.body;
+
+    if(!email) {
+      throw new Error("Email is expected.");
+    }
+
+    if(!token) {
+      throw new Error("One time code required to reset password.");
+    }
+
+    if(!newPassword) {
+      throw new Error("New password is invalid.");
+    }
+
+    const otp = await redisClient.get(email);
+
+    verifyOTP(token, otp);
+
+    await updateUserPasswordFromEmail(email, newPassword, SALT_ROUNDS);
+
+    return res.status(200).json({message: "ok"});
+
+  } catch (error) {
+    return res.status(400).json({ message: `Unable to update password. ${(error as Error).message}`});
+  }
+});
+
+app.post("/auth/password/update", async(req: Request, res: Response) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if(!oldPassword) {
+      throw new Error("Unable to validate existing password.");
+    }
+
+    if(!newPassword) {
+      throw new Error("Invalid new password.");
+    }
+
+    const currentId = req.session.userId;
+
+    if(!currentId) {
+      throw new Error("Invalid session.");
+    }
+
+
+    // validate old password
+    const user = await findUserFromId(currentId);
+
+    const validPassword = await bcrypt.compare(oldPassword, user.password);
+    if (!validPassword) {
+      throw new Error("Current password is incorrect.");
+    }
+
+    // save new password
+    await updateUserPasswordFromEmail(user.email, newPassword, SALT_ROUNDS);
+
+    // refresh session
+    req.session.cookie.expires = dayjs().add(1, "week").toDate();
+    req.session.save();
+
+    return res.status(200).json({message: "ok"});
+     
+  } catch (error) {
+    return res.status(400).json({ message: `Unable to update password. ${(error as Error).message}`});
+  }
+})
 
 app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
   try {
