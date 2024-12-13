@@ -1,30 +1,31 @@
-import classes from './Keyword.module.css';
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/solid';
-import { KeywordOptions } from './KeywordTypes';
+import classes from "./Keyword.module.css";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { KeywordOptions } from "./KeywordTypes";
 
 type KeywordProps = {
   children: string;
-  type: KeywordOptions;
+  type?: KeywordOptions;
 };
 
-export function Keyword(props: KeywordProps) {
+export default function Keyword(props: KeywordProps) {
   return (
     <div
-      className={
-        props.type === KeywordOptions.Delete
-          ? classes.DeleteKeyword
-          : classes.AddKeyword
-      }
+      className={`${classes.keyword} ${
+        props.type && props.type === KeywordOptions.Add
+          ? classes.keywordAdd
+          : classes.keywordDelete
+      } ${!props.type && classes.keywordNone}`}
     >
       <div className={classes.keywordText}>{props.children}</div>
-      <button className={classes.button}>
-        {props.type === KeywordOptions.Delete && (
-          <XMarkIcon className={classes.deleteButtonIcon} />
-        )}
-        {props.type === KeywordOptions.Add && (
-          <PlusIcon className={classes.deleteButtonIcon} />
-        )}
-      </button>
+      {props.type && (
+        <button className={classes.button}>
+          {props.type === KeywordOptions.Add ? (
+            <PlusIcon className={`${classes.addButtonIcon} ${classes.icon}`} />
+          ) : (
+            <XMarkIcon className={`${classes.deleteButtonIcon} ${classes.icon}`} />
+          )}
+        </button>
+      )}
     </div>
   );
 }
