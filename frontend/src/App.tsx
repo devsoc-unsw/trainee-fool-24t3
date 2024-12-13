@@ -13,10 +13,11 @@ import { CreateNewEventPage } from "./Settings/SettingsPage/EventManagementPage/
 import { DiscordPage } from "./Settings/SettingsPage/DiscordPage/DiscordPage";
 import { Unauthenticated } from "./Unauthenticated/Unauthenticated";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
-import { createContext, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { UserContext } from "./UserContext/UserContext";
 
 function App() {
-  const LoginContext = createContext(null);
+  const [user, setUser] = useState({});
 
   useEffect(() => {
     fetch("http://localhost:5180/user", {
@@ -28,11 +29,7 @@ function App() {
     }).then((res) => {
       if (res.ok) {
         res.json().then((data) => {
-          console.log(data);
-        });
-      } else {
-        res.json().then((data) => {
-          console.log(data);
+          setUser(data);
         });
       }
     });
@@ -40,34 +37,36 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="page">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/timeline" element={<Calendar />} /> //
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route
-            path="/settings"
-            element={
-              // this propagates to all child routes
-              <ProtectedRoute
-                isAuthenticated={false}
-                fallback={<Navigate to="/login" />}
-              >
-                <Settings />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="events" element={<EventManagementPage />} />
-            <Route path="events/new" element={<CreateNewEventPage />} />
-            <Route path="discord" element={<DiscordPage />} />
-          </Route>
-          <Route path="/unauthenticated" element={<Unauthenticated />} />
-        </Routes>
-      </div>
-      <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
+      <UserContext.Provider value={user}>
+        <div className="page">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/timeline" element={<Calendar />} /> //
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route
+              path="/settings"
+              element={
+                // this propagates to all child routes
+                <ProtectedRoute
+                  isAuthenticated={user.id !== undefined}
+                  fallback={<Navigate to="/login" />}
+                >
+                  <Settings />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="events" element={<EventManagementPage />} />
+              <Route path="events/new" element={<CreateNewEventPage />} />
+              <Route path="discord" element={<DiscordPage />} />
+            </Route>
+            <Route path="/unauthenticated" element={<Unauthenticated />} />
+          </Routes>
+        </div>
+        <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
+      </UserContext.Provider>
     </BrowserRouter>
   );
 }
