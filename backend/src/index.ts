@@ -898,14 +898,14 @@ app.post(
       return res.status(401).json({ message: "Invalid session provided." });
     }
 
-    const keyword = req.body.text;
-    if (!keyword) {
+    const { text } = req.body;
+    if (!text) {
       return res.status(400).json({ message: "Invalid input." });
     }
 
     const keywordExists = await prisma.keyword.findFirst({
       where: {
-        text: keyword,
+        text: text,
       }
     });
 
@@ -916,7 +916,7 @@ app.post(
     try {
       const newKeyword = await prisma.keyword.create({
         data: {
-          text: keyword,
+          text: text,
         },
       });
       return res.status(200).json(newKeyword);

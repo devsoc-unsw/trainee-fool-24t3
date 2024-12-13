@@ -42,7 +42,7 @@ describe('/keyword endpoint', () => {
       .post("/keyword")
       .set("Cookie", sessionID)
       .send({
-        text: "skibidi toilet yes yes ghvkbhf",
+        text: "skibidi toilet yes yes ghvsbdkakbhf",
       });
 
     expect(response.status).toBe(200);
