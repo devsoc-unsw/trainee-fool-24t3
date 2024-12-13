@@ -64,7 +64,13 @@ export default function LoginPage() {
           />,
         ]}
         buttonText="Log in"
-        footer={<p>Forgot Password</p>}
+        footer={
+          <p>
+            <Link className={classes.forgot} to="/generateotp">
+              Forgot Password
+            </Link>
+          </p>
+        }
         onSubmit={handleSubmit}
         error={error}
       />

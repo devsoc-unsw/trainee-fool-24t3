@@ -6,6 +6,8 @@ import AboutPage from "./About/About";
 import Calendar from "./Calendar/Calendar";
 import LoginPage from "./Login/Login";
 import RegisterPage from "./Register/Register";
+import VerifyOTP from "./VerifyOTP/VerifyOTP";
+import GenerateOTP from "./GenerateOTP/GenerateOTP";
 import { Settings } from "./Settings/Settings";
 import { ProfilePage } from "./Settings/SettingsPage/ProfilePage/ProfilePage";
 import { EventManagementPage } from "./Settings/SettingsPage/EventManagementPage/EventManagementPage";
@@ -22,6 +24,8 @@ function App() {
           <Route path="/timeline" element={<Calendar />} /> //
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/generateotp" element={<GenerateOTP />} />
+          <Route path="/verifyotp" element={<VerifyOTP />} />
           <Route path="/settings" element={<Settings />}>
             <Route path="profile" element={<ProfilePage />} />
             <Route path="events" element={<EventManagementPage />} />

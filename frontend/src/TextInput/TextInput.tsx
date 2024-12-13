@@ -13,7 +13,7 @@ type TextInputProp = {
   name: string;
   onChange: React.Dispatch<React.SetStateAction<string>>;
   type: TextOptions;
-  error: boolean;
+  error?: boolean;
 };
 
 export function TextInput(props: TextInputProp) {
