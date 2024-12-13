@@ -14,7 +14,7 @@ type ButtonProps = {
   icon?: ButtonIcons;
   variant?: ButtonVariants;
   className?: string;
-  type: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
+  type: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
 };
 
 function Button(props: ButtonProps) {

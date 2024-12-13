@@ -1,5 +1,4 @@
 export enum KeywordOptions {
-  Delete,
-  Add,
-  None,
+  Delete = "delete",
+  Add = "add",
 }

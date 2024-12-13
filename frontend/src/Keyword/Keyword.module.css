@@ -9,16 +9,17 @@
   height: 24px;
 }
 
-.DeleteKeyword {
+.keywordDelete {
   background: hsl(0, 3%, 93%);
+  color: hsl(0, 0%, 25%);
 }
 
-.AddKeyword {
+.keywordAdd {
   background: hsl(209, 100%, 96%);
   color: hsl(202, 15%, 25%);
 }
 
-.NoneKeyword {
+.keywordNone {
   background: hsl(0, 3%, 93%);
   border-radius: 8px;
   margin: 0;
@@ -44,12 +45,12 @@
 }
 
 .deleteButtonIcon {
-  color: hsl(0, 0%, 54%);
+  color: hsl(0, 0%, 44%);
   width: 22px;
   height: 22px;
   margin-top: 1px;
 }
 
 .addButtonIcon {
-  color: hsl(202, 15%, 25%);
+  color: hsl(202, 14%, 31%);
 }

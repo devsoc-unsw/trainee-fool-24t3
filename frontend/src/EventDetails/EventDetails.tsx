@@ -10,7 +10,6 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import Keyword from "../Keyword/Keyword";
-import { KeywordOptions } from "../Keyword/KeywordTypes";
 
 type EventDetailsProps = {
   image: string;
@@ -99,7 +98,7 @@ function EventDetails(props: EventDetailsProps) {
           {props.keywords && (
             <section className={classes.keywords}>
               {props.keywords?.map((keyword) => (
-                <Keyword type={KeywordOptions.None}>{keyword}</Keyword>
+                <Keyword>{keyword}</Keyword>
               ))}
             </section>
           )}

@@ -4,30 +4,25 @@ import { KeywordOptions } from "./KeywordTypes";
 
 type KeywordProps = {
   children: string;
-  type: KeywordOptions;
+  type?: KeywordOptions;
 };
 
 export default function Keyword(props: KeywordProps) {
   return (
     <div
       className={`${classes.keyword} ${
-        props.type === KeywordOptions.Delete && classes.DeleteKeyword
-      }
-        ${props.type === KeywordOptions.Add && classes.AddKeyword}
-        ${props.type === KeywordOptions.None && classes.NoneKeyword}`}
+        props.type && props.type === KeywordOptions.Add
+          ? classes.keywordAdd
+          : classes.keywordDelete
+      } ${!props.type && classes.keywordNone}`}
     >
       <div className={classes.keywordText}>{props.children}</div>
-      {props.type !== KeywordOptions.None && (
+      {props.type && (
         <button className={classes.button}>
-          {props.type === KeywordOptions.Delete && (
-            <XMarkIcon
-              className={`${classes.deleteButtonIcon} ${classes.icon}`}
-            />
-          )}
-          {props.type === KeywordOptions.Add && (
-            <PlusIcon
-              className={`${classes.deleteButtonIcon} ${classes.icon}`}
-            />
+          {props.type === KeywordOptions.Add ? (
+            <PlusIcon className={`${classes.addButtonIcon} ${classes.icon}`} />
+          ) : (
+            <XMarkIcon className={`${classes.deleteButtonIcon} ${classes.icon}`} />
           )}
         </button>
       )}
