@@ -12,8 +12,29 @@ import { EventManagementPage } from "./Settings/SettingsPage/EventManagementPage
 import { CreateNewEventPage } from "./Settings/SettingsPage/EventManagementPage/CreateNewEvent/CreateNewEvent";
 import { DiscordPage } from "./Settings/SettingsPage/DiscordPage/DiscordPage";
 import { Unauthenticated } from "./Unauthenticated/Unauthenticated";
+import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
+import { createContext, useEffect } from "react";
 
 function App() {
+  const LoginContext = createContext(null);
+
+  useEffect(() => {
+    fetch("http://localhost:5180/user", {
+      method: "GET",
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          console.log(data);
+        });
+      } else {
+        console.log("Not logged in or problem");
+        res.json().then((data) => {
+          console.log(data);
+        });
+      }
+    });
+  }, []);
+
   return (
     <BrowserRouter>
       <div className="page">
@@ -23,7 +44,15 @@ function App() {
           <Route path="/timeline" element={<Calendar />} /> //
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/settings" element={<Settings />}>
+          <Route
+            path="/settings"
+            element={
+              // this propagates to all child routes
+              <ProtectedRoute isAuthenticated={true}>
+                <Settings />
+              </ProtectedRoute>
+            }
+          >
             <Route path="profile" element={<ProfilePage />} />
             <Route path="events" element={<EventManagementPage />} />
             <Route path="events/new" element={<CreateNewEventPage />} />

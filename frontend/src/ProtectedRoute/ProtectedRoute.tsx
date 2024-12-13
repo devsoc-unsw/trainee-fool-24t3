@@ -2,15 +2,12 @@ import { ReactNode } from "react";
 import { Navigate } from "react-router";
 
 interface ProtectedRouteProps {
-  user: boolean;
+  isAuthenticated: boolean;
   children: ReactNode;
 }
 
-export const ProtectedRoute = (
-  isAuthenticated: boolean,
-  props: ProtectedRouteProps
-) => {
-  if (!isAuthenticated) {
+export const ProtectedRoute = (props: ProtectedRouteProps) => {
+  if (!props.isAuthenticated) {
     return <Navigate to="/unauthenticated" replace />;
   }
 
