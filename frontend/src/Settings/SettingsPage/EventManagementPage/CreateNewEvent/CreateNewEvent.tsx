@@ -3,8 +3,30 @@ import Button from '../../../../Button/Button';
 import { SettingsPage } from '../../SettingsPage';
 import classes from './CreateNewEvent.module.css';
 import { ButtonIcons, ButtonVariants } from '../../../../Button/ButtonTypes';
+import { useRef } from 'react';
 
 export function CreateNewEventPage() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleDrop = (e: any) => {
+    e.preventDefault();
+    console.log(typeof(e));
+    console.log(e);
+    
+    const droppedItems = e.dataTransfer.files;
+    if(droppedItems.length === 1){
+      console.log(droppedItems);
+    } else if(droppedItems.length > 1) {
+      console.log(droppedItems);
+    }
+  }
+  
+  const handleClick = (e: any) => {
+    e.preventDefault();
+    if(inputRef?.current) {
+      inputRef.current.click();
+    }
+  }
   return (
     <SettingsPage
       title="Create a new event"
@@ -18,10 +40,11 @@ export function CreateNewEventPage() {
       ]}
     >
       <form>
-        <div className={classes.photo}>
+        <div className={classes.photo} onDrop={handleDrop} onDragOver={(e)=>e.preventDefault()} onClick={handleClick}>
           <CameraIcon className={classes.cameraIcon}></CameraIcon>
           <p>Upload photo here...</p>
-        </div>
+        </div>    
+        <input ref={inputRef} type="file" accept="image/*" style={{display: 'none'}}/>    
         <label className={classes.field}>Event name</label>
         <div className={classes.textInput}>Training Program Induction</div>
         <label className={classes.field}>Event location</label>

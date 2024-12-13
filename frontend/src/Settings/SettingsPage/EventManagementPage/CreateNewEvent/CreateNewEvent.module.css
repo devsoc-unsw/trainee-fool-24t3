@@ -33,6 +33,11 @@
   margin-bottom: 36px;
 }
 
+.photo:active, .photo:focus, .photo:hover {
+  border-color: hsl(249, 88%, 60%);
+  color: hsl(249, 88%, 60%);
+}
+
 .cameraIcon {
   height: 42px;
   width: 42px;
