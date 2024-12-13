@@ -914,13 +914,12 @@ app.post(
     }
 
     try {
-      const newSociety = await prisma.keyword.create({
+      const newKeyword = await prisma.keyword.create({
         data: {
           text: keyword,
         },
       });
-
-      return res.status(200).json(newSociety);
+      return res.status(200).json(newKeyword);
     } catch (e) {
       return res.status(400).json({ message: "invalid keyword input" });
     }
