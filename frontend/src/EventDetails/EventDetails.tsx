@@ -1,6 +1,6 @@
 import classes from "./EventDetails.module.css";
 import Button from "../Button/Button";
-import { ButtonIcons, ButtonVariants } from "../Button/ButtonTypes"
+import { ButtonIcons, ButtonVariants } from "../Button/ButtonTypes";
 import {
   ArrowTopRightOnSquareIcon,
   CalendarIcon,
@@ -9,8 +9,8 @@ import {
   MapPinIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
-import { Keyword } from "../Keyword/Keyword";
-import { KeywordOptions } from "../Keyword/KeywordTypes"
+import Keyword from "../Keyword/Keyword";
+import { KeywordOptions } from "../Keyword/KeywordTypes";
 
 type EventDetailsProps = {
   image: string;
@@ -46,8 +46,8 @@ function EventDetails(props: EventDetailsProps) {
       </div>
 
       <div className={classes.info}>
-        <div className={classes.details}>
-          <h1 className={classes.name}>{props.name}</h1>
+        <section className={classes.details}>
+          <header className={classes.name}>{props.name}</header>
           <div className={classes.detail}>
             <UserIcon className={classes.icon}></UserIcon>
             <p className={classes.detailInfo}>{props.society}</p>
@@ -66,7 +66,7 @@ function EventDetails(props: EventDetailsProps) {
             <MapPinIcon className={classes.icon}></MapPinIcon>
             <p className={classes.detailInfo}>{props.location}</p>
             {props.locationUrl && (
-              <a href={`${props.locationUrl}`}>
+              <a href={`${props.locationUrl}`} target="_blank" rel="noopener">
                 <ArrowTopRightOnSquareIcon
                   className={`${classes.icon} ${classes.locationLink}`}
                 ></ArrowTopRightOnSquareIcon>
@@ -78,7 +78,7 @@ function EventDetails(props: EventDetailsProps) {
             <p className={classes.detailInfo}>{props.attending} attending</p>
           </div>
 
-          <div className={classes.actions}>
+          <footer className={classes.actions}>
             <Button
               type={"button"}
               icon={ButtonIcons.Bookmark}
@@ -91,19 +91,19 @@ function EventDetails(props: EventDetailsProps) {
               variant={ButtonVariants.Secondary}
               className={classes.actionIcon}
             ></Button>
-          </div>
-        </div>
+          </footer>
+        </section>
 
-        <div className={classes.description}>
-          <p>{props.description}</p>
+        <section className={classes.description}>
+          <main>{props.description}</main>
           {props.keywords && (
-            <div className={classes.keywords}>
+            <section className={classes.keywords}>
               {props.keywords?.map((keyword) => (
                 <Keyword type={KeywordOptions.None}>{keyword}</Keyword>
               ))}
-            </div>
+            </section>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );
