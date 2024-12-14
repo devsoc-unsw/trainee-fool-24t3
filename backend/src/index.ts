@@ -1182,7 +1182,7 @@ app.post(
       });
       return res.status(200).json(newKeyword);
     } catch (e) {
-      return res.status(400).json({ message: "invalid keyword input" });
+      return res.status(400).json({ message: "Invalid keyword input." });
     }
 });
 
