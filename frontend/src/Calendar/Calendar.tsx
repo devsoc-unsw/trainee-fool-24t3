@@ -43,7 +43,7 @@ function Calendar() {
 
         try {
             //not gonna use user/events for now as idk if login is working with the frontedn
-            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL + '/events?' + params}`)
+            const res = await fetch(`${import.meta.env.VITE_BACKEND_URL + '/user/events?' + params}`)
 
             if (res.ok) {
                 const data = await res.json(); 
