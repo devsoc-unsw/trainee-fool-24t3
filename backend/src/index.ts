@@ -231,7 +231,7 @@ app.post('/auth/otp/verify', async (req: Request, res: Response) => {
 
 app.post('/auth/password/forgot', async (req: Request, res: Response) => {
   try {
-    const { email, token, newPassword } = req.body;
+    const { email, token, password } = req.body;
 
     if (!email) {
       throw new Error('Email is expected.');
@@ -241,7 +241,7 @@ app.post('/auth/password/forgot', async (req: Request, res: Response) => {
       throw new Error('One time code required to reset password.');
     }
 
-    if (!newPassword) {
+    if (!password) {
       throw new Error('New password is invalid.');
     }
 
@@ -249,7 +249,7 @@ app.post('/auth/password/forgot', async (req: Request, res: Response) => {
 
     verifyOTP(token, otp);
 
-    await updateUserPasswordFromEmail(email, newPassword, SALT_ROUNDS);
+    await updateUserPasswordFromEmail(email, password, SALT_ROUNDS);
 
     return res.status(200).json({ message: 'ok' });
   } catch (error) {

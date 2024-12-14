@@ -4,15 +4,17 @@ import { TextInput, TextOptions } from '../TextInput/TextInput';
 import { useState, FormEvent } from 'react';
 import { KeyIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { errorHandler, AuthError } from '../errorHandler';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 export default function VerifyOTP() {
   const [token, setToken] = useState('');
   const [password, setPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [error, setError] = useState<AuthError | undefined>(undefined);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
   const { state } = useLocation();
   const { email } = state;
+  const navigate = useNavigate();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,7 +39,7 @@ export default function VerifyOTP() {
       return;
     }
 
-    const res = await fetch('http://localhost:5180/auth/otp/verify', {
+    const res = await fetch('http://localhost:5180/auth/password/forgot', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,6 +47,7 @@ export default function VerifyOTP() {
       body: JSON.stringify({
         token,
         email,
+        password,
       }),
     });
     const json = await res.json();
@@ -53,6 +56,10 @@ export default function VerifyOTP() {
       setError(errorHandler(json.message));
     } else {
       setError(undefined);
+      setSuccess('Password updated successfully! Redirecting...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
     }
   }
   return (
@@ -98,6 +105,7 @@ export default function VerifyOTP() {
         buttonText="Submit"
         onSubmit={handleSubmit}
         error={error}
+        success={success}
       ></AuthScreen>
     </main>
   );
