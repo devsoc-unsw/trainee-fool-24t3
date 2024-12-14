@@ -38,7 +38,6 @@ describe("POST /user/keyword endpoint", () => {
         text: "skibidi12",
       });
       
-      console.log(keywordRes.body);
     expect(keywordRes.status).toBe(200);
 
     const res = await request(app)
@@ -82,7 +81,6 @@ describe("POST /user/keyword endpoint", () => {
       .send({
         keywordId: -230,
       });
-    console.log(res.body);
     expect(res.status).toBe(404);
     expect(res.body.message).toBe("Invalid keyword.");
   });
@@ -276,8 +274,7 @@ describe("/user/keywords endpoint", () => {
     const res = await request(app)
       .get("/user/keywords")
       .set("Cookie", sessionID)
-      console.log(res.body);
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(200);
     expect(res.body.length).toBe(0);
   });
 });
