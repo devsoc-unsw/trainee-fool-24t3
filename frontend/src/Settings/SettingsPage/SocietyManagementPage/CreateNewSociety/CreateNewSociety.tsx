@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 export const CreateNewSocietyPage = () => {
   const [societyName, setSocietyName] = useState('');
+  const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
 
   const createSociety = async (societyName: string) => {
@@ -23,9 +24,10 @@ export const CreateNewSocietyPage = () => {
 
     if (society.ok) {
       setError('');
-      console.log(societyJson);
+      setSuccess('Society created successfully!');
     } else {
       setError(societyJson.message);
+      setSuccess('');
     }
   };
 
@@ -51,6 +53,7 @@ export const CreateNewSocietyPage = () => {
         error={error !== ''}
       />
       {error && <p>{error}</p>}
+      {success && <p>{success}</p>}
     </SettingsPage>
   );
 };
