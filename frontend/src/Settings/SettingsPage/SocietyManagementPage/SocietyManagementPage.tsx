@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { SettingsPage } from '../SettingsPage';
 import Button from '../../../Button/Button';
 import { ButtonIcons, ButtonVariants } from '../../../Button/ButtonTypes';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { UserContext } from '../../../UserContext/UserContext';
 
 export function SocietyManagementPage() {

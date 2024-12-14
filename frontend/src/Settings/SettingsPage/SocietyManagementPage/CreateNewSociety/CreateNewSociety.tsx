@@ -10,7 +10,7 @@ export const CreateNewSocietyPage = () => {
   const [societyName, setSocietyName] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
-  const { societies, setSocieties } = useContext(UserContext);
+  const { setSocieties } = useContext(UserContext);
 
   const createSociety = async (societyName: string) => {
     const society = await fetch('http://localhost:5180/society', {
