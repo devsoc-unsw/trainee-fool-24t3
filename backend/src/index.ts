@@ -92,7 +92,11 @@ if (
   process.exit(1);
 }
 
-if (process.env['EMAIL_KEY'] === undefined || process.env['EMAIL_KEY'] === '') {
+if (
+  (process.env['NODE_ENV'] !== 'test' &&
+    process.env['EMAIL_KEY'] === undefined) ||
+  process.env['EMAIL_KEY'] === ''
+) {
   console.log('`EMAIL_KEY` not provided in .env file.');
   process.exit(1);
 }
