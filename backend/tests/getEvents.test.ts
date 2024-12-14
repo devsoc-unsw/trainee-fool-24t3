@@ -1,14 +1,14 @@
-import { describe, expect, test } from "vitest";
-import request from "supertest";
-import app from "../src/index";
-import prisma from "../src/prisma";
+import { describe, expect, test } from 'vitest';
+import request from 'supertest';
+import app from '../src/index';
+import prisma from '../src/prisma';
 
-describe("/events endpoint", () => {
-  test("Create and get events successfully", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+describe('/events endpoint', () => {
+  test('Create and get events successfully', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -21,17 +21,17 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const societyRes = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
         userId: newUser.id,
       });
 
@@ -41,33 +41,33 @@ describe("/events endpoint", () => {
 
     for (let i = 0; i < 10; i++) {
       const response = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
           banner:
-            "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-          name: "tiktokrizzparty" + i,
+            'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+          name: 'tiktokrizzparty' + i,
           startDateTime: new Date(),
           endDateTime: new Date(start.getTime() + 864000 + i),
-          location: "tampa, florida",
-          description: "fein! fein! fein! fein! fein so good she honor roll",
+          location: 'tampa, florida',
+          description: 'fein! fein! fein! fein! fein so good she honor roll',
           societyId: socId,
         });
 
       expect(response.status).toBe(200);
     }
 
-    const getRes = await request(app).get("/events");
+    const getRes = await request(app).get('/events');
 
     expect(getRes.status).toBe(200);
     expect(getRes.body.length).toBe(10);
   });
 
-  test("Create and get events successfully, events are provided by pages", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+  test('Create and get events successfully, events are provided by pages', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -80,17 +80,17 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const societyRes = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
         userId: newUser.id,
       });
 
@@ -100,35 +100,35 @@ describe("/events endpoint", () => {
 
     for (let i = 0; i < 25; i++) {
       const response = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
           banner:
-            "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-          name: "tiktokrizzparty" + i,
+            'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+          name: 'tiktokrizzparty' + i,
           startDateTime: new Date(),
           endDateTime: new Date(start.getTime() + 864000 + i),
-          location: "tampa, florida",
-          description: "fein! fein! fein! fein! fein so good she honor roll",
+          location: 'tampa, florida',
+          description: 'fein! fein! fein! fein! fein so good she honor roll',
           societyId: socId,
         });
 
       expect(response.status).toBe(200);
     }
 
-    const getRes = await request(app).get("/events");
+    const getRes = await request(app).get('/events');
 
     expect(getRes.status).toBe(200);
     expect(getRes.body.length).toBe(10);
 
-    const pageOne = await request(app).get("/events").query({
+    const pageOne = await request(app).get('/events').query({
       page: 1,
     });
 
     expect(pageOne.status).toBe(200);
     expect(pageOne.body).toStrictEqual(getRes.body);
 
-    const pageTwo = await request(app).get("/events").query({
+    const pageTwo = await request(app).get('/events').query({
       page: 2,
     });
 
@@ -136,7 +136,7 @@ describe("/events endpoint", () => {
     expect(pageTwo.body).not.toStrictEqual(pageOne.body);
     expect(pageTwo.body.length).toBe(10);
 
-    const pageThree = await request(app).get("/events").query({
+    const pageThree = await request(app).get('/events').query({
       page: 3,
     });
 
@@ -144,11 +144,11 @@ describe("/events endpoint", () => {
     expect(pageThree.body.length).toBe(5);
   }, 20000);
 
-  test("Get events when none exist", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+  test('Get events when none exist', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -159,30 +159,30 @@ describe("/events endpoint", () => {
 
     expect(status).toBe(201);
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
-    const response = await request(app).get("/events");
+    const response = await request(app).get('/events');
 
     expect(response.status).toBe(404);
   });
 
-  test("Provide invalid page", async () => {
-    const response = await request(app).get("/events").query({
+  test('Provide invalid page', async () => {
+    const response = await request(app).get('/events').query({
       page: 0,
     });
 
     expect(response.status).toBe(400);
   });
 
-  test("Get events before when query param specified", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+  test('Get events before when query param specified', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -195,17 +195,17 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const society = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
         userId: newUser.id,
       });
 
@@ -213,10 +213,10 @@ describe("/events endpoint", () => {
     const socId = society.body.id;
 
     const society2 = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc2",
+        name: 'Rizzsoc2',
         userId: newUser.id,
       });
 
@@ -231,30 +231,30 @@ describe("/events endpoint", () => {
       endDate.setDate(startDate.getDate() + i + 1);
 
       const response = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
           banner:
-            "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-          name: "tiktokrizzyparty" + i,
+            'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+          name: 'tiktokrizzyparty' + i,
           startDateTime: startDate,
           endDateTime: new Date(startDate.getTime() + 960000 + i),
-          location: "tampa, florida",
-          description: "fein! fein! fein! fein! fein so good she honor roll",
+          location: 'tampa, florida',
+          description: 'fein! fein! fein! fein! fein so good she honor roll',
           societyId: socId,
         });
 
       const response2 = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
           banner:
-            "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-          name: "tiktokrizziestparty" + i,
+            'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+          name: 'tiktokrizziestparty' + i,
           startDateTime: startDate,
           endDateTime: new Date(startDate.getTime() + 960000 + i),
-          location: "tampa, florida",
-          description: "fein! fein! fein! fein! fein so good she honor roll",
+          location: 'tampa, florida',
+          description: 'fein! fein! fein! fein! fein so good she honor roll',
           societyId: socId2,
         });
 
@@ -263,7 +263,7 @@ describe("/events endpoint", () => {
       expect(response2.status).toBe(200);
     }
 
-    const getRes = await request(app).get("/events").query({
+    const getRes = await request(app).get('/events').query({
       before: endDates[3],
     });
 
@@ -276,11 +276,11 @@ describe("/events endpoint", () => {
     expect(getRes.body.length).toBe(10);
   });
 
-  test("Get events before when query param specified, but no relevant events exist", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+  test('Get events before when query param specified, but no relevant events exist', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -293,17 +293,17 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const society = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
         userId: newUser.id,
       });
 
@@ -316,16 +316,16 @@ describe("/events endpoint", () => {
       endDate.setDate(startDate.getDate() + i + 1);
 
       const response = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
           banner:
-            "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-          name: "tiktokrizzyparty" + i,
+            'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+          name: 'tiktokrizzyparty' + i,
           startDateTime: startDate,
           endDateTime: endDate,
-          location: "tampa, florida",
-          description: "fein! fein! fein! fein! fein so good she honor roll",
+          location: 'tampa, florida',
+          description: 'fein! fein! fein! fein! fein so good she honor roll',
           societyId: socId,
         });
 
@@ -333,20 +333,20 @@ describe("/events endpoint", () => {
     }
 
     const getRes = await request(app)
-      .get("/events")
+      .get('/events')
       .query({
         id: socId,
-        before: new Date(Date.parse("2022-01-01")),
+        before: new Date(Date.parse('2022-01-01')),
       });
 
     expect(getRes.status).toBe(404);
   });
 
   test("Get events after when query param specified, don't include events from before", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "aftereventsuser",
-      password: "testpassword",
-      email: "afterevents@example.com",
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
+      email: 'afterevents@example.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -359,17 +359,17 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "aftereventsuser",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const society = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "AfterEventsSoc",
+        name: 'AfterEventsSoc',
         userId: newUser.id,
       });
 
@@ -384,15 +384,15 @@ describe("/events endpoint", () => {
       endDate.setDate(startDate.getDate() + i + 2);
 
       const response = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
-          banner: "https://example.com/banner.jpg",
-          name: "afterevents" + i,
+          banner: 'https://example.com/banner.jpg',
+          name: 'afterevents' + i,
           startDateTime: startDate,
           endDateTime: endDate,
-          location: "test location",
-          description: "Test event description",
+          location: 'test location',
+          description: 'Test event description',
           societyId: socId,
         });
 
@@ -403,7 +403,7 @@ describe("/events endpoint", () => {
     const threeDaysLater = new Date();
     threeDaysLater.setDate(threeDaysLater.getDate() + 3);
 
-    const getRes = await request(app).get("/events").query({
+    const getRes = await request(app).get('/events').query({
       id: socId,
       after: threeDaysLater,
     });
@@ -417,11 +417,11 @@ describe("/events endpoint", () => {
     });
   });
 
-  test("Get events after when query param specified, covers all events", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "aftereventsuser",
-      password: "testpassword",
-      email: "afterevents@example.com",
+  test('Get events after when query param specified, covers all events', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
+      email: 'afterevents@example.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -434,25 +434,25 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "aftereventsuser",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const society = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "AfterEventsSoc",
+        name: 'AfterEventsSoc',
         userId: newUser.id,
       });
 
     const society2 = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "AfterEventsSoc2",
+        name: 'AfterEventsSoc2',
         userId: newUser.id,
       });
 
@@ -468,28 +468,28 @@ describe("/events endpoint", () => {
       endDate.setDate(startDate.getDate() + 5);
 
       const response = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
-          banner: "https://example.com/banner.jpg",
-          name: "afterevents" + i,
+          banner: 'https://example.com/banner.jpg',
+          name: 'afterevents' + i,
           startDateTime: startDate,
           endDateTime: endDate,
-          location: "test location",
-          description: "Test event description",
+          location: 'test location',
+          description: 'Test event description',
           societyId: socId,
         });
 
       const response2 = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
-          banner: "https://example.com/banner.jpg",
-          name: "afterevents2" + i,
+          banner: 'https://example.com/banner.jpg',
+          name: 'afterevents2' + i,
           startDateTime: startDate,
           endDateTime: endDate,
-          location: "test location",
-          description: "Test event description",
+          location: 'test location',
+          description: 'Test event description',
           societyId: socId2,
         });
 
@@ -499,9 +499,9 @@ describe("/events endpoint", () => {
 
     // Query for events after the second event's start date
     const getRes = await request(app)
-      .get("/events")
+      .get('/events')
       .query({
-        after: new Date(Date.parse("2020-01-01")),
+        after: new Date(Date.parse('2020-01-01')),
       });
 
     expect(getRes.status).toBe(200);
@@ -510,16 +510,16 @@ describe("/events endpoint", () => {
     // Verify all returned events start after the specified date
     getRes.body.forEach((event) => {
       expect(new Date(event.startDateTime).getTime()).toBeGreaterThanOrEqual(
-        new Date(Date.parse("2020-01-01")).getTime()
+        new Date(Date.parse('2020-01-01')).getTime()
       );
     });
   });
 
-  test("Get events before and after when query params specify, covers all events, use pagination", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "aftereventsuser",
-      password: "testpassword",
-      email: "afterevents@example.com",
+  test('Get events before and after when query params specify, covers all events, use pagination', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
+      email: 'afterevents@example.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -532,25 +532,25 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "aftereventsuser",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const society = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "AfterEventsSoc",
+        name: 'AfterEventsSoc',
         userId: newUser.id,
       });
 
     const society2 = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "AfterEventsSoc2",
+        name: 'AfterEventsSoc2',
         userId: newUser.id,
       });
 
@@ -565,28 +565,28 @@ describe("/events endpoint", () => {
       endDate.setDate(startDate.getDate() + 5);
 
       const response = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
-          banner: "https://example.com/banner.jpg",
-          name: "afterevents" + i,
+          banner: 'https://example.com/banner.jpg',
+          name: 'afterevents' + i,
           startDateTime: startDate,
           endDateTime: endDate,
-          location: "test location",
-          description: "Test event description",
+          location: 'test location',
+          description: 'Test event description',
           societyId: socId,
         });
 
       const response2 = await request(app)
-        .post("/event")
-        .set("Cookie", sessionID)
+        .post('/event')
+        .set('Cookie', sessionID)
         .send({
-          banner: "https://example.com/banner.jpg",
-          name: "afterevents2" + i,
+          banner: 'https://example.com/banner.jpg',
+          name: 'afterevents2' + i,
           startDateTime: startDate,
           endDateTime: endDate,
-          location: "test location",
-          description: "Test event description",
+          location: 'test location',
+          description: 'Test event description',
           societyId: socId2,
         });
 
@@ -598,10 +598,10 @@ describe("/events endpoint", () => {
     beforeThisDate.setDate(beforeThisDate.getDate() + 99);
 
     const getRes = await request(app)
-      .get("/events")
+      .get('/events')
       .query({
         before: beforeThisDate,
-        after: new Date(Date.parse("2020-01-01")),
+        after: new Date(Date.parse('2020-01-01')),
       });
 
     expect(getRes.status).toBe(200);
@@ -610,7 +610,7 @@ describe("/events endpoint", () => {
     // Verify all returned events start after the specified date
     getRes.body.forEach((event) => {
       expect(new Date(event.startDateTime).getTime()).toBeGreaterThanOrEqual(
-        new Date(Date.parse("2020-01-01")).getTime()
+        new Date(Date.parse('2020-01-01')).getTime()
       );
 
       expect(new Date(event.startDateTime).getTime()).toBeLessThanOrEqual(
@@ -619,10 +619,10 @@ describe("/events endpoint", () => {
     });
 
     const getRes2 = await request(app)
-      .get("/events")
+      .get('/events')
       .query({
         before: beforeThisDate,
-        after: new Date(Date.parse("2020-01-01")),
+        after: new Date(Date.parse('2020-01-01')),
         page: 2,
       });
 
@@ -630,11 +630,11 @@ describe("/events endpoint", () => {
     expect(getRes2.body.length).toEqual(2);
   });
 
-  test("Get events before and after when query params specify, covers no events", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "aftereventsuser",
-      password: "testpassword",
-      email: "afterevents@example.com",
+  test('Get events before and after when query params specify, covers no events', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
+      email: 'afterevents@example.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -647,17 +647,17 @@ describe("/events endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "aftereventsuser",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'aftereventsuser',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const society = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "AfterEventsSoc",
+        name: 'AfterEventsSoc',
         userId: newUser.id,
       });
 
@@ -668,10 +668,10 @@ describe("/events endpoint", () => {
     beforeThisDate.setDate(beforeThisDate.getDate() + 99);
 
     const getRes = await request(app)
-      .get("/events")
+      .get('/events')
       .query({
         before: beforeThisDate,
-        after: new Date(Date.parse("2020-01-01")),
+        after: new Date(Date.parse('2020-01-01')),
       });
 
     expect(getRes.status).toBe(404);
