@@ -45,6 +45,5 @@ export interface DayInfo {
 
 export interface TimelineInfo {
   startDate: Date;
-  endDate: Date;
   days: DayInfo[];
 }

@@ -13,25 +13,11 @@ const startDate = new Date(2024, 9, 28);
 const endDate = new Date(startDate);
 endDate.setDate(endDate.getDate() + 5);
 
-const days = Array.from({ length: 7 }, (e, i) => {
-  e = 50; //straight up this line is just here to get rid of "value declared but not read" warning.
-  // it was bugging me
-
-  const date: Date = new Date(startDate.valueOf());
-
-  date.setDate(startDate.getDate() + i);
-
-  return {
-    date,
-    events: [],
-  };
-});
-
 export function TimelineBar(TimelineProps: TimelineInfo) {
   return (
     <div className={classes.timelineBarContainer}>
       <div className={classes.arrowContainer}>
-        <ArrowLeftIcon />
+        <ArrowLeftIcon className={classes.arrow} />
       </div>
       <div className={classes.daysContainer}>
         {TimelineProps.days.map((day) => {
@@ -48,7 +34,7 @@ export function TimelineBar(TimelineProps: TimelineInfo) {
         })}
       </div>
       <div className={classes.arrowContainer}>
-        <ArrowRightIcon />
+        <ArrowRightIcon className={classes.arrow} />
       </div>
     </div>
   );

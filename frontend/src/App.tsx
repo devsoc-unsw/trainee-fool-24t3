@@ -3,7 +3,6 @@ import NavBar from "./NavBar/NavBar";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import HomePage from "./HomePage/HomePage";
 import AboutPage from "./About/About";
-import Calendar from "./Calendar/Calendar";
 import LoginPage from "./Login/Login";
 import RegisterPage from "./Register/Register";
 import VerifyOTP from "./VerifyOTP/VerifyOTP";

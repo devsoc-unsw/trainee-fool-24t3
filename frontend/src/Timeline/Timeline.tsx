@@ -1,4 +1,4 @@
-import classes from "./timeline.module.css";
+import classes from "./Timeline.module.css";
 import { DayInfo, TimelineInfo } from "../../../backend/src/interfaces";
 import { Calendar } from "../Calendar/Calendar";
 import { useSearchParams } from "react-router";

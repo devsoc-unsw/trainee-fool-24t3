@@ -1,9 +1,9 @@
 .arrowContainer {
-    height: 32px;
-    width: 32px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 8vw;
+    height: 9vh;
+    line-height: 8.4vh;
+    position: relative;
+    vertical-align: center;
 }
 
 .daysContainer {
@@ -11,14 +11,27 @@
     height: 9vh;
     border-top: 0.4vh solid gray;
     border-bottom: 0.4vh solid gray;
+    display: flex;
+}
+
+.arrow {
+    height: 30px;
+    padding: 0;
+    margin: 0;
+    top: 50%;
+    position: absolute;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .timelineBarContainer {
+    z-index: 1;
     padding: 0;
     margin: 0;
     margin-top: 15vw;
     display: flex;
     max-width: 100vw;
+    align-self: center;
     align-content: center;
 }
 
