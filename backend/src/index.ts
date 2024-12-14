@@ -12,6 +12,7 @@ import {
   RegisterBody,
   UpdateEventBody,
   CreateKeywordBody,
+  keywordIdBody,
 } from "./requestTypes";
 import bcrypt from "bcrypt";
 import { LoginErrors, SanitisedUser } from "./interfaces";
@@ -1133,18 +1134,18 @@ app.get(
 
     const userID = sessionFromDB.userId;
 
-    const userKeywords = await prisma.user.findFirst({
+    let userKeywords = await prisma.user.findFirst({
       where: {
         id: userID,
       },
       select: {
-        keywords: {
-          select: {text: true}
-        },
+        keywords: true,
       }
-    })
+    });
+  
+    if (userKeywords === null) return res.status(200).json([]);
 
-  return res.status(200).json(userKeywords);
+  return res.status(200).json(userKeywords.keywords);
 });
 
 // creates a keyword
@@ -1186,8 +1187,119 @@ app.post(
     }
 });
 
-// - app.post("/user/keyword") - Associates a user with a keyword
-// - app.delete("/user/keyword") - Disassociates a user with a keyword
+// associates a user with a keyword
+app.post(
+  "/user/keyword", 
+  async (req: TypedRequest<keywordIdBody>, res: Response) => {
+    //get userid from session
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+    const userID = sessionFromDB.userId;
+
+    //Make sure keyword exists
+    const keywordExists = await prisma.keyword.findFirst({
+      where: {
+        id: req.body.keywordId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!keywordExists) {
+      return res.status(400).json({ message: "Invalid keyword." });
+    }
+
+    //Connect keyword and user
+    await prisma.keyword.update({
+      where: {
+        id: req.body.keywordId,
+      },
+      data: {
+        subscribers: {
+          connect: {
+            id: userID,
+          },
+        },
+      },
+    });
+
+    await prisma.user.update({
+      where: {
+        id: userID,
+      },
+      data: {
+        keywords: {
+          connect: {
+            id: req.body.keywordId,
+          },
+        },
+      },
+    });
+
+  return res.status(200).json({ message: "ok" });
+});
+
+// disassociates a user with a keyword
+app.delete(
+  "/user/keyword", 
+  async (req: TypedRequest<keywordIdBody>, res: Response) => {
+    //get userid from session
+    const sessionFromDB = await validateSession(
+      req.session ? req.session : null
+    );
+    if (!sessionFromDB) {
+      return res.status(401).json({ message: "Invalid session provided." });
+    }
+    const userID = sessionFromDB.userId;
+
+    //Make sure keyword exists
+    const societyId = await prisma.keyword.findFirst({
+      where: {
+        id: req.body.keywordId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!societyId) {
+      return res.status(400).json({ message: "Invalid keyword." });
+    }
+
+    //Disconnect keyword and user
+    await prisma.keyword.update({
+      where: {
+        id: req.body.keywordId,
+      },
+      data: {
+        subscribers: {
+          disconnect: {
+            id: userID,
+          },
+        },
+      },
+    });
+
+    await prisma.user.update({
+      where: {
+        id: userID,
+      },
+      data: {
+        keywords: {
+          disconnect: {
+            id: req.body.keywordId,
+          },
+        },
+      },
+    });
+
+  return res.status(200).json({ message: "ok" });
+});
 
 app.get("/hello", () => {
   console.log("Hello World!");

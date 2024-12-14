@@ -59,4 +59,8 @@ export interface eventIdBody {
   eventId: number;
 }
 
+export interface keywordIdBody {
+  keywordId: number;
+}
+
 export interface eventDetailsBody {}
