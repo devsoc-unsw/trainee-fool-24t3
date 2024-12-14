@@ -26,11 +26,15 @@ export interface UserContextType {
   societies: Societies | null;
   setUser: Dispatch<SetStateAction<User | null>> | undefined;
   setSocieties: Dispatch<SetStateAction<Societies | null>> | undefined;
+  society: Society | null;
+  setSociety: Dispatch<SetStateAction<Society | null>> | undefined;
 }
 
 export const UserContext = createContext<UserContextType>({
   user: null,
   societies: null,
+  society: null,
   setUser: undefined,
   setSocieties: undefined,
+  setSociety: undefined,
 });

@@ -14,7 +14,7 @@ import { DiscordPage } from './Settings/SettingsPage/DiscordPage/DiscordPage';
 import { Unauthenticated } from './Unauthenticated/Unauthenticated';
 import { ProtectedRoute } from './ProtectedRoute/ProtectedRoute';
 import { useEffect, useState } from 'react';
-import { Societies, User, UserContext } from './UserContext/UserContext';
+import { Societies, Society, User, UserContext } from './UserContext/UserContext';
 import GenerateOTP from './GenerateOTP/GenerateOTP';
 import VerifyOTP from './VerifyOTP/VerifyOTP';
 import { SocietyManagementPage } from './Settings/SettingsPage/SocietyManagementPage/SocietyManagementPage';
@@ -26,6 +26,7 @@ function App() {
     joined: [],
     administering: [],
   });
+  const [society, setSociety] = useState<Society | null>(null);
 
   useEffect(() => {
     fetch('http://localhost:5180/user', {
@@ -45,7 +46,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <UserContext.Provider value={{ user, setUser, societies, setSocieties }}>
+      <UserContext.Provider value={{ user, setUser, societies, setSocieties, society, setSociety}}>
         <div className="page">
           <Routes>
             <Route path="/" element={<HomePage />} />

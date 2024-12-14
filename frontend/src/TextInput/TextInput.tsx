@@ -48,6 +48,7 @@ export function TextInput(props: TextInputProp) {
           className={classes.input}
           onChange={handleChange}
           autoFocus={props.autofocus}
+          value={props.value}
         />
       : <input
           autoFocus={props.autofocus}

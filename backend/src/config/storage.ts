@@ -36,3 +36,9 @@ export const getFile = async (path: string) => {
 
     return data;
 }
+
+export const getFileUrl = async (path: string) => {
+    const { data } = await storageClient.from('images').getPublicUrl(path);
+
+    return data;
+}

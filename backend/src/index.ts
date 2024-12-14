@@ -27,12 +27,8 @@ import { verifyOTP } from './routes/OTP/verifyOTP';
 import {
   findUserFromId,
   updateUserPasswordFromEmail,
-<<<<<<< HEAD
-} from './routes/User/user';
-=======
 } from "./routes/User/user";
-import { getFile, uploadFile } from "./config/storage";
->>>>>>> 731a053 (Added image uploading and linked to supabase storage. added input boxes for event creation form.)
+import { getFile, getFileUrl, uploadFile } from "./config/storage";
 
 declare module 'express-session' {
   interface SessionData {
@@ -631,7 +627,7 @@ app.post(
       return res.status(400).json({ message: 'Invalid date' });
     }
 
-    console.log(event);
+    //console.log(event);
 
     // upload image to storage and get link
     let imagePath;
@@ -669,6 +665,7 @@ app.post(
       });
       return res.status(200).json(eventRes);
     } catch (e) {
+      console.log(e);
       return res.status(400).json({ message: 'Invalid event input' });
     }
   }
@@ -735,7 +732,15 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
         description: req.body.description,
       },
     });
-    return res.status(200).json(eventRes);
+    // we are choosing to send the image back as a url
+    let imageFile;
+    try {
+      imageFile = await getFileUrl(event.banner); // getFile(event.banner) if we wanted raw file
+    } catch (error) {
+      return res.status(400).json({ error: (error as Error).message });
+    };
+
+    return res.status(200).json({...event, banner: imageFile});
   } catch (e) {
     return res.status(400).json({ message: 'Invalid event input' });
   }

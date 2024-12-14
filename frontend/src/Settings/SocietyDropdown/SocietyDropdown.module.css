@@ -12,8 +12,29 @@
     padding: 32px;
     padding-left: 24px;
     border-radius: 16px 0px 0px 16px;
+    width: 19%;
   }
 
 .label {
+    font-weight: bold;
+}
+
+.select {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-weight:bold;
+    margin-top: 10px;
+    font-size: 1rem;
+    text-overflow: ellipsis;
+}
+
+.option {
+    max-width: 280px;
+    font-size: 1.2rem;
+    text-overflow: ellipsis;
+}
+
+.option:hover {
     font-weight: bold;
 }

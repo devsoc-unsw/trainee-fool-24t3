@@ -65,6 +65,12 @@
   font-weight: bold;
 }
 
+.submitting {
+  padding: 10px;
+  color: hsl(0, 0%, 0%);
+  font-weight: bold;
+}
+
 .textInput {
   background-color: hsl(0, 0%, 93%);
   color: hsla(0, 0%, 0%, 30%);

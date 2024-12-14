@@ -3,9 +3,10 @@ import Button from '../../../../Button/Button';
 import { SettingsPage } from '../../SettingsPage';
 import classes from './CreateNewEvent.module.css';
 import { ButtonIcons, ButtonVariants } from '../../../../Button/ButtonTypes';
-import { ChangeEventHandler, MouseEvent, MouseEventHandler, useContext, useRef, useState } from 'react';
+import { ChangeEventHandler, MouseEventHandler, useContext, useEffect, useRef, useState } from 'react';
 import { UserContext } from '../../../../UserContext/UserContext';
 import { TextInput, TextOptions } from '../../../../TextInput/TextInput';
+import { useNavigate } from 'react-router';
 
 type StringSetter = React.Dispatch<React.SetStateAction<string>>;
 
@@ -61,10 +62,13 @@ export function CreateNewEventPage() {
   const [uploadError, setUploadError] = useState<UploadError>({status: false, message: ErrorMessage.default});
   const [submitError, setSubmitError] = useState('');
   const [fileDragging, setFileDragging] = useState(false);
-  const { user } = useContext(UserContext);
+  const [submitting, setSubmitting] = useState(false);
+  const [inactiveForms, setInactiveForms] = useState<FormStructure[]>([]);
+  const { society } = useContext(UserContext);
+  const navigate = useNavigate();
 
   const defaultForm = {
-    societyId: user?.id,
+    societyId: society?.id,
     name: "Training Program Induction", 
     location: "John Lions Garden", 
     startDateTime: new Date(),
@@ -136,9 +140,7 @@ export function CreateNewEventPage() {
     setFormContent({...formContent, banner: undefined});
   }
 
-  const submitForm: MouseEventHandler<HTMLButtonElement> = async (e) => {   
-    e.preventDefault();
-
+  const submitForm = async () => {   
     let formResponses = formContent;
     if(formContent.banner && formContent.banner instanceof File) {
       const file = formContent.banner;
@@ -156,6 +158,7 @@ export function CreateNewEventPage() {
 
     console.log(formResponses);
 
+    setSubmitting(true);
     const res = await fetch("http://localhost:5180/event", {
       method: "POST",
       credentials: "include",
@@ -167,8 +170,10 @@ export function CreateNewEventPage() {
     const json = await res.json();
 
     console.log(json);
+    setSubmitting(false);
     if(res.ok){
       emptyForm();
+      navigate("/settings/events", {state: { creationSuccess: true} } );
     } else {
       setSubmitError(json.message);
     }
@@ -220,6 +225,23 @@ export function CreateNewEventPage() {
     return setItemContent;
   }
 
+  useEffect(() => {
+    if(!formContent.societyId) {
+      setFormContent({...formContent, societyId: society?.id});
+      return;
+    }
+    if(society?.id !== formContent.societyId) {
+      setInactiveForms((prev) => [...prev.filter(item => item.societyId !== formContent.societyId), formContent]);
+      const archived = inactiveForms.find((form) => form.societyId === society?.id);
+      console.log(archived);
+      if(archived) {
+        setFormContent(archived);
+        return;
+      }
+    }
+    setFormContent({...defaultForm, societyId: society?.id});
+  }, [society]);
+
   return (
     <SettingsPage
       title="Create a new event"
@@ -237,6 +259,10 @@ export function CreateNewEventPage() {
         {submitError && 
         <div className={classes.error}>
           <p>{submitError}</p>
+        </div>}
+        {submitting && 
+        <div className={classes.submitting}>
+          <p>creating event...</p>
         </div>}
         <div className={classes.photoArea}>
           <div className={`${classes.photo} ${fileDragging ? classes.photoDragged : ""}`} 
@@ -268,6 +294,7 @@ export function CreateNewEventPage() {
           type={TextOptions.Text}
           error={false}
           autofocus={true}
+          value={formContent.name === defaultForm.name ? "" : formContent.name}
           />
         <label className={classes.field}>Event location</label>
         <TextInput className={classes.textInput}
@@ -276,6 +303,7 @@ export function CreateNewEventPage() {
           onChange={setFormItem("location")}
           type={TextOptions.Text}
           error={false}
+          value={formContent.location === defaultForm.location ? "" : formContent.location}
           />
         <div className={classes.times}>
           <div className={classes.timeInput}>
@@ -320,6 +348,7 @@ export function CreateNewEventPage() {
           type={TextOptions.Text}
           error={false}
           textarea={true}
+          value={formContent.description === defaultForm.description ? "" : formContent.description}
           />
       </form>
     </SettingsPage>
