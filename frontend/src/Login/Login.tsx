@@ -4,7 +4,7 @@ import { TextInput, TextOptions } from '../TextInput/TextInput';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { LockClosedIcon } from '@heroicons/react/24/outline';
 import { useState, FormEvent, useContext } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { errorHandler, AuthError } from '../errorHandler';
 import { UserContext, User } from '../UserContext/UserContext';
 
