@@ -1,29 +1,28 @@
-import classes from "./Login.module.css";
-import { AuthScreen } from "../AuthScreen/AuthScreen";
-import { TextInput, TextOptions } from "../TextInput/TextInput";
-import { UserCircleIcon } from "@heroicons/react/24/outline";
-import { LockClosedIcon } from "@heroicons/react/24/outline";
-import { useState, FormEvent, useContext } from "react";
-import { Link, useNavigate } from "react-router";
-import { errorHandler, AuthError } from "../errorHandler";
-import { UserContext, User } from "../UserContext/UserContext";
+import classes from './Login.module.css';
+import { AuthScreen } from '../AuthScreen/AuthScreen';
+import { TextInput, TextOptions } from '../TextInput/TextInput';
+import { UserCircleIcon } from '@heroicons/react/24/outline';
+import { LockClosedIcon } from '@heroicons/react/24/outline';
+import { useState, FormEvent, useContext } from 'react';
+import { Link } from 'react-router';
+import { errorHandler, AuthError } from '../errorHandler';
+import { UserContext, User } from '../UserContext/UserContext';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<AuthError | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
-  const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const res = await fetch("http://localhost:5180/auth/login", {
-      method: "POST",
+    const res = await fetch('http://localhost:5180/auth/login', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
-      credentials: "include",
+      credentials: 'include',
       body: JSON.stringify({
         username,
         password,
@@ -35,10 +34,9 @@ export default function LoginPage() {
       setError(errorHandler(json.error));
     } else if (setUser) {
       setError(undefined);
-      setUser(json as User);
-      setSuccess("Logged in successfully! Redirecting...");
+      setSuccess('Logged in successfully! Redirecting...');
       setTimeout(() => {
-        navigate("/timeline");
+        setUser(json as User);
       }, 1000);
     } else {
       setError(errorHandler("Couldn't update user object."));
@@ -77,7 +75,13 @@ export default function LoginPage() {
           />,
         ]}
         buttonText="Log in"
-        footer={<p>Forgot Password</p>}
+        footer={
+          <p>
+            <Link className={classes.forgot} to="/changepassword">
+              Forgot Password
+            </Link>
+          </p>
+        }
         onSubmit={handleSubmit}
         error={error}
         success={success}

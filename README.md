@@ -14,6 +14,8 @@ ALLOWED_ORIGINS=commaseparated,urls,or,regexes
 DATABASE_URL="postgresql://.../postgres?pgbouncer=true"
 DIRECT_URL="postgresql://.../postgres"
 REDIS_PORT=6379
+EMAIL_KEY="mailgun_api_key"
+OTP_EXPIRES=600
 ```
 
 `NODE_ENV` may be either 'development' or 'production'.
