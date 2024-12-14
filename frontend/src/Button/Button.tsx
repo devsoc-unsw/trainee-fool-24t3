@@ -14,18 +14,20 @@ type ButtonProps = {
   icon?: ButtonIcons;
   variant?: ButtonVariants;
   className?: string;
-  type: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
+  type: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
+  onClick?: () => void;
 };
 
 function Button(props: ButtonProps) {
   return (
     <button
       className={`${classes.button} ${
-        props.variant ? classes[props.variant] : ""
-      } ${props.className ? props.className : ""} ${
-        props.children ? classes.stringButton : ""
+        props.variant ? classes[props.variant] : ''
+      } ${props.className ? props.className : ''} ${
+        props.children ? classes.stringButton : ''
       }`}
       type={props.type}
+      onClick={props.onClick}
     >
       {props.icon === ButtonIcons.Plus && (
         <PlusIcon className={classes.icon}></PlusIcon>

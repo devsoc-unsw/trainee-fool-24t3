@@ -1,14 +1,14 @@
-import { expect, test, vi, describe } from "vitest"; // 👈🏻 Added the `vi` import
-import prisma from "../src/prisma";
-import request from "supertest";
-import app from "../src/index";
+import { expect, test, vi, describe } from 'vitest'; // 👈🏻 Added the `vi` import
+import prisma from '../src/prisma';
+import request from 'supertest';
+import app from '../src/index';
 
-describe("POST /user/event (attend) endpoint", () => {
-  test("Attend successful", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+describe('POST /user/event (attend) endpoint', () => {
+  test('Attend successful', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -21,17 +21,17 @@ describe("POST /user/event (attend) endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const societyRes = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
       });
 
     const socId = societyRes.body.id;
@@ -39,22 +39,22 @@ describe("POST /user/event (attend) endpoint", () => {
     const start = new Date();
 
     const eventRes = await request(app)
-      .post("/event")
-      .set("Cookie", sessionID)
+      .post('/event')
+      .set('Cookie', sessionID)
       .send({
         banner:
-          "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-        name: "tiktokrizzparty",
+          'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+        name: 'tiktokrizzparty',
         startDateTime: new Date(),
         endDateTime: new Date(start.getTime() + 86400000),
-        location: "tampa, florida",
-        description: "fein! fein! fein! fein! fein so good she honor roll",
+        location: 'tampa, florida',
+        description: 'fein! fein! fein! fein! fein so good she honor roll',
         societyId: socId,
       });
 
     const attendRes = await request(app)
-      .post("/user/event")
-      .set("Cookie", sessionID)
+      .post('/user/event')
+      .set('Cookie', sessionID)
       .send({
         eventId: eventRes.body.numId,
       });
@@ -62,11 +62,11 @@ describe("POST /user/event (attend) endpoint", () => {
     expect(attendRes.status).toBe(200);
   });
 
-  test("Event invalid", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+  test('Event invalid', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -79,17 +79,17 @@ describe("POST /user/event (attend) endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const societyRes = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
         userId: newUser.id,
       });
 
@@ -98,22 +98,22 @@ describe("POST /user/event (attend) endpoint", () => {
     const start = new Date();
 
     const eventRes = await request(app)
-      .post("/event")
-      .set("Cookie", sessionID)
+      .post('/event')
+      .set('Cookie', sessionID)
       .send({
         banner:
-          "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-        name: "tiktokrizzparty",
+          'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+        name: 'tiktokrizzparty',
         startDateTime: new Date(),
         endDateTime: new Date(start.getTime() + 86400000),
-        location: "tampa, florida",
-        description: "fein! fein! fein! fein! fein so good she honor roll",
+        location: 'tampa, florida',
+        description: 'fein! fein! fein! fein! fein so good she honor roll',
         societyId: socId,
       });
 
     const attendRes = await request(app)
-      .post("/user/event")
-      .set("Cookie", sessionID)
+      .post('/user/event')
+      .set('Cookie', sessionID)
       .send({
         eventId: -123,
       });
@@ -122,12 +122,12 @@ describe("POST /user/event (attend) endpoint", () => {
   });
 });
 
-describe("/unattend endpoint", () => {
-  test("Unattend successful", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+describe('/unattend endpoint', () => {
+  test('Unattend successful', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -140,17 +140,17 @@ describe("/unattend endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const societyRes = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
         userId: newUser.id,
       });
 
@@ -159,22 +159,22 @@ describe("/unattend endpoint", () => {
     const start = new Date();
 
     const eventRes = await request(app)
-      .post("/event")
-      .set("Cookie", sessionID)
+      .post('/event')
+      .set('Cookie', sessionID)
       .send({
         banner:
-          "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-        name: "tiktokrizzparty",
+          'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+        name: 'tiktokrizzparty',
         startDateTime: new Date(),
         endDateTime: new Date(start.getTime() + 86400000),
-        location: "tampa, florida",
-        description: "fein! fein! fein! fein! fein so good she honor roll",
+        location: 'tampa, florida',
+        description: 'fein! fein! fein! fein! fein so good she honor roll',
         societyId: socId,
       });
 
     const attendRes = await request(app)
-      .delete("/user/event")
-      .set("Cookie", sessionID)
+      .delete('/user/event')
+      .set('Cookie', sessionID)
       .send({
         eventId: eventRes.body.numId,
       });
@@ -182,11 +182,11 @@ describe("/unattend endpoint", () => {
     expect(attendRes.status).toBe(200);
   });
 
-  test("Event invalid", async () => {
-    const { status, body } = await request(app).post("/auth/register").send({
-      username: "shinjisatoo",
-      password: "testpassword",
-      email: "longseason1996@gmail.com",
+  test('Event invalid', async () => {
+    const { status, body } = await request(app).post('/auth/register').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
+      email: 'longseason1996@gmail.com',
     });
 
     const newUser = await prisma.user.findFirst({
@@ -199,17 +199,17 @@ describe("/unattend endpoint", () => {
     expect(status).toBe(201);
     expect(newUser).not.toBeNull();
 
-    const loginres = await request(app).post("/auth/login").send({
-      username: "shinjisatoo",
-      password: "testpassword",
+    const loginres = await request(app).post('/auth/login').send({
+      username: 'shinjisatoo',
+      password: 'testpassword',
     });
-    let sessionID = loginres.headers["set-cookie"];
+    let sessionID = loginres.headers['set-cookie'];
 
     const societyRes = await request(app)
-      .post("/society/create")
-      .set("Cookie", sessionID)
+      .post('/society')
+      .set('Cookie', sessionID)
       .send({
-        name: "Rizzsoc",
+        name: 'Rizzsoc',
         userId: newUser.id,
       });
 
@@ -218,22 +218,22 @@ describe("/unattend endpoint", () => {
     const start = new Date();
 
     const eventRes = await request(app)
-      .post("/event")
-      .set("Cookie", sessionID)
+      .post('/event')
+      .set('Cookie', sessionID)
       .send({
         banner:
-          "https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg",
-        name: "tiktokrizzparty",
+          'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
+        name: 'tiktokrizzparty',
         startDateTime: new Date(),
         endDateTime: new Date(start.getTime() + 86400000),
-        location: "tampa, florida",
-        description: "fein! fein! fein! fein! fein so good she honor roll",
+        location: 'tampa, florida',
+        description: 'fein! fein! fein! fein! fein so good she honor roll',
         societyId: socId,
       });
 
     const attendRes = await request(app)
-      .delete("/user/event")
-      .set("Cookie", sessionID)
+      .delete('/user/event')
+      .set('Cookie', sessionID)
       .send({
         eventId: -123,
       });

@@ -17,6 +17,8 @@ import { useEffect, useState } from 'react';
 import { User, UserContext } from './UserContext/UserContext';
 import GenerateOTP from './GenerateOTP/GenerateOTP';
 import VerifyOTP from './VerifyOTP/VerifyOTP';
+import { SocietyManagementPage } from './Settings/SettingsPage/SocietyManagementPage/SocietyManagementPage';
+import { CreateNewSocietyPage } from './Settings/SettingsPage/SocietyManagementPage/CreateNewSociety/CreateNewSociety';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -82,6 +84,8 @@ function App() {
               <Route path="profile" element={<ProfilePage />} />
               <Route path="events" element={<EventManagementPage />} />
               <Route path="events/new" element={<CreateNewEventPage />} />
+              <Route path="societies" element={<SocietyManagementPage />} />
+              <Route path="societies/new" element={<CreateNewSocietyPage />} />
               <Route path="discord" element={<DiscordPage />} />
             </Route>
             <Route path="/unauthenticated" element={<Unauthenticated />} />
