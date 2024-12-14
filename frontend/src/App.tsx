@@ -1,30 +1,32 @@
-import "./App.css";
-import NavBar from "./NavBar/NavBar";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
-import HomePage from "./HomePage/HomePage";
-import AboutPage from "./About/About";
-import Calendar from "./Calendar/Calendar";
-import LoginPage from "./Login/Login";
-import RegisterPage from "./Register/Register";
-import { Settings } from "./Settings/Settings";
-import { ProfilePage } from "./Settings/SettingsPage/ProfilePage/ProfilePage";
-import { EventManagementPage } from "./Settings/SettingsPage/EventManagementPage/EventManagementPage";
-import { CreateNewEventPage } from "./Settings/SettingsPage/EventManagementPage/CreateNewEvent/CreateNewEvent";
-import { DiscordPage } from "./Settings/SettingsPage/DiscordPage/DiscordPage";
-import { Unauthenticated } from "./Unauthenticated/Unauthenticated";
-import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
-import { useEffect, useState } from "react";
-import { User, UserContext } from "./UserContext/UserContext";
+import './App.css';
+import NavBar from './NavBar/NavBar';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import HomePage from './HomePage/HomePage';
+import AboutPage from './About/About';
+import Calendar from './Calendar/Calendar';
+import LoginPage from './Login/Login';
+import RegisterPage from './Register/Register';
+import { Settings } from './Settings/Settings';
+import { ProfilePage } from './Settings/SettingsPage/ProfilePage/ProfilePage';
+import { EventManagementPage } from './Settings/SettingsPage/EventManagementPage/EventManagementPage';
+import { CreateNewEventPage } from './Settings/SettingsPage/EventManagementPage/CreateNewEvent/CreateNewEvent';
+import { DiscordPage } from './Settings/SettingsPage/DiscordPage/DiscordPage';
+import { Unauthenticated } from './Unauthenticated/Unauthenticated';
+import { ProtectedRoute } from './ProtectedRoute/ProtectedRoute';
+import { useEffect, useState } from 'react';
+import { User, UserContext } from './UserContext/UserContext';
+import GenerateOTP from './GenerateOTP/GenerateOTP';
+import VerifyOTP from './VerifyOTP/VerifyOTP';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:5180/user", {
-      method: "GET",
-      credentials: "include",
+    fetch('http://localhost:5180/user', {
+      method: 'GET',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     }).then((res) => {
       if (res.ok) {
@@ -83,6 +85,8 @@ function App() {
               <Route path="discord" element={<DiscordPage />} />
             </Route>
             <Route path="/unauthenticated" element={<Unauthenticated />} />
+            <Route path="/changepassword" element={<GenerateOTP />} />
+            <Route path="/changepassword/verify" element={<VerifyOTP />} />
           </Routes>
         </div>
         <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>

@@ -1,6 +1,6 @@
-import express, { Request, Response } from "express";
-import session, { Session } from "express-session";
-import cors from "cors";
+import express, { Request, Response } from 'express';
+import session, { Session } from 'express-session';
+import cors from 'cors';
 import {
   DiscordLoginBody,
   LoginBody,
@@ -12,23 +12,23 @@ import {
   RegisterBody,
   UpdateEventBody,
   CreateKeywordBody,
-} from "./requestTypes";
-import bcrypt from "bcrypt";
-import { LoginErrors, SanitisedUser } from "./interfaces";
-import { PrismaClient, Prisma, User } from "@prisma/client";
-import prisma from "./prisma";
-import RedisStore from "connect-redis";
-import { createClient } from "redis";
-import dayjs, { Dayjs } from "dayjs";
-import { generateOTP } from "./routes/OTP/generateOTP";
-import assert from "assert";
-import { verifyOTP } from "./routes/OTP/verifyOTP";
+} from './requestTypes';
+import bcrypt from 'bcrypt';
+import { LoginErrors, SanitisedUser } from './interfaces';
+import { PrismaClient, Prisma, User } from '@prisma/client';
+import prisma from './prisma';
+import RedisStore from 'connect-redis';
+import { createClient } from 'redis';
+import dayjs, { Dayjs } from 'dayjs';
+import { generateOTP } from './routes/OTP/generateOTP';
+import assert from 'assert';
+import { verifyOTP } from './routes/OTP/verifyOTP';
 import {
   findUserFromId,
   updateUserPasswordFromEmail,
-} from "./routes/User/user";
+} from './routes/User/user';
 
-declare module "express-session" {
+declare module 'express-session' {
   interface SessionData {
     userId: number;
   }
@@ -36,27 +36,27 @@ declare module "express-session" {
 
 // Initialize client.
 if (
-  process.env["REDIS_PORT"] === undefined ||
-  process.env["REDIS_PORT"] === ""
+  process.env['REDIS_PORT'] === undefined ||
+  process.env['REDIS_PORT'] === ''
 ) {
   console.log(process.env);
-  console.error("Redis port not provided in .env file");
+  console.error('Redis port not provided in .env file');
   process.exit(1);
 }
 
 let allowed_origins;
 if (
-  process.env["ALLOWED_ORIGINS"] === undefined ||
-  process.env["ALLOWED_ORIGINS"] === ""
+  process.env['ALLOWED_ORIGINS'] === undefined ||
+  process.env['ALLOWED_ORIGINS'] === ''
 ) {
-  console.log("Warning: ALLOWED_ORIGINS not specified. Using wildcard *.");
-  allowed_origins = ["*"];
+  console.log('Warning: ALLOWED_ORIGINS not specified. Using wildcard *.');
+  allowed_origins = ['*'];
 } else {
-  allowed_origins = process.env["ALLOWED_ORIGINS"]?.split(",");
+  allowed_origins = process.env['ALLOWED_ORIGINS']?.split(',');
 }
 
 let redisClient = createClient({
-  url: `redis://localhost:${process.env["REDIS_PORT"]}`,
+  url: `redis://localhost:${process.env['REDIS_PORT']}`,
 });
 
 redisClient.connect().catch(console.error);
@@ -64,7 +64,7 @@ redisClient.connect().catch(console.error);
 // Initialize store.
 let redisStore = new RedisStore({
   client: redisClient,
-  prefix: "session:",
+  prefix: 'session:',
 });
 
 const app = express();
@@ -79,16 +79,25 @@ app.use(
 );
 app.use(express.json());
 
-if (process.env["SESSION_SECRET"] === undefined) {
-  console.error("Session secret not provided in .env file");
+if (process.env['SESSION_SECRET'] === undefined) {
+  console.error('Session secret not provided in .env file');
   process.exit(1);
 }
 
 if (
-  process.env["DATABASE_URL"] === undefined ||
-  process.env["DIRECT_URL"] === undefined
+  process.env['DATABASE_URL'] === undefined ||
+  process.env['DIRECT_URL'] === undefined
 ) {
-  console.error("Database URL or Direct URL not provided in .env file.");
+  console.error('Database URL or Direct URL not provided in .env file.');
+  process.exit(1);
+}
+
+if (
+  (process.env['NODE_ENV'] !== 'test' &&
+    process.env['EMAIL_KEY'] === undefined) ||
+  process.env['EMAIL_KEY'] === ''
+) {
+  console.log('`EMAIL_KEY` not provided in .env file.');
   process.exit(1);
 }
 
@@ -98,22 +107,22 @@ app.use(
     store: redisStore,
     resave: false, // required: force lightweight session keep alive (touch)
     saveUninitialized: false, // recommended: only save session when data exists
-    secret: process.env["SESSION_SECRET"],
+    secret: process.env['SESSION_SECRET'],
   })
 );
 
-app.get("/", (req: Request, res: Response) => {
-  console.log("Hello, TypeScript with Express :)))!");
-  res.send("Hello, TypeScript with Express :)))!");
+app.get('/', (req: Request, res: Response) => {
+  console.log('Hello, TypeScript with Express :)))!');
+  res.send('Hello, TypeScript with Express :)))!');
 });
 
 app.post(
-  "/auth/register",
+  '/auth/register',
   async (req: TypedRequest<RegisterBody>, res: Response) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const results = await prisma.user.findFirst({
@@ -125,7 +134,7 @@ app.post(
     if (results) {
       return res
         .status(400)
-        .json({ error: "Account with same credentials already exists" });
+        .json({ error: 'Account with same credentials already exists' });
     }
 
     const saltRounds: number = SALT_ROUNDS;
@@ -154,96 +163,99 @@ app.post(
   }
 );
 
-app.post("/auth/otp/generate", async (req: Request, res: Response) => {
-  try {
-    const { email }: { email: string } = req.body;
+app.post('/auth/otp/generate', async (req: Request, res: Response) => {
+  const { email }: { email: string } = req.body;
 
-    if (!email) {
-      throw new Error("Email address expected.");
-    }
-
-    const token = await generateOTP(email);
-
-    if (token) {
-      const expiryTime = process.env["OTP_EXPIRES"];
-
-      try {
-        await redisClient.set(email, token, {
-          EX: parseInt(expiryTime as string),
-        });
-      } catch {
-        console.error("OTP expiration time not set in environment variable.");
-      }
-
-      if (process.env["CI"]) {
-        return res.status(200).json({ message: token });
-      }
-      return res.status(200).json({ message: "ok" });
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Unexpected error while generating OTP." });
-    }
-  } catch (error) {
-    return res.status(400).json({ message: (error as Error).message });
+  if (!email) {
+    return res.status(400).json({ message: 'Missing required fields' });
   }
-});
 
-app.post("/auth/otp/verify", async (req: Request, res: Response) => {
+  let token;
   try {
-    const { email, token } = req.body;
+    token = await generateOTP(email);
+  } catch (e) {
+    return res.status(500).json({ message: (e as Error).message });
+  }
 
-    if (!email) {
-      throw new Error("Email address expected.");
-    }
-
-    if (!token) {
-      throw new Error("One time code expected.");
-    }
-
-    const otp = await redisClient.get(email);
-
-    verifyOTP(token, otp);
-
-    const expiryTime = process.env["OTP_EXPIRES"];
+  if (token) {
+    const expiryTime = process.env['OTP_EXPIRES'];
 
     try {
       await redisClient.set(email, token, {
         EX: parseInt(expiryTime as string),
       });
     } catch {
-      console.error("OTP expiration time not set in environment variable.");
+      return res.status(500).json({
+        message: 'OTP expiration time not set in environment variable.',
+      });
     }
 
-    return res.status(200).json({ message: "ok" });
-  } catch (error) {
-    return res.status(400).json({ message: (error as Error).message });
+    if (process.env['CI']) {
+      return res.status(200).json({ message: token });
+    }
+    return res.status(200).json({ message: 'ok' });
+  } else {
+    return res
+      .status(400)
+      .json({ message: 'Unexpected error while generating OTP.' });
   }
 });
 
-app.post("/auth/password/forgot", async (req: Request, res: Response) => {
+app.post('/auth/otp/verify', async (req: Request, res: Response) => {
   try {
-    const { email, token, newPassword } = req.body;
+    const { email, token } = req.body;
 
     if (!email) {
-      throw new Error("Email is expected.");
+      throw new Error('Email address expected.');
     }
 
     if (!token) {
-      throw new Error("One time code required to reset password.");
-    }
-
-    if (!newPassword) {
-      throw new Error("New password is invalid.");
+      throw new Error('One time code expected.');
     }
 
     const otp = await redisClient.get(email);
 
     verifyOTP(token, otp);
 
-    await updateUserPasswordFromEmail(email, newPassword, SALT_ROUNDS);
+    const expiryTime = process.env['OTP_EXPIRES'];
 
-    return res.status(200).json({ message: "ok" });
+    try {
+      await redisClient.set(email, token, {
+        EX: parseInt(expiryTime as string),
+      });
+    } catch {
+      console.error('OTP expiration time not set in environment variable.');
+    }
+
+    return res.status(200).json({ message: 'ok' });
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+});
+
+app.post('/auth/password/forgot', async (req: Request, res: Response) => {
+  try {
+    const { email, token, password } = req.body;
+
+    if (!email) {
+      throw new Error('Email is expected.');
+    }
+
+    if (!token) {
+      throw new Error('One time code required to reset password.');
+    }
+
+    if (!password) {
+      throw new Error('New password is invalid.');
+    }
+
+    const otp = await redisClient.get(email);
+
+    verifyOTP(token, otp);
+
+    await updateUserPasswordFromEmail(email, password, SALT_ROUNDS);
+
+    return res.status(200).json({ message: 'ok' });
   } catch (error) {
     return res.status(400).json({
       message: `Unable to update password. ${(error as Error).message}`,
@@ -251,22 +263,22 @@ app.post("/auth/password/forgot", async (req: Request, res: Response) => {
   }
 });
 
-app.post("/auth/password/update", async (req: Request, res: Response) => {
+app.post('/auth/password/update', async (req: Request, res: Response) => {
   try {
     const { oldPassword, newPassword } = req.body;
 
     if (!oldPassword) {
-      throw new Error("Unable to validate existing password.");
+      throw new Error('Unable to validate existing password.');
     }
 
     if (!newPassword) {
-      throw new Error("Invalid new password.");
+      throw new Error('Invalid new password.');
     }
 
     const currentId = req.session.userId;
 
     if (!currentId) {
-      throw new Error("Invalid session.");
+      throw new Error('Invalid session.');
     }
 
     // validate old password
@@ -274,17 +286,17 @@ app.post("/auth/password/update", async (req: Request, res: Response) => {
 
     const validPassword = await bcrypt.compare(oldPassword, user.password);
     if (!validPassword) {
-      throw new Error("Current password is incorrect.");
+      throw new Error('Current password is incorrect.');
     }
 
     // save new password
     await updateUserPasswordFromEmail(user.email, newPassword, SALT_ROUNDS);
 
     // refresh session
-    req.session.cookie.expires = dayjs().add(1, "week").toDate();
+    req.session.cookie.expires = dayjs().add(1, 'week').toDate();
     req.session.save();
 
-    return res.status(200).json({ message: "ok" });
+    return res.status(200).json({ message: 'ok' });
   } catch (error) {
     return res.status(400).json({
       message: `Unable to update password. ${(error as Error).message}`,
@@ -292,12 +304,12 @@ app.post("/auth/password/update", async (req: Request, res: Response) => {
   }
 });
 
-app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
+app.post('/auth/login', async (req: TypedRequest<LoginBody>, res: Response) => {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Find user
@@ -308,60 +320,60 @@ app.post("/auth/login", async (req: TypedRequest<LoginBody>, res: Response) => {
     });
 
     if (!user) {
-      return res.status(400).json({ error: "User doesnt exist!" });
+      return res.status(400).json({ error: 'User doesnt exist!' });
     }
 
     // Check password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.status(400).json({ error: "Invalid password" });
+      return res.status(400).json({ error: 'Invalid password' });
     }
 
     // Set user session
     req.session.userId = user.id;
-    req.session.cookie.expires = dayjs().add(1, "week").toDate();
+    req.session.cookie.expires = dayjs().add(1, 'week').toDate();
     req.session.save(); // Explicitly save session to Redis
-    return res.status(200).json({ message: "ok" });
+    return res.status(200).json({ message: 'ok' });
   } catch (error) {
-    return res.status(500).json({ error: "Error logging in" });
+    return res.status(500).json({ error: 'Error logging in' });
   }
 });
 
 app.post(
-  "/discord/login",
+  '/discord/login',
   async (req: TypedRequest<DiscordLoginBody>, res: Response) => {
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
-    if (!req.body.discordID || typeof req.body.discordID !== "number") {
+    if (!req.body.discordID || typeof req.body.discordID !== 'number') {
       return res
         .status(400)
-        .json({ error: "Body is missing discordID, or it is not a number." });
+        .json({ error: 'Body is missing discordID, or it is not a number.' });
     }
 
     await redisClient.set(`discord:${req.body.discordID}`, req.session.id);
-    return res.status(200).json({ message: "ok" });
+    return res.status(200).json({ message: 'ok' });
   }
 );
 
 app.post(
-  "/discord/logout",
+  '/discord/logout',
   async (req: TypedRequest<DiscordLoginBody>, res: Response) => {
     const providedSession = await validateSession(
       req.session ? req.session : null
     );
     if (!providedSession) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
-    if (!req.body.discordID || typeof req.body.discordID !== "number") {
+    if (!req.body.discordID || typeof req.body.discordID !== 'number') {
       return res
         .status(400)
-        .json({ error: "Body is missing discordID, or it is not a number." });
+        .json({ error: 'Body is missing discordID, or it is not a number.' });
     }
 
     const sessionString = await redisClient.get(
@@ -371,19 +383,19 @@ app.post(
     if (!sessionString) {
       return res
         .status(400)
-        .json({ error: "No session is associated with this Discord account." });
+        .json({ error: 'No session is associated with this Discord account.' });
     }
 
     const session = JSON.parse(sessionString);
 
     if (!providedSession.id !== session.id) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     await redisClient.del(`discord_${req.body.discordID}`);
     return res.status(200).json({
       message:
-        "The association between a Pyramids session and this Discord account has been removed.",
+        'The association between a Pyramids session and this Discord account has been removed.',
     });
   }
 );
@@ -437,10 +449,10 @@ const getUserFromID = async (userID: number): Promise<SanitisedUser | null> => {
   }
 };
 
-app.get("/user", async (req, res: Response) => {
+app.get('/user', async (req, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
+    return res.status(401).json({ message: 'Invalid session provided.' });
   }
 
   const userID = sessionFromDB.userId;
@@ -468,12 +480,12 @@ app.get("/user", async (req, res: Response) => {
   });
 });
 
-app.get("/society", async (req, res: Response) => {
-  if (!req.query["id"]) {
-    return res.status(400).json({ message: "Missing `id` query parameter." });
+app.get('/society', async (req, res: Response) => {
+  if (!req.query['id']) {
+    return res.status(400).json({ message: 'Missing `id` query parameter.' });
   }
 
-  const societyID = Number(req.query["id"]);
+  const societyID = Number(req.query['id']);
 
   const society = await prisma.society.findFirst({
     where: {
@@ -482,25 +494,25 @@ app.get("/society", async (req, res: Response) => {
   });
 
   if (!society) {
-    return res.status(404).json({ message: "Society not found." });
+    return res.status(404).json({ message: 'Society not found.' });
   }
 
   return res.status(200).json(society);
 });
 
-app.get("/society/events", async (req, res: Response) => {
-  if (!req.query["id"]) {
-    return res.status(400).json({ message: "Missing `id` query parameter." });
+app.get('/society/events', async (req, res: Response) => {
+  if (!req.query['id']) {
+    return res.status(400).json({ message: 'Missing `id` query parameter.' });
   }
 
-  const before = req.query["before"]
-    ? new Date(req.query["before"] as string)
+  const before = req.query['before']
+    ? new Date(req.query['before'] as string)
     : undefined;
-  const after = req.query["after"]
-    ? new Date(req.query["after"] as string)
+  const after = req.query['after']
+    ? new Date(req.query['after'] as string)
     : undefined;
 
-  const societyID = Number(req.query["id"]);
+  const societyID = Number(req.query['id']);
 
   const society = await prisma.society.findFirst({
     where: {
@@ -509,7 +521,7 @@ app.get("/society/events", async (req, res: Response) => {
   });
 
   if (!society) {
-    return res.status(404).json({ message: "Society not found." });
+    return res.status(404).json({ message: 'Society not found.' });
   }
 
   // Find events that pertain to the society
@@ -530,14 +542,14 @@ app.get("/society/events", async (req, res: Response) => {
       }),
     },
     orderBy: {
-      startDateTime: "asc",
+      startDateTime: 'asc',
     },
   });
 
   if (!events || events.length === 0) {
     return res.status(404).json({
       message:
-        "The society does not have any events, or none exist within the provided filters.",
+        'The society does not have any events, or none exist within the provided filters.',
     });
   }
 
@@ -545,11 +557,11 @@ app.get("/society/events", async (req, res: Response) => {
 });
 
 app.post(
-  "/society/create",
+  '/society/create',
   async (req: TypedRequest<CreateSocietyBody>, res: Response) => {
     const society = req.body;
     if (!society.name) {
-      return res.status(400).json({ message: "Invalid input." });
+      return res.status(400).json({ message: 'Invalid input.' });
     }
 
     if (!society.profilePicture) {
@@ -561,7 +573,7 @@ app.post(
     );
 
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     try {
@@ -578,13 +590,13 @@ app.post(
 
       return res.status(200).json(newSociety);
     } catch (e) {
-      return res.status(400).json({ message: "invalid society input" });
+      return res.status(400).json({ message: 'invalid society input' });
     }
   }
 );
 
 app.post(
-  "/event",
+  '/event',
   async (req: TypedRequest<CreateEventBody>, res: Response) => {
     //Session validation
     const event = req.body;
@@ -593,12 +605,12 @@ app.post(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     //Sanitize Inputs/Check Validity
     if (!isValidDate(event.startDateTime, event.endDateTime)) {
-      return res.status(400).json({ message: "Invalid date" });
+      return res.status(400).json({ message: 'Invalid date' });
     }
 
     try {
@@ -619,22 +631,22 @@ app.post(
       });
       return res.status(200).json(eventRes);
     } catch (e) {
-      return res.status(400).json({ message: "Invalid event input" });
+      return res.status(400).json({ message: 'Invalid event input' });
     }
   }
 );
 
-app.put("/event", async (req: TypedRequest<UpdateEventBody>, res: Response) => {
+app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
+    return res.status(401).json({ message: 'Invalid session provided.' });
   }
 
-  if (!req.body["id"]) {
-    return res.status(400).json({ message: "Missing `id` query parameter." });
+  if (!req.body['id']) {
+    return res.status(400).json({ message: 'Missing `id` query parameter.' });
   }
 
-  const eventID = Number(req.body["id"]);
+  const eventID = Number(req.body['id']);
 
   const event = await prisma.event.findFirst({
     where: {
@@ -643,11 +655,11 @@ app.put("/event", async (req: TypedRequest<UpdateEventBody>, res: Response) => {
   });
 
   if (!event) {
-    return res.status(404).json({ message: "Event not found." });
+    return res.status(404).json({ message: 'Event not found.' });
   }
 
   if (!isValidDate(req.body.startDateTime, req.body.endDateTime)) {
-    return res.status(400).json({ message: "Invalid date" });
+    return res.status(400).json({ message: 'Invalid date' });
   }
 
   try {
@@ -666,21 +678,21 @@ app.put("/event", async (req: TypedRequest<UpdateEventBody>, res: Response) => {
     });
     return res.status(200).json(eventRes);
   } catch (e) {
-    return res.status(400).json({ message: "Invalid event input" });
+    return res.status(400).json({ message: 'Invalid event input' });
   }
 });
 
-app.get("/event", async (req: Request, res: Response) => {
+app.get('/event', async (req: Request, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
+    return res.status(401).json({ message: 'Invalid session provided.' });
   }
 
-  if (!req.query["id"]) {
-    return res.status(400).json({ message: "Missing `id` query parameter." });
+  if (!req.query['id']) {
+    return res.status(400).json({ message: 'Missing `id` query parameter.' });
   }
 
-  const eventID = Number(req.query["id"]);
+  const eventID = Number(req.query['id']);
 
   const event = await prisma.event.findFirst({
     where: {
@@ -689,7 +701,7 @@ app.get("/event", async (req: Request, res: Response) => {
   });
 
   if (!event) {
-    return res.status(404).json({ message: "Event not found." });
+    return res.status(404).json({ message: 'Event not found.' });
   }
 
   return res.status(200).json(event);
@@ -702,24 +714,24 @@ function isValidDate(startDate: Date, endDate: Date): boolean {
   return !(
     parsedStartDate.isAfter(parsedEndDate) ||
     parsedStartDate.isSame(parsedEndDate) ||
-    parsedStartDate.isBefore(dayjs(), "day")
+    parsedStartDate.isBefore(dayjs(), 'day')
   );
 }
 
-app.get("/events", async (req, res: Response) => {
-  const page = Number(req.query["page"]) - 1 || 0;
+app.get('/events', async (req, res: Response) => {
+  const page = Number(req.query['page']) - 1 || 0;
 
   if (page < 0 || isNaN(page)) {
     return res.status(400).json({
-      message: "Invalid page specified. Note that a page must be 1 or greater.",
+      message: 'Invalid page specified. Note that a page must be 1 or greater.',
     });
   }
 
-  const before = req.query["before"]
-    ? new Date(req.query["before"] as string)
+  const before = req.query['before']
+    ? new Date(req.query['before'] as string)
     : undefined;
-  const after = req.query["after"]
-    ? new Date(req.query["after"] as string)
+  const after = req.query['after']
+    ? new Date(req.query['after'] as string)
     : undefined;
 
   const events = await prisma.event.findMany({
@@ -736,23 +748,23 @@ app.get("/events", async (req, res: Response) => {
       }),
     },
     orderBy: {
-      startDateTime: "asc",
+      startDateTime: 'asc',
     },
     skip: page * 10,
     take: 10,
   });
 
   if (!events || events.length === 0) {
-    return res.status(404).json({ message: "No events found." });
+    return res.status(404).json({ message: 'No events found.' });
   }
 
   return res.status(200).json(events);
 });
 
-app.get("/user/events", async (req, res: Response) => {
+app.get('/user/events', async (req, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
+    return res.status(401).json({ message: 'Invalid session provided.' });
   }
 
   const userID = sessionFromDB.userId;
@@ -760,21 +772,21 @@ app.get("/user/events", async (req, res: Response) => {
   // pagination is optional for /user/events
 
   let page = undefined;
-  if (req.query["page"]) {
-    page = Number(req.query["page"]) - 1;
+  if (req.query['page']) {
+    page = Number(req.query['page']) - 1;
     if (page < 0 || isNaN(page)) {
       return res.status(400).json({
         message:
-          "Invalid page specified. Note that a page must be 1 or greater.",
+          'Invalid page specified. Note that a page must be 1 or greater.',
       });
     }
   }
 
-  const before = req.query["before"]
-    ? new Date(req.query["before"] as string)
+  const before = req.query['before']
+    ? new Date(req.query['before'] as string)
     : undefined;
-  const after = req.query["after"]
-    ? new Date(req.query["after"] as string)
+  const after = req.query['after']
+    ? new Date(req.query['after'] as string)
     : undefined;
 
   const events = await prisma.event.findMany({
@@ -796,7 +808,7 @@ app.get("/user/events", async (req, res: Response) => {
       },
     },
     orderBy: {
-      startDateTime: "asc",
+      startDateTime: 'asc',
     },
     ...(page !== undefined && {
       skip: page * 10,
@@ -805,16 +817,16 @@ app.get("/user/events", async (req, res: Response) => {
   });
 
   if (!events || events.length === 0) {
-    return res.status(404).json({ message: "No events found." });
+    return res.status(404).json({ message: 'No events found.' });
   }
 
   return res.status(200).json(events);
 });
 
-app.get("/user/societies", async (req, res: Response) => {
+app.get('/user/societies', async (req, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
+    return res.status(401).json({ message: 'Invalid session provided.' });
   }
 
   const userID = sessionFromDB.userId;
@@ -845,10 +857,10 @@ app.get("/user/societies", async (req, res: Response) => {
   return res.status(200).json(societies);
 });
 
-app.get("/societies", async (req, res: Response) => {
+app.get('/societies', async (req, res: Response) => {
   const societies = await prisma.society.findMany({
     orderBy: {
-      id: "asc",
+      id: 'asc',
     },
   });
   return res.status(200).json(societies);
@@ -856,14 +868,14 @@ app.get("/societies", async (req, res: Response) => {
 
 //Lets a user join a society
 app.post(
-  "/user/society/join",
+  '/user/society/join',
   async (req: TypedRequest<societyIdBody>, res: Response) => {
     //get userid from session
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     const userID = sessionFromDB.userId;
@@ -879,7 +891,7 @@ app.post(
     });
 
     if (!societyId) {
-      return res.status(400).json({ message: "Invalid society" });
+      return res.status(400).json({ message: 'Invalid society' });
     }
 
     //Connect society and user
@@ -896,18 +908,18 @@ app.post(
       },
     });
 
-    return res.status(200).json({ message: "ok" });
+    return res.status(200).json({ message: 'ok' });
   }
 );
 
 app.delete(
-  "/user/society",
+  '/user/society',
   async (req: TypedRequest<societyIdBody>, res: Response) => {
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     const userID = sessionFromDB.userId;
@@ -922,7 +934,7 @@ app.delete(
     });
 
     if (!societyId) {
-      return res.status(400).json({ message: "Invalid society" });
+      return res.status(400).json({ message: 'Invalid society' });
     }
 
     const result = await prisma.society.update({
@@ -938,18 +950,18 @@ app.delete(
       },
     });
 
-    return res.status(200).json({ message: "ok" });
+    return res.status(200).json({ message: 'ok' });
   }
 );
 
 app.post(
-  "/user/event",
+  '/user/event',
   async (req: TypedRequest<eventIdBody>, res: Response) => {
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     const userID = sessionFromDB.userId;
@@ -964,7 +976,7 @@ app.post(
     });
 
     if (!event) {
-      return res.status(400).json({ message: "Invalid Event" });
+      return res.status(400).json({ message: 'Invalid Event' });
     }
 
     const result = await prisma.event.update({
@@ -980,18 +992,18 @@ app.post(
       },
     });
 
-    return res.status(200).json({ message: "ok" });
+    return res.status(200).json({ message: 'ok' });
   }
 );
 
 app.delete(
-  "/user/event",
+  '/user/event',
   async (req: TypedRequest<eventIdBody>, res: Response) => {
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     const userID = sessionFromDB.userId;
@@ -1006,7 +1018,7 @@ app.delete(
     });
 
     if (!event) {
-      return res.status(400).json({ message: "Invalid Event" });
+      return res.status(400).json({ message: 'Invalid Event' });
     }
 
     const result = await prisma.event.update({
@@ -1022,13 +1034,13 @@ app.delete(
       },
     });
 
-    return res.status(200).json({ message: "ok" });
+    return res.status(200).json({ message: 'ok' });
   }
 );
 
 //For retrieving the data in the individual event view card
 app.get(
-  "/event/details",
+  '/event/details',
   async (req: TypedRequest<eventIdBody>, res: Response) => {
     const event = await prisma.event.findFirst({
       where: {
@@ -1037,7 +1049,7 @@ app.get(
     });
 
     if (!event) {
-      return res.status(400).json({ message: "invalid society" });
+      return res.status(400).json({ message: 'invalid society' });
     }
 
     return res.status(200).json(event);
@@ -1045,10 +1057,10 @@ app.get(
 );
 
 //this is a bit messy
-app.delete("/event", async (req: TypedRequest<eventIdBody>, res: Response) => {
+app.delete('/event', async (req: TypedRequest<eventIdBody>, res: Response) => {
   const sessionFromDB = await validateSession(req.session ? req.session : null);
   if (!sessionFromDB) {
-    return res.status(401).json({ message: "Invalid session provided." });
+    return res.status(401).json({ message: 'Invalid session provided.' });
   }
 
   const userID = sessionFromDB.userId;
@@ -1082,7 +1094,7 @@ app.delete("/event", async (req: TypedRequest<eventIdBody>, res: Response) => {
   });
 
   if (!society) {
-    return res.status(401).json({ message: "User is not an admin!" });
+    return res.status(401).json({ message: 'User is not an admin!' });
   }
 
   //200 if deletion is successful
@@ -1093,20 +1105,20 @@ app.delete("/event", async (req: TypedRequest<eventIdBody>, res: Response) => {
       },
     });
   } catch (e) {
-    return res.status(400).json({ message: "Deletion failed" });
+    return res.status(400).json({ message: 'Deletion failed' });
   }
 
-  return res.status(200).json({ message: "ok" });
+  return res.status(200).json({ message: 'ok' });
 });
 
 app.delete(
-  "/society",
+  '/society',
   async (req: TypedRequest<societyIdBody>, res: Response) => {
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     const userID = sessionFromDB.userId;
@@ -1123,7 +1135,7 @@ app.delete(
     });
 
     if (!society) {
-      return res.status(401).json({ message: "User is not an admin!" });
+      return res.status(401).json({ message: 'User is not an admin!' });
     }
 
     //200 if deletion is successful
@@ -1134,64 +1146,61 @@ app.delete(
         },
       });
     } catch (e) {
-      return res.status(400).json({ message: "Deletion failed" });
+      return res.status(400).json({ message: 'Deletion failed' });
     }
 
-  return res.status(200).json({message:"ok"});
-})
+    return res.status(200).json({ message: 'ok' });
+  }
+);
 
 // gets keywords a user is associated with
-app.get(
-  "/user/keywords", 
-  async (req, res: Response) => {
-    const sessionFromDB = await validateSession(
-      req.session ? req.session : null
-    );
-    if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
-    }
+app.get('/user/keywords', async (req, res: Response) => {
+  const sessionFromDB = await validateSession(req.session ? req.session : null);
+  if (!sessionFromDB) {
+    return res.status(401).json({ message: 'Invalid session provided.' });
+  }
 
-    const userID = sessionFromDB.userId;
+  const userID = sessionFromDB.userId;
 
-    const userKeywords = await prisma.user.findFirst({
-      where: {
-        id: userID,
+  const userKeywords = await prisma.user.findFirst({
+    where: {
+      id: userID,
+    },
+    select: {
+      keywords: {
+        select: { text: true },
       },
-      select: {
-        keywords: {
-          select: {text: true}
-        },
-      }
-    })
+    },
+  });
 
   return res.status(200).json(userKeywords);
 });
 
 // creates a keyword
 app.post(
-  "/keyword", 
+  '/keyword',
   async (req: TypedRequest<CreateKeywordBody>, res: Response) => {
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
 
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
 
     const { text } = req.body;
     if (!text) {
-      return res.status(400).json({ message: "Invalid input." });
+      return res.status(400).json({ message: 'Invalid input.' });
     }
 
     const keywordExists = await prisma.keyword.findFirst({
       where: {
         text: text,
-      }
+      },
     });
 
     if (keywordExists) {
-      return res.status(400).json({ message: "Keyword already exists." });
+      return res.status(400).json({ message: 'Keyword already exists.' });
     }
 
     try {
@@ -1202,18 +1211,19 @@ app.post(
       });
       return res.status(200).json(newKeyword);
     } catch (e) {
-      return res.status(400).json({ message: "invalid keyword input" });
+      return res.status(400).json({ message: 'invalid keyword input' });
     }
-});
+  }
+);
 
 // - app.post("/user/keyword") - Associates a user with a keyword
 // - app.delete("/user/keyword") - Disassociates a user with a keyword
 
-app.get("/hello", () => {
-  console.log("Hello World!");
+app.get('/hello', () => {
+  console.log('Hello World!');
 });
 
-if (process.env["NODE_ENV"] !== "test") {
+if (process.env['NODE_ENV'] !== 'test') {
   app.listen(SERVER_PORT, () => {
     console.log(`Server running on port http://localhost:${SERVER_PORT}`);
   });
