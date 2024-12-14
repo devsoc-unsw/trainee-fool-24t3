@@ -333,10 +333,22 @@ app.post('/auth/login', async (req: TypedRequest<LoginBody>, res: Response) => {
     req.session.userId = user.id;
     req.session.cookie.expires = dayjs().add(1, 'week').toDate();
     req.session.save(); // Explicitly save session to Redis
-    return res.status(200).json({ message: 'ok' });
+    return res.status(200).json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      dateJoined: user.dateJoined,
+      profilePicture: user.profilePicture,
+    } as SanitisedUser);
   } catch (error) {
     return res.status(500).json({ error: 'Error logging in' });
   }
+});
+
+app.post('/auth/logout', async (req: Request, res: Response) => {
+  req.session.destroy(() => {
+    return res.status(200).json({ message: 'ok' });
+  });
 });
 
 app.post(

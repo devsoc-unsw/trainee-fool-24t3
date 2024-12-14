@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<AuthError | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
-  const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -35,10 +34,9 @@ export default function LoginPage() {
       setError(errorHandler(json.error));
     } else if (setUser) {
       setError(undefined);
-      setUser(json as User);
       setSuccess('Logged in successfully! Redirecting...');
       setTimeout(() => {
-        navigate('/timeline');
+        setUser(json as User);
       }, 1000);
     } else {
       setError(errorHandler("Couldn't update user object."));
