@@ -3,12 +3,14 @@ import Button from '../../../../Button/Button';
 import { ButtonIcons, ButtonVariants } from '../../../../Button/ButtonTypes';
 import { TextInput, TextOptions } from '../../../../TextInput/TextInput';
 import { SettingsPage } from '../../SettingsPage';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { Societies, UserContext } from '../../../../UserContext/UserContext';
 
 export const CreateNewSocietyPage = () => {
   const [societyName, setSocietyName] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const { societies, setSocieties } = useContext(UserContext);
 
   const createSociety = async (societyName: string) => {
     const society = await fetch('http://localhost:5180/society', {
@@ -24,6 +26,15 @@ export const CreateNewSocietyPage = () => {
 
     if (society.ok) {
       setError('');
+
+      const societies = await fetch('http://localhost:5180/user/societies', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      const societiesJson: Societies = await societies.json();
+      setSocieties?.(societiesJson);
+
       setSuccess('Society created successfully!');
     } else {
       setError(societyJson.message);
