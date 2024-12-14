@@ -31,7 +31,7 @@ function NavBar(props: NavBarProps) {
           className={({ isActive }) =>
             isActive && view === "calendar" ? classes.active : ""
           }
-          to="/timeline?view=calendar" 
+          to="/timeline?view=calendar"
         >
           Calendar
         </NavLink>
@@ -52,7 +52,7 @@ function NavBar(props: NavBarProps) {
         style={{
           backgroundImage: `url(${props.profileImage})`,
         }}
-        to="/login"
+        to="/settings"
       ></NavLink>
     </nav>
   );

@@ -15,6 +15,7 @@ type ButtonProps = {
   variant?: ButtonVariants;
   className?: string;
   type: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
+  onClick?: () => void
 };
 
 function Button(props: ButtonProps) {
