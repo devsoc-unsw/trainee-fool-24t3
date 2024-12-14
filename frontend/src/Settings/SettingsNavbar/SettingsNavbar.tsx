@@ -1,9 +1,11 @@
 import {
   CalendarIcon,
+  FaceSmileIcon,
   KeyIcon,
   MegaphoneIcon,
   StarIcon,
   UserCircleIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import classes from './SettingsNavbar.module.css';
 import { NavLink, useLocation } from 'react-router';
@@ -23,6 +25,18 @@ const rows: Row[][] = [
       icon: <UserCircleIcon />,
       name: 'Profile',
       to: '/settings/profile',
+    },
+  ],
+  [
+    {
+      icon: <UserGroupIcon />,
+      name: 'Society Management',
+      to: '/settings/societies',
+    },
+    {
+      icon: <FaceSmileIcon />,
+      name: 'Create a new society',
+      to: '/settings/societies/new',
     },
   ],
   [

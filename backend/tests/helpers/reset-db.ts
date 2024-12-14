@@ -11,6 +11,9 @@ let redisClient = createClient({
 export default async () => {
   await redisClient.connect();
   await prisma.user.deleteMany();
+  await prisma.society.deleteMany();
+  await prisma.event.deleteMany();
+  await prisma.keyword.deleteMany();
   await redisClient.flushDb();
   await redisClient.quit();
 };
