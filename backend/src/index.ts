@@ -1172,7 +1172,7 @@ app.get('/user/keywords', async (req, res: Response) => {
       }
     });
   
-    if (userKeywords === null) return res.status(200).json([]);
+    if (userKeywords === null) return res.status(404).json([]);
 
   return res.status(200).json(userKeywords.keywords);
 });
@@ -1241,7 +1241,7 @@ app.post(
     });
 
     if (!keywordExists) {
-      return res.status(400).json({ message: "Invalid keyword." });
+      return res.status(404).json({ message: "Invalid keyword." });
     }
 
     //Connect keyword and user

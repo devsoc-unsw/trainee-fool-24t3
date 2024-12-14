@@ -35,9 +35,10 @@ describe("POST /user/keyword endpoint", () => {
       .post("/keyword")
       .set("Cookie", sessionID)
       .send({
-        text: "skibidi",
+        text: "skibidi12",
       });
-
+      
+      console.log(keywordRes.body);
     expect(keywordRes.status).toBe(200);
 
     const res = await request(app)
@@ -81,7 +82,8 @@ describe("POST /user/keyword endpoint", () => {
       .send({
         keywordId: -230,
       });
-    expect(res.status).toBe(400);
+    console.log(res.body);
+    expect(res.status).toBe(404);
     expect(res.body.message).toBe("Invalid keyword.");
   });
 });
@@ -117,7 +119,7 @@ describe("DELETE /user/keyword endpoint", () => {
       .post("/keyword")
       .set("Cookie", sessionID)
       .send({
-        text: "mfw",
+        text: "mfw2",
       });
 
     expect(keywordRes.status).toBe(200);
@@ -207,8 +209,10 @@ describe("/user/keywords endpoint", () => {
       .post("/keyword")
       .set("Cookie", sessionID)
       .send({
-        text: "skibidi1",
+        text: "skibidi59",
       });
+
+    expect(keywordRes.status).toBe(200);
 
     await request(app)
       .post("/user/keyword")
@@ -222,8 +226,10 @@ describe("/user/keywords endpoint", () => {
       .post("/keyword")
       .set("Cookie", sessionID)
       .send({
-        text: "toilet",
+        text: "toilet39",
       });
+    
+    expect(keywordRes.status).toBe(200);
 
     await request(app)
       .post("/user/keyword")
@@ -237,8 +243,8 @@ describe("/user/keywords endpoint", () => {
       .set("Cookie", sessionID);
     expect(res.status).toBe(200);
     expect(res.body.length).toBe(2);
-    expect(res.body.map((x) => x.text)).toContain('skibidi1');
-    expect(res.body.map((x) => x.text)).toContain('toilet');
+    expect(res.body.map((x) => x.text)).toContain('skibidi59');
+    expect(res.body.map((x) => x.text)).toContain('toilet39');
   });
 
   test("Zero keywords successfully listed", async () => {
@@ -270,7 +276,8 @@ describe("/user/keywords endpoint", () => {
     const res = await request(app)
       .get("/user/keywords")
       .set("Cookie", sessionID)
-    expect(res.status).toBe(200);
+      console.log(res.body);
+    expect(res.status).toBe(404);
     expect(res.body.length).toBe(0);
   });
 });

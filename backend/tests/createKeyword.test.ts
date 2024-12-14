@@ -42,13 +42,12 @@ describe('/keyword endpoint', () => {
       .post("/keyword")
       .set("Cookie", sessionID)
       .send({
-        text: "skibidi toilet yes yes ghvsbdkakbhf",
+        text: "skibidi toilet yes",
       });
-
     expect(response.status).toBe(200);
   });
 
-  test('DDuplicate keyword rejected', async () => {
+  test('Duplicate keyword rejected', async () => {
     const { status, body } = await request(app).post("/auth/register").send({
       username: "shinjisatoo",
       password: "testpassword",
