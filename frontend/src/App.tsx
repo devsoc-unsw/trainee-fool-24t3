@@ -1,44 +1,98 @@
 import "./App.css";
-import Event from "./Event/Event";
-import { Keyword, KeywordOptions } from "./Keyword/Keyword";
-import bbq from "./assets/bbq.png";
 import NavBar from "./NavBar/NavBar";
-import Button, { ButtonOptions } from "./Button/Button";
-import CreateEvent from "./CreateEvent/CreateEvent";
-import { TimelinePage, PCTimelinePage, MobileTimelinePageFrame } from './timeline';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import HomePage from "./HomePage/HomePage";
+import AboutPage from "./About/About";
+import Calendar from "./Calendar/Calendar";
+import LoginPage from "./Login/Login";
+import RegisterPage from "./Register/Register";
+import VerifyOTP from "./VerifyOTP/VerifyOTP";
+import GenerateOTP from "./GenerateOTP/GenerateOTP";
+import { Settings } from "./Settings/Settings";
+import { ProfilePage } from "./Settings/SettingsPage/ProfilePage/ProfilePage";
+import { EventManagementPage } from "./Settings/SettingsPage/EventManagementPage/EventManagementPage";
+import { CreateNewEventPage } from "./Settings/SettingsPage/EventManagementPage/CreateNewEvent/CreateNewEvent";
+import { DiscordPage } from "./Settings/SettingsPage/DiscordPage/DiscordPage";
+import { Unauthenticated } from "./Unauthenticated/Unauthenticated";
+import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute";
+import { useEffect, useState } from "react";
+import { User, UserContext } from "./UserContext/UserContext";
+import { TimelinePage } from "./Timeline/Timeline";
 
 function App() {
-  return (
-    <>
-      <h1>Hi</h1>
-      <Event
-        name="DevSoc BBQ"
-        image={bbq}
-        backgroundPositionY="180px"
-        time="Tomorrow mate"
-      ></Event>
-      <Event
-        name="TikTok rizz party"
-        image="https://pbs.twimg.com/media/F2y8Ehbb0AA-ch9.jpg"
-        backgroundPositionY="150px"
-        time="25th Dec 2024"
-        keywords={["hiii", "another keyword"]}
-      ></Event>
-      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
-      <Keyword type={KeywordOptions.Add}>Frunk Dwindleward</Keyword>
-      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
-      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
-      <Keyword type={KeywordOptions.Delete}>Frunk Dwindleward</Keyword>
-      <Button type={ButtonOptions.Plus}></Button>
-      <Button type={ButtonOptions.Bookmark}></Button>
-      <Button type={ButtonOptions.String}>Log in</Button>
-      <CreateEvent></CreateEvent>
-      <TimelinePage></TimelinePage>
-      <PCTimelinePage></PCTimelinePage>
-      <MobileTimelinePageFrame></MobileTimelinePageFrame>
+  const [user, setUser] = useState<User | null>(null);
 
-      <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
-    </>
+  useEffect(() => {
+    fetch("http://localhost:5180/user", {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          setUser(data);
+        });
+      }
+    });
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <UserContext.Provider value={{ user, setUser }}>
+        <div className="page">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/timeline" element={<TimelinePage />} />
+            <Route path="/generateotp" element={<GenerateOTP />} />
+            <Route path="/verifyotp" element={<VerifyOTP />} />
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user === null}
+                  fallback={<Navigate to="/settings/profile" />}
+                >
+                  <LoginPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user === null}
+                  fallback={<Navigate to="/settings/profile" />}
+                >
+                  <RegisterPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                // this propagates to all child routes
+                <ProtectedRoute
+                  isAuthenticated={user !== null && user.id !== undefined}
+                  fallback={<Navigate to="/login" />}
+                >
+                  <Settings />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="events" element={<EventManagementPage />} />
+              <Route path="events/new" element={<CreateNewEventPage />} />
+              <Route path="discord" element={<DiscordPage />} />
+            </Route>
+            <Route path="/unauthenticated" element={<Unauthenticated />} />
+          </Routes>
+        </div>
+        <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
+      </UserContext.Provider>
+    </BrowserRouter>
   );
 }
 

@@ -1,0 +1,55 @@
+.container {
+    height: 100%;
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.calendarHeader{
+    padding: 2%;
+    height: 5vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 98vw;
+    margin: 0.5vw;
+}
+
+.calendarNavButtons {
+    width: 72px;
+    float: right;
+    display: flex;
+    justify-content: space-between;
+}
+.navButton {
+    height: 24px;
+    width: 24px;
+}
+
+.weekdayRow {
+    width: 98vw;
+    display: flex;
+}
+
+.days {
+    width: 98vw;
+    height: 80vh;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0;
+    margin: 0;
+}
+
+.monthYearName {
+    font-size: 1.5rem;
+}
+  

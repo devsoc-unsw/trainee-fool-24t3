@@ -1,0 +1,116 @@
+.container {
+  background: hsl(0, 0%, 100%);
+  border-radius: 16px;
+  padding-bottom: 40px;
+  width: 76vw;
+  min-height: fit-content;
+  height: 90vh;
+  box-shadow: 0px 0px 16px hsla(0, 0%, 0%, 0.25);
+}
+
+.picture {
+  width: 100%;
+  border-radius: 16px 16px 0px 0px;
+  height: 280px;
+  background-size: cover;
+  position: relative;
+}
+
+.exitIcon {
+  height: 48px;
+  width: 48px;
+  padding: 12px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background-color: hsl(0, 0%, 100%);
+  color: hsl(0, 0%, 0%);
+  box-shadow: none;
+  border-radius: 0px 8px 0px 0px;
+}
+
+.info {
+  display: flex;
+  padding-left: 40px;
+  padding-right: 40px;
+  min-height: fit-content;
+  height: 360px;
+}
+
+.name {
+  font-size: 3rem;
+  font-weight: 750;
+  margin: 0px;
+  margin-bottom: 12px;
+}
+
+.details {
+  width: 40vw;
+  margin-top: 24px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  height: auto;
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+}
+
+.icon {
+  width: 24px;
+}
+
+.locationLink {
+  height: 18px;
+  margin-top: 2px;
+  color: hsl(0, 0%, 35%);
+  transition: color 0.2s linear; 
+}
+
+.locationLink:hover {
+  color: hsl(0, 0%, 84%);
+}
+
+.detail {
+  display: flex;
+  height: 24px;
+  margin-bottom: 12px;
+  width: 30vw;
+  gap: 8px;
+  color: hsl(0, 0%, 20%);
+}
+
+.detailInfo {
+  margin: 0px;
+}
+
+.attending {
+  color: hsl(0, 0%, 40%);
+}
+
+.actions {
+  display: flex;
+  height: fit-content;
+  gap: 12px;
+  margin-top: auto;
+}
+
+button.actionIcon {
+  height: 48px;
+  width: 48px;
+  padding: 10px;
+}
+
+.description {
+  width: 40vw;
+  margin-top: 24px;
+  padding-left: 24px;
+  line-height: 1.8;
+  height: auto;
+}
+
+.keywords {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  gap: 12px;
+}
