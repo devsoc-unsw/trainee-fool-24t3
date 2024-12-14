@@ -27,6 +27,7 @@ import {
   findUserFromId,
   updateUserPasswordFromEmail,
 } from "./routes/User/user";
+import { getFile, uploadFile } from "./config/storage";
 
 declare module "express-session" {
   interface SessionData {
@@ -77,7 +78,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: '20mb' }));
 
 if (process.env["SESSION_SECRET"] === undefined) {
   console.error("Session secret not provided in .env file");
@@ -601,10 +602,30 @@ app.post(
       return res.status(400).json({ message: "Invalid date" });
     }
 
+    console.log(event);
+
+    // upload image to storage and get link
+    let imagePath;
+    try {
+      if(Object.keys(event.banner).length > 0) {
+        const metaData = event.banner.metaData;
+        const base64Data = event.banner.buffer.split(',')[1];
+        if(base64Data) {
+          imagePath = await uploadFile(base64Data, metaData.type, event.societyId, event.name);
+        } else {
+          throw new Error("Invalid base64 string.");
+        }
+      } else {
+        throw new Error("No banner submitted.");
+      }
+    } catch (error) {
+      return res.status(400).json({ message: `Unable to upload image.` });
+    };
+
     try {
       const eventRes = await prisma.event.create({
         data: {
-          banner: event.banner,
+          banner: imagePath,
           name: event.name,
           startDateTime: dayjs(event.startDateTime).toISOString(),
           endDateTime: dayjs(event.endDateTime).toISOString(),
@@ -650,13 +671,34 @@ app.put("/event", async (req: TypedRequest<UpdateEventBody>, res: Response) => {
     return res.status(400).json({ message: "Invalid date" });
   }
 
+  // upload image to storage and get link
+  let imagePath;
+  try {
+    if(Object.keys(event.banner).length > 0) {
+      const base64Data = req.body.banner.buffer.split(',')[1];
+      if(base64Data) {
+        const metaData = req.body.banner.metaData;
+
+        imagePath = await uploadFile(base64Data, metaData
+          .type, event.societyId, event.name);
+      } else {
+        throw new Error("Invalid base64 string.");
+      }
+    } else {
+      throw new Error("No banner submitted.");
+    }
+  } catch (error) {
+    return res.status(400).json({ error: (error as Error).message });
+  };
+
+
   try {
     const eventRes = await prisma.event.update({
       where: {
         id: eventID,
       },
       data: {
-        banner: req.body.banner,
+        banner: imagePath,
         name: req.body.name,
         startDateTime: dayjs(req.body.startDateTime).toISOString(),
         endDateTime: dayjs(req.body.endDateTime).toISOString(),
@@ -666,6 +708,7 @@ app.put("/event", async (req: TypedRequest<UpdateEventBody>, res: Response) => {
     });
     return res.status(200).json(eventRes);
   } catch (e) {
+    console.log(e);
     return res.status(400).json({ message: "Invalid event input" });
   }
 });

@@ -24,13 +24,22 @@ export interface UserIdBody {
 }
 
 export interface CreateEventBody {
-  banner: string;
+  banner: Base64Image;
   name: string;
   startDateTime: Date;
   endDateTime: Date;
   location: string;
   description: string;
   societyId: number;
+}
+
+interface Base64Image {
+  buffer: string,
+  metaData: {
+    name: string,
+    type: string,
+    size: number,
+  }
 }
 
 export interface UpdateEventBody extends CreateEventBody {
