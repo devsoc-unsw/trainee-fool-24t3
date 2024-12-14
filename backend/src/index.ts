@@ -570,7 +570,7 @@ app.get('/society/events', async (req, res: Response) => {
 });
 
 app.post(
-  '/society/create',
+  '/society',
   async (req: TypedRequest<CreateSocietyBody>, res: Response) => {
     const society = req.body;
     if (!society.name) {
