@@ -257,6 +257,8 @@ app.post('/auth/password/forgot', async (req: Request, res: Response) => {
 
     await updateUserPasswordFromEmail(email, password, SALT_ROUNDS);
 
+    await redisClient.del(email);
+
     return res.status(200).json({ message: 'ok' });
   } catch (error) {
     return res.status(400).json({
