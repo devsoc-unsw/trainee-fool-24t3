@@ -1,13 +1,12 @@
-import { User } from "@prisma/client";
-import prisma from "../../prisma";
+import { User } from '@prisma/client';
+import prisma from '../../prisma';
 
 export interface OTPToken {
-    user: User,
-    token: string,
-    timeCreated: Date,
-    expiryTime: Date,
+  user: User;
+  token: string;
+  timeCreated: Date;
+  expiryTime: Date;
 }
-
 
 export const getUserFromEmail = async (emailAddress: string) => {
   try {
@@ -18,7 +17,6 @@ export const getUserFromEmail = async (emailAddress: string) => {
     });
     return result;
   } catch (error) {
-    throw new Error("Error finding user");
+    throw new Error('Error finding user');
   }
-
-}
+};
