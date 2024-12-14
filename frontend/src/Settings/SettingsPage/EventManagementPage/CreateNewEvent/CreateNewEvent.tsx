@@ -3,11 +3,16 @@ import Button from '../../../../Button/Button';
 import { SettingsPage } from '../../SettingsPage';
 import classes from './CreateNewEvent.module.css';
 import { ButtonIcons, ButtonVariants } from '../../../../Button/ButtonTypes';
-import { useRef, useState } from 'react';
+import { ChangeEventHandler, MouseEvent, MouseEventHandler, useContext, useRef, useState } from 'react';
+import { UserContext } from '../../../../UserContext/UserContext';
+import { TextInput, TextOptions } from '../../../../TextInput/TextInput';
+
+type StringSetter = React.Dispatch<React.SetStateAction<string>>;
 
 enum ErrorMessage {
     TYPE = "Banner must be an image file.",
     NUMBER = "Please upload only one image.",
+    SIZE = "Maximum file size of 10MB.",
     default = "",
 };
 
@@ -23,9 +28,18 @@ const updateError = (newMessage: ErrorMessage) => {
   }
 };
 
-interface FormStructure {
-  id: number,
-  banner?: File,
+const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
+export interface FormStructure {
+  societyId: number | undefined,
+  banner?: File | Base64Image,
   name: string,
   location: string,
   startDateTime: Date,
@@ -33,20 +47,32 @@ interface FormStructure {
   description: string,
 };
 
-const defaultForm = {
-  id: 0,
-  name: "", 
-  location: "", 
-  startDateTime: new Date(),
-  endDateTime: new Date(), 
-  description: ""
+interface Base64Image {
+  buffer: string,
+  metaData: {
+    name: string,
+    type: string,
+    size: number,
+  }
 };
 
 export function CreateNewEventPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploadError, setUploadError] = useState<UploadError>({status: false, message: ErrorMessage.default});
-  const [formContent, setFormContent] = useState<FormStructure>(defaultForm);
+  const [submitError, setSubmitError] = useState('');
   const [fileDragging, setFileDragging] = useState(false);
+  const { user } = useContext(UserContext);
+
+  const defaultForm = {
+    societyId: user?.id,
+    name: "Training Program Induction", 
+    location: "John Lions Garden", 
+    startDateTime: new Date(),
+    endDateTime: new Date(Date.now() + (60*60*1000)),   // one hour by default 
+    description: "Your event description."
+  };
+
+  const [formContent, setFormContent] = useState<FormStructure>(defaultForm);
 
   const uploadBanner = (files: File[]) => {
     if(files.length <= 1) {
@@ -55,6 +81,10 @@ export function CreateNewEventPage() {
         if(file.type.split("/")[0] !== "image") {
          setUploadError(updateError(ErrorMessage.TYPE)); 
          return;
+        }
+        if(file.size > 1000000 * 10) {
+          setUploadError(updateError(ErrorMessage.SIZE));
+          return;
         }
         setUploadError(updateError(ErrorMessage.default));
         setFormContent({...formContent, banner: file});
@@ -66,54 +96,128 @@ export function CreateNewEventPage() {
     }
   }
 
-  const handleDrop = (e: any) => {
+  const handleDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     setFileDragging(false);
     
     const droppedItems = e.dataTransfer.files;
-    console.log(e.dataTransfer);
-    uploadBanner(droppedItems);
+    if(droppedItems) {
+      console.log(e.dataTransfer);
+      uploadBanner([...droppedItems]);
+    }
   }
   
-  const handleDropzoneClick = (e: any) => {
+  const handleDropzoneClick: MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     if(inputRef?.current) {
       inputRef.current.click();
     }
   }
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     var files = e.target.files;
-    uploadBanner(files);
+    if(files) {
+       uploadBanner([...files]);
+    }
   }
 
-  const handleDropzoneDragOver = (e: any) => {
+  const handleDropzoneDragOver: React.DragEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     setFileDragging(true);
   }
 
-  const handleDropzoneDragEnd = (e: any) => {
+  const handleDropzoneDragEnd: React.DragEventHandler<HTMLDivElement>= (e) => {
     e.preventDefault();
     setFileDragging(false);
   }
 
-  const removeFile = (e: any) => {
+  const removeFile: MouseEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
     setFormContent({...formContent, banner: undefined});
   }
 
-  const submitForm = async (e: any) => {
+  const submitForm: MouseEventHandler<HTMLButtonElement> = async (e) => {   
     e.preventDefault();
-    
-    console.log(formContent);
 
-    const res = await fetch("/http://localhost:5180/event", {
+    let formResponses = formContent;
+    if(formContent.banner && formContent.banner instanceof File) {
+      const file = formContent.banner;
+      const buffer = await fileToBase64(file);
+      const data = {
+        buffer,
+        metaData: {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+        }
+      };
+      formResponses = {...formContent, banner: data};
+    }
+
+    console.log(formResponses);
+
+    const res = await fetch("http://localhost:5180/event", {
       method: "POST",
+      credentials: "include",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(formContent)
+      body: JSON.stringify(formResponses)
     });
+    const json = await res.json();
+
+    console.log(json);
+    if(res.ok){
+      emptyForm();
+    } else {
+      setSubmitError(json.message);
+    }
+  };
+
+  const emptyForm = () => {
+    setFormContent(defaultForm);
+  }
+
+  const setFormItem = (itemKey: keyof FormStructure) => {
+    const getUpdatedDateTime = (val: string, newDateTime: Date) => {
+      //check if time
+      const times = val.split(":");
+      if(times.length === 1) {
+        //must be date
+        const [year, month, day] = val.split('-').map(Number);
+        newDateTime.setFullYear(year, month, day);
+      } else {
+        const [hour, minute] = times.map(Number);
+        newDateTime.setHours(hour, minute);
+      }
+      return newDateTime;
+    }
+
+    const setItemContent: StringSetter = (val) => {
+      if(typeof val === "string") {
+        console.log(val);
+        if(formContent[itemKey] instanceof Date) {
+          const newDateTime = getUpdatedDateTime(val, formContent[itemKey]);
+          setFormContent({...formContent, [itemKey]: newDateTime});
+          return;
+        }
+        setFormContent({...formContent, [itemKey]: val});
+      } else {
+        setFormContent((prev) => {
+          const item = prev[itemKey];
+          let newVal;
+          if(item instanceof Date) {
+            // assumes val ouputs in appropriate Date/Time format
+            const newDateTime = val(item.toString());
+            newVal = getUpdatedDateTime(newDateTime, item);
+          } else {
+            newVal = val(prev[itemKey] as string);
+          }
+          return {...prev, [itemKey]: newVal};
+        });
+      }
+    };
+    return setItemContent;
   }
 
   return (
@@ -130,6 +234,10 @@ export function CreateNewEventPage() {
       ]}
     >
       <form>
+        {submitError && 
+        <div className={classes.error}>
+          <p>{submitError}</p>
+        </div>}
         <div className={classes.photoArea}>
           <div className={`${classes.photo} ${fileDragging ? classes.photoDragged : ""}`} 
             onDrop={handleDrop} 
@@ -146,37 +254,73 @@ export function CreateNewEventPage() {
             <div>
               <p className={classes.error}>{uploadError.message}</p>
             </div>}   
-          {formContent.banner && 
+          {formContent.banner instanceof File &&
             <div>
               <img className={classes.thumbnail} onClick={removeFile} src={URL.createObjectURL(formContent.banner)}/>
               <p className={classes.fileName}>{formContent.banner.name}</p>
             </div>}
         </div>
         <label className={classes.field}>Event name</label>
-        <div className={classes.textInput}>Training Program Induction</div>
+        <TextInput className={classes.textInput}
+          placeholder={defaultForm.name}
+          name="event name"
+          onChange={setFormItem("name")}
+          type={TextOptions.Text}
+          error={false}
+          autofocus={true}
+          />
         <label className={classes.field}>Event location</label>
-        <div className={classes.textInput}>John Lions Garden</div>
+        <TextInput className={classes.textInput}
+          placeholder={defaultForm.location}
+          name="event location"
+          onChange={setFormItem("location")}
+          type={TextOptions.Text}
+          error={false}
+          />
         <div className={classes.times}>
           <div className={classes.timeInput}>
             <label className={classes.field}>Date</label>
-            <div className={classes.textInput}>6/5/24</div>
+            <TextInput className={classes.textInput}
+              placeholder='DD/MM/YYY'
+              value={formContent.endDateTime.toLocaleDateString('en-CA')}
+              name="event date"
+              onChange={setFormItem("endDateTime")}
+              type={TextOptions.Date}
+              error={submitError.includes("Invalid date")}
+            />
           </div>
           <div className={classes.timeInput}>
             <label className={classes.field}>Start time</label>
-            <div className={classes.textInput}>11:00AM</div>
+            <TextInput className={classes.textInput}
+              placeholder='HH:MM'
+              value={formContent.startDateTime.toLocaleTimeString("en-GB").slice(0, 5)}
+              name="event start time"
+              onChange={setFormItem("startDateTime")}
+              type={TextOptions.Time}
+              error={submitError.includes("Invalid date")}
+            />
           </div>
           <div className={classes.timeInput}>
             <label className={classes.field}>End time</label>
-            <div className={classes.textInput}>5:00PM</div>
+            <TextInput className={classes.textInput}
+              placeholder="HH:MM"
+              value={formContent.endDateTime.toLocaleTimeString("en-GB").slice(0, 5)}
+              name="event end time"
+              onChange={setFormItem("endDateTime")}
+              type={TextOptions.Time}
+              error={submitError.includes("Invalid date")}
+            />
           </div>
         </div>
         <label className={classes.field}>Description</label>
-        <div className={`${classes.textInput} ${classes.description}`}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          elementum pulvinar cursus. Duis vel convallis orci. Duis blandit
-          ultrices hendrerit. Morbi ullamcorper vehicula arcu, et suscipit ex
-          posuere quis. Sed turpis massa, placerat ut sem
-        </div>
+        <TextInput className={`${classes.textInput} ${classes.description}`}
+          placeholder={defaultForm.description}
+          name="event description"
+          onChange={setFormItem("description")}
+          type={TextOptions.Text}
+          error={false}
+          textarea={true}
+          />
       </form>
     </SettingsPage>
   );

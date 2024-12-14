@@ -2,13 +2,6 @@
   display: flex;
 }
 
-.description {
-  line-height: 160%;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-
 .error{
   padding: 10px;
   color: hsl(0, 100%, 64%);
@@ -84,9 +77,16 @@
   margin-bottom: 34px;
 }
 
+.description {
+  line-height: 160%;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 .thumbnail {
   width: 100px;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .times {
