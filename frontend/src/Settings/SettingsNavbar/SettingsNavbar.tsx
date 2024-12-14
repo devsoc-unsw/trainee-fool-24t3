@@ -7,12 +7,14 @@ import {
 } from '@heroicons/react/24/outline';
 import classes from './SettingsNavbar.module.css';
 import { NavLink, useLocation } from 'react-router';
+import { useContext } from 'react';
+import { User, UserContext } from '../../UserContext/UserContext';
 
 interface Row {
   icon: React.ReactNode;
   name: string;
   to?: string;
-  onClick?: () => void;
+  onClick?: (() => void) | ((state: any) => void);
 }
 
 const rows: Row[][] = [
@@ -46,8 +48,18 @@ const rows: Row[][] = [
     {
       icon: <KeyIcon />,
       name: 'Log out',
-      onClick: () => {
-        alert('hello');
+      onClick: async (state: {
+        setUser: React.Dispatch<React.SetStateAction<User | null>>;
+      }) => {
+        const logout = await fetch('http://localhost:5180/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (logout.ok) {
+          state.setUser(null);
+        } else {
+          alert('Failed to logout.');
+        }
       },
     },
   ],
@@ -55,6 +67,7 @@ const rows: Row[][] = [
 
 export function SettingsNavbar() {
   const { pathname } = useLocation();
+  const { setUser } = useContext(UserContext);
 
   return (
     <nav className={classes.container}>
@@ -68,7 +81,13 @@ export function SettingsNavbar() {
                   ? `${classes.row} ${classes.interactable}`
                   : classes.row
               }
-              {...(row.onClick && { onClick: row.onClick })}
+              {...{
+                onClick: (_) =>
+                  row.onClick &&
+                  row.onClick({
+                    setUser,
+                  }),
+              }}
             >
               <div className={classes.icon}>{row.icon}</div>
               {row.to ? (
