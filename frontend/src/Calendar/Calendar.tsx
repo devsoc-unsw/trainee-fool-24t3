@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, subMonths, getDaysInMonth } from 'date-fns'
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, subMonths, getDaysInMonth, getTime, startOfDay } from 'date-fns'
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline"
 import classes from './Calendar.module.css'
 import CalendarCell from '../CalendarCell/CalendarCell'
@@ -68,7 +68,7 @@ function Calendar() {
     const buildEventsDict = async (events: Event[]) => {
         const dict: Record<number, any> = {}
         events.forEach((item: Event) => {
-            const date = item.startDateTime.getTime();
+            const date = getTime(startOfDay(item.startDateTime));
             if(!dict[date]) {
                 dict[date] = []
             }
@@ -79,9 +79,13 @@ function Calendar() {
 
     useEffect(() => {
         fetchEvents();
-        buildEventsDict(eventsInMonth);
     }, [currentDate]);
-    
+
+    useEffect(() => {
+        buildEventsDict(eventsInMonth);
+    }, [eventsInMonth])
+
+    console.log(eventsInMonth)
     console.log(eventsByDate);
     return (
         <div className={classes.container}>
@@ -105,7 +109,7 @@ function Calendar() {
                         })}
 
                         { daysOfMonth.map((day) => {
-                            return <CalendarCell date={format(day, 'dd/MM')} events={eventsByDate[day.getTime()]}/>
+                            return <CalendarCell date={format(day, 'dd/MM')} events={eventsByDate[getTime(startOfDay(day))]}/>
                         })}
 
                         {Array.from({length:dayBuffer}).map((_, ) => {

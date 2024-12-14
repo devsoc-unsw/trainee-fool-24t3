@@ -6,7 +6,7 @@ interface Event {
 };
 
 type CalendarCellProps = {
-  date: string,
+  date?: string,
   events?: Event[]
   [key: string]: any; //gonna fix this and fill it out with whatever the backend sends soon
 };
@@ -18,6 +18,11 @@ function CalendarCell(props: CalendarCellProps) {
             <p className={classes.dateElement}>{props.date ? props.date : ''}</p>
         </div>
         <div className={classes.eventSpace}>
+          {
+            props.events ? props.events.map((event) => {
+              return <CalendarEventElem event={event}/>
+            }) : ''
+          }
         </div>
     </div>
   )
