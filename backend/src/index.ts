@@ -766,7 +766,7 @@ app.get('/events', async (req, res: Response) => {
     skip: page * 10,
     take: 10,
   });
-
+  
   if (!events || events.length === 0) {
     return res.status(404).json({ message: 'No events found.' });
   }
@@ -828,7 +828,7 @@ app.get('/user/events', async (req, res: Response) => {
       take: 10,
     }),
   });
-
+  
   if (!events || events.length === 0) {
     return res.status(404).json({ message: 'No events found.' });
   }
