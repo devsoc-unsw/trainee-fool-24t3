@@ -5,7 +5,7 @@ import app from '../src/index';
 import { createClient } from 'redis';
 import prisma from '../src/prisma';
 
-describe.skip('Password change', () => {
+describe('Password change', () => {
   test('Forgot password OTP', async () => {
     const redisClient = createClient({
       url: `redis://localhost:${process.env['REDIS_PORT']}`,
@@ -45,6 +45,7 @@ describe.skip('Password change', () => {
       const expToken = await redisClient.get(newUser.email);
 
       expect(expToken).not.toBeNull();
+
       expect(expToken).toEqual(expResToken);
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -106,13 +107,10 @@ describe.skip('Password change', () => {
       const forgotRes = await request(app).post('/auth/password/forgot').send({
         email: 'pyramidstestdump@gmail.com',
         token: fResToken,
-        newPassword: 'oraclefan1',
+        password: 'oraclefan1',
       });
 
-      //console.log(forgotRes.error.text);
       expect(forgotRes.status).toBe(200);
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const fCheckVerTokens = await redisClient.get(newUser.email);
       expect(fCheckVerTokens).toBeNull();
@@ -194,7 +192,7 @@ describe.skip('Password change', () => {
         username: 'richard grayson',
         password: 'iheartkori',
       });
-      expect(updateResFail.status).toBe(400);
+      expect(oldPassResFail.status).toBe(400);
 
       const newPassRes = await request(app).post('/auth/login').send({
         username: 'richard grayson',

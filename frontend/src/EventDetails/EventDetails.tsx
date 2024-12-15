@@ -16,7 +16,7 @@ type EventDetailsProps = {
   backgroundPositionY: string;
   name: string;
   society: string;
-  date: string;
+  eventDate: string;
   startTime: string;
   endTime: string;
   location: string;
@@ -24,6 +24,7 @@ type EventDetailsProps = {
   attending: number;
   description: string;
   keywords?: string[];
+  closeEventDetails: () => void
 };
 
 function EventDetails(props: EventDetailsProps) {
@@ -41,6 +42,7 @@ function EventDetails(props: EventDetailsProps) {
           icon={ButtonIcons.Cross}
           variant={ButtonVariants.Primary}
           className={classes.exitIcon}
+          onClick={props.closeEventDetails}
         ></Button>
       </div>
 
@@ -53,7 +55,7 @@ function EventDetails(props: EventDetailsProps) {
           </div>
           <div className={classes.detail}>
             <CalendarIcon className={classes.icon}></CalendarIcon>
-            <p className={classes.detailInfo}>{props.date}</p>
+            <p className={classes.detailInfo}>{props.eventDate}</p>
           </div>
           <div className={classes.detail}>
             <ClockIcon className={classes.icon}></ClockIcon>

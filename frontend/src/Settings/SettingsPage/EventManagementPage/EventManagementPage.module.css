@@ -1,0 +1,6 @@
+.success {
+    padding: 10px;
+    color: hsla(125, 69%, 50%, 0.76);
+    font-size: 1.3rem;
+    font-weight: bold;      
+}
