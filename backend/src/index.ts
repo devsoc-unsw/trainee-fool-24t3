@@ -197,7 +197,7 @@ app.post('/auth/otp/generate', async (req: Request, res: Response) => {
       });
     }
 
-    if (process.env['CI']) {
+    if (process.env['NODE_ENV'] === 'test') {
       return res.status(200).json({ message: token });
     }
     return res.status(200).json({ message: 'ok' });
