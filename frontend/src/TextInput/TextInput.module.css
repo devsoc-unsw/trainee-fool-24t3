@@ -8,6 +8,7 @@
     background: none;
     font-size: 1.2rem;
     width: 100%;
+    resize: none;
 }
 
 .input::placeholder {

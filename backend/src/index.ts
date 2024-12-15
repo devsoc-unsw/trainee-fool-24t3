@@ -28,6 +28,12 @@ import {
   findUserFromId,
   updateUserPasswordFromEmail,
 } from './routes/User/user';
+import {
+  getFile,
+  getFileUrl,
+  storageClient,
+  uploadFile,
+} from './config/storage';
 
 declare module 'express-session' {
   interface SessionData {
@@ -78,7 +84,7 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: '20mb' }));
 
 if (process.env['SESSION_SECRET'] === undefined) {
   console.error('Session secret not provided in .env file');
@@ -191,7 +197,7 @@ app.post('/auth/otp/generate', async (req: Request, res: Response) => {
       });
     }
 
-    if (process.env['CI']) {
+    if (process.env['NODE_ENV'] === 'test') {
       return res.status(200).json({ message: token });
     }
     return res.status(200).json({ message: 'ok' });
@@ -255,6 +261,8 @@ app.post('/auth/password/forgot', async (req: Request, res: Response) => {
     verifyOTP(token, otp);
 
     await updateUserPasswordFromEmail(email, password, SALT_ROUNDS);
+
+    await redisClient.del(email);
 
     return res.status(200).json({ message: 'ok' });
   } catch (error) {
@@ -626,10 +634,33 @@ app.post(
       return res.status(400).json({ message: 'Invalid date' });
     }
 
+    //console.log(event);
+
+    // upload image to storage and get link
+    let imagePath = '';
+    try {
+      if (event.banner && storageClient) {
+        const metaData = event.banner.metaData;
+        const base64Data = event.banner.buffer.split(',')[1];
+        if (base64Data) {
+          imagePath = await uploadFile(
+            base64Data,
+            metaData.type,
+            event.societyId,
+            event.name
+          );
+        } else {
+          throw new Error('Invalid base64 string.');
+        }
+      }
+    } catch (error) {
+      return res.status(400).json({ message: `Unable to upload image.` });
+    }
+
     try {
       const eventRes = await prisma.event.create({
         data: {
-          banner: event.banner,
+          banner: imagePath,
           name: event.name,
           startDateTime: dayjs(event.startDateTime).toISOString(),
           endDateTime: dayjs(event.endDateTime).toISOString(),
@@ -644,6 +675,7 @@ app.post(
       });
       return res.status(200).json(eventRes);
     } catch (e) {
+      console.log(e);
       return res.status(400).json({ message: 'Invalid event input' });
     }
   }
@@ -675,13 +707,37 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
     return res.status(400).json({ message: 'Invalid date' });
   }
 
+  // upload image to storage and get link
+  let imagePath;
+  try {
+    if (Object.keys(event.banner).length > 0) {
+      const base64Data = req.body.banner.buffer.split(',')[1];
+      if (base64Data) {
+        const metaData = req.body.banner.metaData;
+
+        imagePath = await uploadFile(
+          base64Data,
+          metaData.type,
+          event.societyId,
+          event.name
+        );
+      } else {
+        throw new Error('Invalid base64 string.');
+      }
+    } else {
+      throw new Error('No banner submitted.');
+    }
+  } catch (error) {
+    return res.status(400).json({ error: (error as Error).message });
+  }
+
   try {
     const eventRes = await prisma.event.update({
       where: {
         id: eventID,
       },
       data: {
-        banner: req.body.banner,
+        banner: imagePath,
         name: req.body.name,
         startDateTime: dayjs(req.body.startDateTime).toISOString(),
         endDateTime: dayjs(req.body.endDateTime).toISOString(),
@@ -689,7 +745,15 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
         description: req.body.description,
       },
     });
-    return res.status(200).json(eventRes);
+    // we are choosing to send the image back as a url
+    let imageFile;
+    try {
+      imageFile = await getFileUrl(event.banner); // getFile(event.banner) if we wanted raw file
+    } catch (error) {
+      return res.status(400).json({ error: (error as Error).message });
+    }
+
+    return res.status(200).json({ ...event, banner: imageFile });
   } catch (e) {
     return res.status(400).json({ message: 'Invalid event input' });
   }
@@ -1175,16 +1239,16 @@ app.get('/user/keywords', async (req, res: Response) => {
 
   const userID = sessionFromDB.userId;
 
-    let userKeywords = await prisma.user.findFirst({
-      where: {
-        id: userID,
-      },
-      select: {
-        keywords: true,
-      }
-    });
-  
-    if (userKeywords === null) return res.status(404).json([]);
+  let userKeywords = await prisma.user.findFirst({
+    where: {
+      id: userID,
+    },
+    select: {
+      keywords: true,
+    },
+  });
+
+  if (userKeywords === null) return res.status(404).json([]);
 
   return res.status(200).json(userKeywords.keywords);
 });
@@ -1224,21 +1288,21 @@ app.post(
       });
       return res.status(200).json(newKeyword);
     } catch (e) {
-      return res.status(400).json({ message: "Invalid keyword input." });
+      return res.status(400).json({ message: 'Invalid keyword input.' });
     }
   }
 );
 
 // associates a user with a keyword
 app.post(
-  "/user/keyword", 
+  '/user/keyword',
   async (req: TypedRequest<keywordIdBody>, res: Response) => {
     //get userid from session
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
     const userID = sessionFromDB.userId;
 
@@ -1253,7 +1317,7 @@ app.post(
     });
 
     if (!keywordExists) {
-      return res.status(404).json({ message: "Invalid keyword." });
+      return res.status(404).json({ message: 'Invalid keyword.' });
     }
 
     //Connect keyword and user
@@ -1283,19 +1347,20 @@ app.post(
       },
     });
 
-  return res.status(200).json({ message: "ok" });
-});
+    return res.status(200).json({ message: 'ok' });
+  }
+);
 
 // disassociates a user with a keyword
 app.delete(
-  "/user/keyword", 
+  '/user/keyword',
   async (req: TypedRequest<keywordIdBody>, res: Response) => {
     //get userid from session
     const sessionFromDB = await validateSession(
       req.session ? req.session : null
     );
     if (!sessionFromDB) {
-      return res.status(401).json({ message: "Invalid session provided." });
+      return res.status(401).json({ message: 'Invalid session provided.' });
     }
     const userID = sessionFromDB.userId;
 
@@ -1310,7 +1375,7 @@ app.delete(
     });
 
     if (!societyId) {
-      return res.status(400).json({ message: "Invalid keyword." });
+      return res.status(400).json({ message: 'Invalid keyword.' });
     }
 
     //Disconnect keyword and user
@@ -1340,8 +1405,9 @@ app.delete(
       },
     });
 
-  return res.status(200).json({ message: "ok" });
-});
+    return res.status(200).json({ message: 'ok' });
+  }
+);
 
 app.get('/hello', () => {
   console.log('Hello World!');

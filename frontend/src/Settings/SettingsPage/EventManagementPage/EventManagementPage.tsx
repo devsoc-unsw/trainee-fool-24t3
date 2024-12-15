@@ -1,22 +1,16 @@
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import Button from '../../../Button/Button';
 import { ButtonIcons, ButtonVariants } from '../../../Button/ButtonTypes';
 import { SettingsPage } from '../SettingsPage';
 import { useEffect } from 'react';
+import classes from './EventManagementPage.module.css';
 
 export function EventManagementPage() {
+  const location = useLocation();
+  const { creationSuccess } = location.state;
+
   useEffect(() => {
     const getEvents = async () => {
-      const societies = await fetch('http://localhost:5180/user/societies', {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      if (societies.ok) {
-        const societiesJson = await societies.json();
-        console.log(societiesJson);
-      }
-
       const events = await fetch(
         'http://localhost:5180/society/events?' +
           new URLSearchParams({
@@ -50,6 +44,11 @@ export function EventManagementPage() {
         </Link>,
       ]}
     >
+      {creationSuccess && (
+        <div className={classes.success}>
+          <p>Event created!</p>
+        </div>
+      )}
       <table>
         <thead>
           <tr>
