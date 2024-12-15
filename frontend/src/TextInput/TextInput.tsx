@@ -1,10 +1,10 @@
-import { ReactNode, useState, ChangeEvent } from "react";
-import classes from "./TextInput.module.css";
+import { ReactNode, useState, ChangeEvent } from 'react';
+import classes from './TextInput.module.css';
 
 export enum TextOptions {
-  Text = "text",
-  Password = "password",
-  Email = "email",
+  Text = 'text',
+  Password = 'password',
+  Email = 'email',
 }
 
 type TextInputProp = {
@@ -14,6 +14,7 @@ type TextInputProp = {
   onChange: React.Dispatch<React.SetStateAction<string>>;
   type: TextOptions;
   error: boolean;
+  noMargin?: boolean;
 };
 
 export function TextInput(props: TextInputProp) {
@@ -28,9 +29,10 @@ export function TextInput(props: TextInputProp) {
 
   return (
     <div
-      className={`${classes.container} ${focus ? classes.focus : ""} ${
-        props.error ? classes.error : ""
+      className={`${classes.container} ${focus ? classes.focus : ''} ${
+        props.error ? classes.error : ''
       }`}
+      style={{ marginBottom: props.noMargin ? '0' : '' }}
     >
       <input
         type={props.type}
