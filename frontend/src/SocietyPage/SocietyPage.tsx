@@ -48,11 +48,9 @@ export default function SocietyPage() {
       credentials: "include",
       body: JSON.stringify({ eventId }),
     });
-    const json = await res.json();
     if (res.ok) {
       alert("Joined event yippee");
     }
-    console.log(json);
   };
 
   if (!id) {

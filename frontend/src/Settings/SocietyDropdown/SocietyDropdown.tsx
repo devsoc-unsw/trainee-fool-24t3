@@ -1,19 +1,17 @@
-import { ChangeEvent, useContext, useEffect } from 'react';
-import classes from './SocietyDropdown.module.css';
-import { UserContext } from '../../UserContext/UserContext';
+import { ChangeEvent, useContext, useEffect } from "react";
+import classes from "./SocietyDropdown.module.css";
+import { UserContext } from "../../UserContext/UserContext";
 
 export function SocietyDropdown() {
   const { societies, setSocieties, setSociety } = useContext(UserContext);
 
   useEffect(() => {
     const getSocieties = async () => {
-      const res = await fetch('http://localhost:5180/user/societies', {
-        method: 'Get',
-        credentials: 'include',
+      const res = await fetch("http://localhost:5180/user/societies", {
+        method: "Get",
+        credentials: "include",
       });
       const json = await res.json();
-
-      console.log(json);
 
       if (json) {
         setSocieties?.(json);
@@ -27,10 +25,8 @@ export function SocietyDropdown() {
     const findSelection = societies?.administering.find(
       (soc) => soc.name === newSelection
     );
-    console.log(newSelection);
     if (findSelection) {
       setSociety?.(findSelection);
-      console.log(findSelection);
     }
   };
 

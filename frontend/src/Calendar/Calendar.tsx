@@ -67,8 +67,6 @@ function Calendar() {
         credentials: "include",
       });
 
-      console.log(res);
-
       if (res.ok) {
         const data = await res.json();
         return data;
@@ -108,8 +106,6 @@ function Calendar() {
     buildEventsDict(eventsInMonth);
   }, [eventsInMonth]);
 
-  console.log(eventsInMonth);
-  console.log(eventsByDate);
   return (
     <div className={classes.container}>
       <div className={classes.calendar}>
