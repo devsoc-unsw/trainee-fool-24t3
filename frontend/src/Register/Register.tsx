@@ -4,7 +4,7 @@ import { TextInput, TextOptions } from "../TextInput/TextInput";
 import { AtSymbolIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 import { useState, FormEvent } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { errorHandler, AuthError } from "../errorHandler";
 
 export default function RegisterPage() {
@@ -12,6 +12,9 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<AuthError | undefined>(undefined);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const res = await fetch("http://localhost:5180/auth/register", {
@@ -31,6 +34,10 @@ export default function RegisterPage() {
       setError(errorHandler(json.error));
     } else {
       setError(undefined);
+      setSuccess("Signed up successfully! Redirecting to login page...");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
     }
   }
 
@@ -76,6 +83,7 @@ export default function RegisterPage() {
         buttonText="Sign up"
         onSubmit={handleSubmit}
         error={error}
+        success={success}
       />
       <div className={classes.lower} />
     </main>
