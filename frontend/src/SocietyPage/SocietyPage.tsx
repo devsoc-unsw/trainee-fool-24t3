@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import classes from "./SocietyPage.module.css";
 import { Society } from "../UserContext/UserContext";
 import { ReactNode, useEffect, useState } from "react";
+import Button from "../Button/Button";
 
 export default function SocietyPage() {
   const { id } = useParams();
@@ -38,6 +39,22 @@ export default function SocietyPage() {
     getSociety();
   }, []);
 
+  const joinEvent = async (eventId: string) => {
+    const res = await fetch("http://localhost:5180/user/event/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ eventId }),
+    });
+    const json = await res.json();
+    if (res.ok) {
+      alert("Joined event yippee");
+    }
+    console.log(json);
+  };
+
   if (!id) {
     return <>No society provided.</>;
   }
@@ -56,7 +73,17 @@ export default function SocietyPage() {
         {events && events.length > 0 ? (
           <ul>
             {events.map((event: any) => (
-              <li key={event.id}>{event.name}</li>
+              <li key={event.id}>
+                {event.name}{" "}
+                <Button
+                  type="button"
+                  onClick={() => {
+                    joinEvent(event.id);
+                  }}
+                >
+                  Join
+                </Button>
+              </li>
             ))}
           </ul>
         ) : (
