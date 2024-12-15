@@ -42,7 +42,7 @@ export const uploadFile = async (
     throw new Error(error.message);
   }
   console.log(data);
-  return data.path;
+  return (await getFileUrl(data.path)).publicUrl;
 };
 
 export const getFile = async (path: string) => {
@@ -62,7 +62,7 @@ export const getFileUrl = async (path: string) => {
     throw new Error('Storage client not initialised.');
   }
 
-  const { data } = await storageClient.from('images').getPublicUrl(path);
+  const { data } = storageClient.from('images').getPublicUrl(path);
 
   return data;
 };

@@ -745,15 +745,8 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
         description: req.body.description,
       },
     });
-    // we are choosing to send the image back as a url
-    let imageFile;
-    try {
-      imageFile = await getFileUrl(event.banner); // getFile(event.banner) if we wanted raw file
-    } catch (error) {
-      return res.status(400).json({ error: (error as Error).message });
-    }
 
-    return res.status(200).json({ ...event, banner: imageFile });
+    return res.status(200).json(eventRes);
   } catch (e) {
     return res.status(400).json({ message: 'Invalid event input' });
   }
