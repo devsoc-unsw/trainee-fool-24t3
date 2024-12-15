@@ -4,11 +4,8 @@ import { ButtonIcons, ButtonVariants } from '../../../../Button/ButtonTypes';
 import { TextInput, TextOptions } from '../../../../TextInput/TextInput';
 import { SettingsPage } from '../../SettingsPage';
 import { useContext, useEffect, useState } from 'react';
-import {
-  Societies,
-  Society,
-  UserContext,
-} from '../../../../UserContext/UserContext';
+import { Society, UserContext } from '../../../../UserContext/UserContext';
+import classes from './SearchSocieties.module.css';
 
 export const SearchSocietiesPage = () => {
   const [societyName, setSocietyName] = useState('');
@@ -69,9 +66,16 @@ export const SearchSocietiesPage = () => {
         />,
       ]}
     >
-      <ul>
+      <ul className={classes.societiesList}>
         {foundSocieties.map((society: Society) => (
-          <li key={society.id}>{society.name}</li>
+          <li key={society.id}>
+            <h2>{society.name}</h2>
+            <Button
+              variant={ButtonVariants.Secondary}
+              icon={ButtonIcons.Plus}
+              type="button"
+            />
+          </li>
         ))}
       </ul>
       {error && <p>{error}</p>}
