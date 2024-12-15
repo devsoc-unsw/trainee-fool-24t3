@@ -638,8 +638,6 @@ app.post(
       return res.status(400).json({ message: "Invalid date" });
     }
 
-    //console.log(event);
-
     // upload image to storage and get link
     let imagePath = "";
     try {
