@@ -107,7 +107,7 @@ describe('Password change', () => {
       const forgotRes = await request(app).post('/auth/password/forgot').send({
         email: 'pyramidstestdump@gmail.com',
         token: fResToken,
-        newPassword: 'oraclefan1',
+        password: 'oraclefan1',
       });
 
       expect(forgotRes.status).toBe(200);
