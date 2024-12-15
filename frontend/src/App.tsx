@@ -50,7 +50,17 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/timeline" element={<Calendar />} /> //
+            <Route
+              path="/timeline"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user !== null && user.id !== undefined}
+                  fallback={<Navigate to="/login" />}
+                >
+                  <Calendar />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/login"
               element={
