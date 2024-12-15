@@ -8,7 +8,6 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { ButtonIcons, ButtonVariants } from './ButtonTypes';
-import { MouseEventHandler } from 'react';
 
 type ButtonProps = {
   children?: string;

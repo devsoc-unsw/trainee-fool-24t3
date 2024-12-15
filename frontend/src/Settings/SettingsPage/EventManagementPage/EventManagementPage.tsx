@@ -2,14 +2,12 @@ import { Link, useLocation } from 'react-router';
 import Button from '../../../Button/Button';
 import { ButtonIcons, ButtonVariants } from '../../../Button/ButtonTypes';
 import { SettingsPage } from '../SettingsPage';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import classes from './EventManagementPage.module.css';
-import { UserContext } from '../../../UserContext/UserContext';
 
 export function EventManagementPage() {
   const location = useLocation();
   const { creationSuccess } = location.state;
-  const { societies } = useContext(UserContext);
 
   useEffect(() => {
     const getEvents = async () => {
@@ -46,10 +44,11 @@ export function EventManagementPage() {
         </Link>,
       ]}
     >
-      {creationSuccess && 
-      <div className={classes.success}>
-        <p>Event created!</p>
-      </div>}
+      {creationSuccess && (
+        <div className={classes.success}>
+          <p>Event created!</p>
+        </div>
+      )}
       <table>
         <thead>
           <tr>
