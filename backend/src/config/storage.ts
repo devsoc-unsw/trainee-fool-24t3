@@ -10,10 +10,14 @@ if (process.env['NODE_ENV'] !== 'test' && !STORAGE_URL) {
 if (process.env['NODE_ENV'] !== 'test' && !SERVICE_KEY) {
   throw new Error('Service key not found.');
 }
-const storageClient = new StorageClient(STORAGE_URL, {
-  apikey: SERVICE_KEY,
-  Authorization: `Bearer ${SERVICE_KEY}`,
-});
+
+export let storageClient: StorageClient | null = null;
+if (STORAGE_URL && SERVICE_KEY) {
+  storageClient = new StorageClient(STORAGE_URL, {
+    apikey: SERVICE_KEY,
+    Authorization: `Bearer ${SERVICE_KEY}`,
+  });
+}
 
 export const uploadFile = async (
   file: string,
@@ -21,6 +25,9 @@ export const uploadFile = async (
   societyId: number,
   eventName: string
 ) => {
+  if (!storageClient) {
+    throw new Error('Storage client not initialised.');
+  }
   const { data, error } = await storageClient
     .from('images')
     .upload(
@@ -39,6 +46,9 @@ export const uploadFile = async (
 };
 
 export const getFile = async (path: string) => {
+  if (!storageClient) {
+    throw new Error('Storage client not initialised.');
+  }
   const { data, error } = await storageClient.from('images').download(path);
   if (error) {
     throw new Error(error.message);
@@ -48,6 +58,10 @@ export const getFile = async (path: string) => {
 };
 
 export const getFileUrl = async (path: string) => {
+  if (!storageClient) {
+    throw new Error('Storage client not initialised.');
+  }
+
   const { data } = await storageClient.from('images').getPublicUrl(path);
 
   return data;
