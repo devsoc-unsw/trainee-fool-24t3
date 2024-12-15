@@ -12,6 +12,7 @@ export interface Society {
   id: number;
   discordId: null;
   name: string;
+  description: string;
   profilePicture: string | null;
   userId: number;
 }

@@ -34,12 +34,12 @@ export interface CreateEventBody {
 }
 
 interface Base64Image {
-  buffer: string,
+  buffer: string;
   metaData: {
-    name: string,
-    type: string,
-    size: number,
-  }
+    name: string;
+    type: string;
+    size: number;
+  };
 }
 
 export interface UpdateEventBody extends CreateEventBody {
@@ -49,6 +49,7 @@ export interface UpdateEventBody extends CreateEventBody {
 //strictNullChecks being set to false broke some more code, so I'm just gonna make it string|null
 export interface CreateSocietyBody {
   name: string;
+  description?: string;
   profilePicture: string | null;
 }
 

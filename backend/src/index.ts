@@ -605,6 +605,7 @@ app.post(
       const newSociety = await prisma.society.create({
         data: {
           name: society.name,
+          description: society.description ? society.description : null,
           admin: {
             connect: {
               id: sessionFromDB.userId,

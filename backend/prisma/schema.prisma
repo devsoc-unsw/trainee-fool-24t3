@@ -34,6 +34,7 @@ model Society {
   userId         Int
   name           String  @unique
   events         Event[]
+  description    String?
   members        User[]  @relation(name: "membertosociety")
   discordId      String? @unique
   profilePicture String?

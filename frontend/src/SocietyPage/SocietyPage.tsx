@@ -60,33 +60,38 @@ export default function SocietyPage() {
   return (
     society && (
       <div className={classes.container}>
-        <div
+        <section
           className={classes.picture}
           style={{
             backgroundImage: `url(${society.profilePicture})`,
             backgroundPositionY: "0px",
           }}
         />
-        <h1>{society.name}</h1>
-        {events && events.length > 0 ? (
-          <ul>
-            {events.map((event: any) => (
-              <li key={event.id}>
-                {event.name}{" "}
-                <Button
-                  type="button"
-                  onClick={() => {
-                    joinEvent(event.id);
-                  }}
-                >
-                  Join
-                </Button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No events yet sadge</p>
-        )}
+        <section>
+          <header>
+            <h1>{society.name}</h1>
+            <p>{society.description}</p>
+          </header>
+          {events && events.length > 0 ? (
+            <ul>
+              {events.map((event: any) => (
+                <li key={event.id}>
+                  {event.name}{" "}
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      joinEvent(event.id);
+                    }}
+                  >
+                    Join
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No events yet sadge</p>
+          )}
+        </section>
       </div>
     )
   );

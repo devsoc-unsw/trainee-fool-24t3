@@ -1,7 +1,12 @@
+.container {
+  display: flex;
+  padding: 64px 128px;
+}
+
 .picture {
-  width: 100%;
+  width: 200px;
   border-radius: 16px 16px 0px 0px;
-  height: 106px;
+  height: 200px;
   background-size: cover;
 }
 
