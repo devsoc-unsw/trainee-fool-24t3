@@ -1,0 +1,11 @@
+.societiesList {
+  list-style-type: none;
+}
+
+.societiesList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px;
+  border-radius: 32px;
+}

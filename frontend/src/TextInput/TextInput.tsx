@@ -18,6 +18,7 @@ type TextInputProp = {
   onChange: React.Dispatch<React.SetStateAction<string>>;
   type: TextOptions;
   error: boolean;
+  noMargin?: boolean;
   textarea?: boolean;
   value?: string;
 };
@@ -27,18 +28,21 @@ export function TextInput(props: TextInputProp) {
   const onFocus = () => setFocus(true);
   const onBlur = () => setFocus(false);
 
-  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     const value = event.target.value;
     props.onChange(value);
   }
 
   return (
     <div
-      className={`${props.className ? props.className : classes.container} ${focus ? classes.focus : ""} ${
-        props.error ? classes.error : ""
-      }`}
+      className={`${props.className ? props.className : classes.container} ${
+        focus ? classes.focus : ""
+      } ${props.error ? classes.error : ""}`}
+      style={{ marginBottom: props.noMargin ? "0" : "" }}
     >
-      {props.textarea ? 
+      {props.textarea ? (
         <textarea
           rows={6}
           name={props.name}
@@ -50,7 +54,8 @@ export function TextInput(props: TextInputProp) {
           autoFocus={props.autofocus}
           value={props.value}
         />
-      : <input
+      ) : (
+        <input
           autoFocus={props.autofocus}
           type={props.type}
           name={props.name}
@@ -60,7 +65,8 @@ export function TextInput(props: TextInputProp) {
           onBlur={onBlur}
           className={classes.input}
           onChange={handleChange}
-        />}
+        />
+      )}
       <div className={classes.icon}>{props.icon && props.icon}</div>
     </div>
   );

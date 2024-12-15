@@ -12,7 +12,9 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState<AuthError | undefined>(undefined);
+  const [success, setSuccess] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const res = await fetch("http://localhost:5180/auth/register", {
@@ -32,7 +34,10 @@ export default function RegisterPage() {
       setError(errorHandler(json.error));
     } else {
       setError(undefined);
-      navigate("/login");
+      setSuccess("Signed up successfully! Redirecting to login page...");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
     }
   }
 
@@ -78,6 +83,7 @@ export default function RegisterPage() {
         buttonText="Sign up"
         onSubmit={handleSubmit}
         error={error}
+        success={success}
       />
       <div className={classes.lower} />
     </main>

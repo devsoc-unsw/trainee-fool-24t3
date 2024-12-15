@@ -2,6 +2,7 @@ import {
   CalendarIcon,
   FaceSmileIcon,
   KeyIcon,
+  MagnifyingGlassIcon,
   MegaphoneIcon,
   StarIcon,
   UserCircleIcon,
@@ -37,6 +38,11 @@ const rows: Row[][] = [
       icon: <FaceSmileIcon />,
       name: 'Create a new society',
       to: '/settings/societies/new',
+    },
+    {
+      icon: <MagnifyingGlassIcon />,
+      name: 'Join a society',
+      to: '/settings/societies/search',
     },
   ],
   [

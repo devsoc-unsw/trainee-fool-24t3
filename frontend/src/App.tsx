@@ -19,6 +19,7 @@ import GenerateOTP from './GenerateOTP/GenerateOTP';
 import VerifyOTP from './VerifyOTP/VerifyOTP';
 import { SocietyManagementPage } from './Settings/SettingsPage/SocietyManagementPage/SocietyManagementPage';
 import { CreateNewSocietyPage } from './Settings/SettingsPage/SocietyManagementPage/CreateNewSociety/CreateNewSociety';
+import { SearchSocietiesPage } from './Settings/SettingsPage/SocietyManagementPage/SearchSocieties/SearchSocieties';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -101,6 +102,10 @@ function App() {
               <Route path="events/new" element={<CreateNewEventPage />} />
               <Route path="societies" element={<SocietyManagementPage />} />
               <Route path="societies/new" element={<CreateNewSocietyPage />} />
+              <Route
+                path="societies/search"
+                element={<SearchSocietiesPage />}
+              />
               <Route path="discord" element={<DiscordPage />} />
             </Route>
             <Route path="/unauthenticated" element={<Unauthenticated />} />
