@@ -26,6 +26,7 @@ import { SocietyManagementPage } from "./Settings/SettingsPage/SocietyManagement
 import { CreateNewSocietyPage } from "./Settings/SettingsPage/SocietyManagementPage/CreateNewSociety/CreateNewSociety";
 import { SearchSocietiesPage } from "./Settings/SettingsPage/SocietyManagementPage/SearchSocieties/SearchSocieties";
 import SocietyPage from "./SocietyPage/SocietyPage";
+import EventDetails from "./EventPage/EventPage";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -121,6 +122,7 @@ function App() {
             <Route path="/changepassword/verify" element={<VerifyOTP />} />
             <Route path="/society" element={<SocietyPage />} />
             <Route path="/society/:id" element={<SocietyPage />} />
+            <Route path="/event/:id" element={<EventDetails />} />
           </Routes>
         </div>
         <NavBar profileImage="https://i.redd.it/white-pharaoh-in-school-textbook-v0-fgr8oliazlkd1.jpg?width=225&format=pjpg&auto=webp&s=04dc4c2c8a0170c4e161091673352cd966591475"></NavBar>
