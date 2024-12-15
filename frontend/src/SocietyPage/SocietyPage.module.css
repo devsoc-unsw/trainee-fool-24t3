@@ -1,13 +1,23 @@
 .container {
   display: flex;
   padding: 64px 128px;
+  gap: 64px;
 }
 
 .picture {
   width: 200px;
-  border-radius: 16px 16px 0px 0px;
+  border-radius: 16px;
   height: 200px;
   background-size: cover;
+  box-shadow: 0px 4px 4px hsla(0, 0%, 50%, 0.25);
+}
+
+.defaultPictureContainer {
+  width: 128px;
+  height: 128px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 4px hsla(0, 0%, 50%, 0.25);
 }
 
 .society-name-container {
@@ -21,4 +31,23 @@
   font-size: 16px;
   padding-left: 5%;
   margin: 0;
+}
+
+.header,
+.main section {
+  margin-bottom: 32px;
+}
+
+.header h1 {
+  font-size: 2rem;
+}
+
+.events {
+  list-style-type: none;
+  display: flex;
+  gap: 64px;
+}
+
+.events li {
+  max-width: 400px;
 }
