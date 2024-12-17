@@ -35,7 +35,7 @@ export interface CreateEventBody {
 
 interface Base64Image {
   buffer: string;
-  metaData: {
+  metadata: {
     name: string;
     type: string;
     size: number;

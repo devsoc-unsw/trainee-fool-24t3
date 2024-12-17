@@ -4,12 +4,15 @@
 // With SanitisedUser, IDs are represented just as regular numbers.
 // With the actual User, which is stored in the DB, IDs are handled
 // by Prisma and do not need to be noted in these type definitions,
+
+import { Image } from '@prisma/client';
+
 // hence its omission.
 interface BaseUser {
   username: string;
   email: string;
   dateJoined: Date;
-  profilePicture: string | null;
+  profilePicture: Image | null;
   //attendee: Attendee?
   //society: Society?
 }

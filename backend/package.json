@@ -26,6 +26,7 @@
     "mailgun.js": "^10.2.3",
     "prisma": "^5.22.0",
     "redis": "^4.7.0",
+    "sharp": "^0.33.5",
     "zod": "^3.23.8",
     "zod-prisma-types": "^3.2.1"
   },

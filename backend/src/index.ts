@@ -156,7 +156,6 @@ app.post(
         password: hashedPassword,
         salt,
         dateJoined: new Date(),
-        profilePicture: null,
       },
       select: {
         id: true,
@@ -326,6 +325,9 @@ app.post('/auth/login', async (req: TypedRequest<LoginBody>, res: Response) => {
       where: {
         username: username,
       },
+      include: {
+        profilePicture: true,
+      },
     });
 
     if (!user) {
@@ -456,6 +458,9 @@ const getUserFromID = async (userID: number): Promise<SanitisedUser | null> => {
     where: {
       id: userID,
     },
+    include: {
+      profilePicture: true,
+    },
   });
   if (user) {
     return {
@@ -477,12 +482,7 @@ app.get('/user', async (req, res: Response) => {
   }
 
   const userID = sessionFromDB.userId;
-
-  const user: User | null = await prisma.user.findFirst({
-    where: {
-      id: userID,
-    },
-  });
+  const user = await getUserFromID(userID);
 
   if (user === null) {
     return res.status(404).json({
@@ -643,12 +643,12 @@ app.post(
     let imagePath = '';
     try {
       if (event.banner && storageClient) {
-        const metaData = event.banner.metaData;
+        const metadata = event.banner.metadata;
         const base64Data = event.banner.buffer.split(',')[1];
         if (base64Data) {
           imagePath = await uploadFile(
             base64Data,
-            metaData.type,
+            metadata.type,
             event.societyId,
             event.name
           );
@@ -663,7 +663,7 @@ app.post(
     try {
       const eventRes = await prisma.event.create({
         data: {
-          banner: imagePath,
+          picture: imagePath,
           name: event.name,
           startDateTime: dayjs(event.startDateTime).toISOString(),
           endDateTime: dayjs(event.endDateTime).toISOString(),
@@ -700,6 +700,9 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
     where: {
       id: eventID,
     },
+    include: {
+      picture: true,
+    },
   });
 
   if (!event) {
@@ -713,7 +716,7 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
   // upload image to storage and get link
   let imagePath;
   try {
-    if (Object.keys(event.banner).length > 0) {
+    if (Object.keys(event.picture).length > 0) {
       const base64Data = req.body.banner.buffer.split(',')[1];
       if (base64Data) {
         const metaData = req.body.banner.metaData;
@@ -740,7 +743,7 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
         id: eventID,
       },
       data: {
-        banner: imagePath,
+        picture: imagePath,
         name: req.body.name,
         startDateTime: dayjs(req.body.startDateTime).toISOString(),
         endDateTime: dayjs(req.body.endDateTime).toISOString(),
