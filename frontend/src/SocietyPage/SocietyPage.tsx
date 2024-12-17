@@ -1,15 +1,15 @@
 import { useParams } from 'react-router';
 import classes from './SocietyPage.module.css';
 import { Society } from '../UserContext/UserContext';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../Button/Button';
-import Event from '../Event/Event';
+import Event, { EventFromDatabase, EventType } from '../Event/Event';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
 
 export default function SocietyPage() {
   const { id } = useParams();
   const [society, setSociety] = useState<Society | null>(null);
-  const [events, setEvents] = useState<ReactNode[] | null>(null);
+  const [events, setEvents] = useState<EventFromDatabase[] | null>(null);
 
   useEffect(() => {
     const getEvents = async () => {
@@ -31,6 +31,7 @@ export default function SocietyPage() {
         ) {
           setEvents([]);
         } else {
+          console.log(events);
           setEvents(events);
         }
       } else {
@@ -88,7 +89,7 @@ export default function SocietyPage() {
                 <>
                   <h2>Events</h2>
                   <ul className={classes.events}>
-                    {events.map((event: any) => (
+                    {events.map((event: EventFromDatabase) => (
                       <li key={event.id}>
                         {/* <Button
                           type="button"
@@ -99,12 +100,15 @@ export default function SocietyPage() {
                           Join
                         </Button> */}
                         <Event
+                          id={event.id}
+                          banner={event.banner}
                           name={event.name}
-                          time={`${event.startDateTime} - ${event.endDateTime}`}
-                          image={
-                            'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fa%2Fa5%2FRed_Kitten_01.jpg&f=1&nofb=1&ipt=cd2acb0971452c69a7ba55acb246385f6c734a9f844da1dad74dd7d7736d5cfb&ipo=images'
-                          }
-                          backgroundPositionY="0px"
+                          startDateTime={new Date(event.startDateTime)}
+                          endDateTime={new Date(event.endDateTime)}
+                          location={event.location}
+                          description={event.description}
+                          keywords={event.keywords}
+                          societyId={event.societyId}
                         ></Event>
                       </li>
                     ))}

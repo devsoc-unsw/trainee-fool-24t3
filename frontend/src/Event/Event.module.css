@@ -2,6 +2,29 @@
   background: #dbdbdb;
   border-radius: 16px;
   padding: 0;
+  position: relative;
+}
+
+.container::after {
+  box-shadow: 0px 0px 32px var(--dominant-colour);
+  opacity: 0.4;
+  transition: opacity 0.2s linear;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: '';
+  border-radius: 16px;
+}
+
+.container:hover {
+  cursor: pointer;
+}
+
+.container:hover::after {
+  opacity: 1;
 }
 
 .picture {
@@ -14,4 +37,8 @@
 
 .eventBody {
   padding: 24px 16px;
+}
+
+.eventBody p:first-child {
+  margin-bottom: 8px;
 }

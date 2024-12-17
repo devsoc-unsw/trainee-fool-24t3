@@ -45,7 +45,9 @@
 .events {
   list-style-type: none;
   display: flex;
-  gap: 64px;
+  gap: 48px;
+  padding: 0;
+  margin-top: 24px;
 }
 
 .events li {
