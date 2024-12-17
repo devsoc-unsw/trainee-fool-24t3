@@ -14,6 +14,40 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model HSLColour {
+  id         Int           @id
+  hue        Int
+  saturation Int
+  lightness  Int
+  images     ImageColour[]
+
+  @@unique([hue, saturation, lightness])
+}
+
+model ImageColour {
+  imageURL String
+  colourID Int
+
+  image  Image     @relation(fields: [imageURL], references: [url])
+  colour HSLColour @relation(fields: [colourID], references: [id])
+
+  @@unique([imageURL, colourID])
+}
+
+model Image {
+  url     String        @id
+  colours ImageColour[]
+
+  profilePictureUser   User @relation(fields: [profilePictureUserId], references: [id])
+  profilePictureUserId Int  @unique
+
+  societyPicture   Society @relation(fields: [societyPictureId], references: [id])
+  societyPictureId Int     @unique
+
+  eventPicture   Event @relation(fields: [eventPictureId], references: [id])
+  eventPictureId Int   @unique
+}
+
 model User {
   id             Int       @id @default(autoincrement())
   username       String    @unique
@@ -21,7 +55,7 @@ model User {
   password       String
   salt           String
   dateJoined     DateTime
-  profilePicture String?
+  profilePicture Image?
   societies      Society[] @relation(name: "membertosociety")
   keywords       Keyword[]
   adminsocieties Society[]
@@ -37,12 +71,12 @@ model Society {
   description    String?
   members        User[]  @relation(name: "membertosociety")
   discordId      String? @unique
-  profilePicture String?
+  societyPicture Image?
 }
 
 model Event {
   id            Int       @id @default(autoincrement())
-  banner        String
+  picture       Image?
   name          String
   startDateTime DateTime
   endDateTime   DateTime
@@ -52,13 +86,13 @@ model Event {
   society       Society   @relation(fields: [societyId], references: [id], onDelete: Cascade)
   keywords      Keyword[]
   attendees     User[]
-  
+
   @@unique(name: "eventID", [societyId, name, startDateTime, endDateTime])
 }
 
 model Keyword {
-  id Int @id @default(autoincrement())
-  text String @unique
+  id          Int     @id @default(autoincrement())
+  text        String  @unique
   subscribers User[]
-  events Event[]
+  events      Event[]
 }
