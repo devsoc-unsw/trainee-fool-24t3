@@ -16,7 +16,7 @@ import {
 } from './requestTypes';
 import bcrypt from 'bcrypt';
 import { LoginErrors, SanitisedUser } from './interfaces';
-import { PrismaClient, Prisma, User } from '@prisma/client';
+import { PrismaClient, Prisma, User, Image } from '@prisma/client';
 import prisma from './prisma';
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
@@ -642,9 +642,9 @@ app.post(
     // upload image to storage and get link
     let imagePath = '';
     try {
-      if (event.banner && storageClient) {
-        const metadata = event.banner.metadata;
-        const base64Data = event.banner.buffer.split(',')[1];
+      if (event.image && storageClient) {
+        const metadata = event.image.metadata;
+        const base64Data = event.image.buffer.split(',')[1];
         if (base64Data) {
           imagePath = await uploadFile(
             base64Data,
@@ -660,10 +660,18 @@ app.post(
       return res.status(400).json({ message: `Unable to upload image.` });
     }
 
+    const myImage: Image = {
+      url: imagePath,
+      profilePictureUserID: 1,
+      societyPictureID: 1,
+      imageColoursID: 1,
+      eventPictureID: 1,
+    };
+
     try {
       const eventRes = await prisma.event.create({
         data: {
-          picture: imagePath,
+          picture: myImage,
           name: event.name,
           startDateTime: dayjs(event.startDateTime).toISOString(),
           endDateTime: dayjs(event.endDateTime).toISOString(),
@@ -717,13 +725,13 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
   let imagePath;
   try {
     if (Object.keys(event.picture).length > 0) {
-      const base64Data = req.body.banner.buffer.split(',')[1];
+      const base64Data = req.body.image.buffer.split(',')[1];
       if (base64Data) {
-        const metaData = req.body.banner.metaData;
+        const metadata = req.body.image.metadata;
 
         imagePath = await uploadFile(
           base64Data,
-          metaData.type,
+          metadata.type,
           event.societyId,
           event.name
         );
@@ -731,7 +739,7 @@ app.put('/event', async (req: TypedRequest<UpdateEventBody>, res: Response) => {
         throw new Error('Invalid base64 string.');
       }
     } else {
-      throw new Error('No banner submitted.');
+      throw new Error('No image submitted.');
     }
   } catch (error) {
     return res.status(400).json({ error: (error as Error).message });

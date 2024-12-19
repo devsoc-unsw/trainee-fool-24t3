@@ -42,7 +42,7 @@ describe('POST /user/event (attend) endpoint', () => {
       .post('/event')
       .set('Cookie', sessionID)
       .send({
-        banner:
+        image:
           'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
         name: 'tiktokrizzparty',
         startDateTime: new Date(),
@@ -101,7 +101,7 @@ describe('POST /user/event (attend) endpoint', () => {
       .post('/event')
       .set('Cookie', sessionID)
       .send({
-        banner:
+        image:
           'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
         name: 'tiktokrizzparty',
         startDateTime: new Date(),
@@ -162,7 +162,7 @@ describe('/unattend endpoint', () => {
       .post('/event')
       .set('Cookie', sessionID)
       .send({
-        banner:
+        image:
           'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
         name: 'tiktokrizzparty',
         startDateTime: new Date(),
@@ -221,7 +221,7 @@ describe('/unattend endpoint', () => {
       .post('/event')
       .set('Cookie', sessionID)
       .send({
-        banner:
+        image:
           'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
         name: 'tiktokrizzparty',
         startDateTime: new Date(),

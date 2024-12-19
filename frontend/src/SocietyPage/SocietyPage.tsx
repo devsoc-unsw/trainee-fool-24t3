@@ -101,7 +101,7 @@ export default function SocietyPage() {
                         </Button> */}
                         <Event
                           id={event.id}
-                          banner={event.banner}
+                          image={event.image}
                           name={event.name}
                           startDateTime={new Date(event.startDateTime)}
                           endDateTime={new Date(event.endDateTime)}

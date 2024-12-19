@@ -1,8 +1,8 @@
-import { CameraIcon } from "@heroicons/react/24/outline";
-import Button from "../../../../Button/Button";
-import { SettingsPage } from "../../SettingsPage";
-import classes from "./CreateNewEvent.module.css";
-import { ButtonIcons, ButtonVariants } from "../../../../Button/ButtonTypes";
+import { CameraIcon } from '@heroicons/react/24/outline';
+import Button from '../../../../Button/Button';
+import { SettingsPage } from '../../SettingsPage';
+import classes from './CreateNewEvent.module.css';
+import { ButtonIcons, ButtonVariants } from '../../../../Button/ButtonTypes';
 import {
   ChangeEventHandler,
   MouseEventHandler,
@@ -10,18 +10,18 @@ import {
   useEffect,
   useRef,
   useState,
-} from "react";
-import { UserContext } from "../../../../UserContext/UserContext";
-import { TextInput, TextOptions } from "../../../../TextInput/TextInput";
-import { useNavigate } from "react-router";
+} from 'react';
+import { UserContext } from '../../../../UserContext/UserContext';
+import { TextInput, TextOptions } from '../../../../TextInput/TextInput';
+import { useNavigate } from 'react-router';
 
 type StringSetter = React.Dispatch<React.SetStateAction<string>>;
 
 enum ErrorMessage {
-  TYPE = "Banner must be an image file.",
-  NUMBER = "Please upload only one image.",
-  SIZE = "Maximum file size of 10MB.",
-  default = "",
+  TYPE = 'Banner must be an image file.',
+  NUMBER = 'Please upload only one image.',
+  SIZE = 'Maximum file size of 10MB.',
+  default = '',
 }
 
 interface UploadError {
@@ -47,7 +47,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 
 export interface FormStructure {
   societyId: number | undefined;
-  banner?: File | Base64Image;
+  image?: File | Base64Image;
   name: string;
   location: string;
   startDateTime: Date;
@@ -57,7 +57,7 @@ export interface FormStructure {
 
 interface Base64Image {
   buffer: string;
-  metaData: {
+  metadata: {
     name: string;
     type: string;
     size: number;
@@ -70,7 +70,7 @@ export function CreateNewEventPage() {
     status: false,
     message: ErrorMessage.default,
   });
-  const [submitError, setSubmitError] = useState("");
+  const [submitError, setSubmitError] = useState('');
   const [fileDragging, setFileDragging] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [inactiveForms, setInactiveForms] = useState<FormStructure[]>([]);
@@ -79,11 +79,11 @@ export function CreateNewEventPage() {
 
   const defaultForm = {
     societyId: society?.id,
-    name: "Training Program Induction",
-    location: "John Lions Garden",
+    name: 'Training Program Induction',
+    location: 'John Lions Garden',
     startDateTime: new Date(),
     endDateTime: new Date(Date.now() + 60 * 60 * 1000), // one hour by default
-    description: "Your event description.",
+    description: 'Your event description.',
   };
 
   const [formContent, setFormContent] = useState<FormStructure>(defaultForm);
@@ -92,7 +92,7 @@ export function CreateNewEventPage() {
     if (files.length <= 1) {
       if (files.length === 1) {
         const file = files[0];
-        if (file.type.split("/")[0] !== "image") {
+        if (file.type.split('/')[0] !== 'image') {
           setUploadError(updateError(ErrorMessage.TYPE));
           return;
         }
@@ -101,10 +101,10 @@ export function CreateNewEventPage() {
           return;
         }
         setUploadError(updateError(ErrorMessage.default));
-        setFormContent({ ...formContent, banner: file });
+        setFormContent({ ...formContent, image: file });
         return;
       }
-      setFormContent({ ...formContent, banner: undefined });
+      setFormContent({ ...formContent, image: undefined });
     } else {
       setUploadError(updateError(ErrorMessage.NUMBER));
     }
@@ -148,31 +148,31 @@ export function CreateNewEventPage() {
 
   const removeFile: MouseEventHandler<HTMLImageElement> = (e) => {
     e.preventDefault();
-    setFormContent({ ...formContent, banner: undefined });
+    setFormContent({ ...formContent, image: undefined });
   };
 
   const submitForm = async () => {
     let formResponses = formContent;
-    if (formContent.banner && formContent.banner instanceof File) {
-      const file = formContent.banner;
+    if (formContent.image && formContent.image instanceof File) {
+      const file = formContent.image;
       const buffer = await fileToBase64(file);
       const data = {
         buffer,
-        metaData: {
+        metadata: {
           name: file.name,
           type: file.type,
           size: file.size,
         },
       };
-      formResponses = { ...formContent, banner: data };
+      formResponses = { ...formContent, image: data };
     }
 
     setSubmitting(true);
-    const res = await fetch("http://localhost:5180/event", {
-      method: "POST",
-      credentials: "include",
+    const res = await fetch('http://localhost:5180/event', {
+      method: 'POST',
+      credentials: 'include',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(formResponses),
     });
@@ -181,7 +181,7 @@ export function CreateNewEventPage() {
     setSubmitting(false);
     if (res.ok) {
       emptyForm();
-      navigate("/settings/events", { state: { creationSuccess: true } });
+      navigate('/settings/events', { state: { creationSuccess: true } });
     } else {
       setSubmitError(json.message);
     }
@@ -194,10 +194,10 @@ export function CreateNewEventPage() {
   const setFormItem = (itemKey: keyof FormStructure) => {
     const getUpdatedDateTime = (val: string, newDateTime: Date) => {
       //check if time
-      const times = val.split(":");
+      const times = val.split(':');
       if (times.length === 1) {
         //must be date
-        const [year, month, day] = val.split("-").map(Number);
+        const [year, month, day] = val.split('-').map(Number);
         newDateTime.setFullYear(year, month, day);
       } else {
         const [hour, minute] = times.map(Number);
@@ -207,7 +207,7 @@ export function CreateNewEventPage() {
     };
 
     const setItemContent: StringSetter = (val) => {
-      if (typeof val === "string") {
+      if (typeof val === 'string') {
         if (formContent[itemKey] instanceof Date) {
           const newDateTime = getUpdatedDateTime(val, formContent[itemKey]);
           setFormContent({ ...formContent, [itemKey]: newDateTime });
@@ -280,7 +280,7 @@ export function CreateNewEventPage() {
         <div className={classes.photoArea}>
           <div
             className={`${classes.photo} ${
-              fileDragging ? classes.photoDragged : ""
+              fileDragging ? classes.photoDragged : ''
             }`}
             onDrop={handleDrop}
             onDragOver={handleDropzoneDragOver}
@@ -295,7 +295,7 @@ export function CreateNewEventPage() {
             ref={inputRef}
             type="file"
             accept="image/*"
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
             onChange={handleInputChange}
           />
           {uploadError.status && (
@@ -303,14 +303,14 @@ export function CreateNewEventPage() {
               <p className={classes.error}>{uploadError.message}</p>
             </div>
           )}
-          {formContent.banner instanceof File && (
+          {formContent.image instanceof File && (
             <div>
               <img
                 className={classes.thumbnail}
                 onClick={removeFile}
-                src={URL.createObjectURL(formContent.banner)}
+                src={URL.createObjectURL(formContent.image)}
               />
-              <p className={classes.fileName}>{formContent.banner.name}</p>
+              <p className={classes.fileName}>{formContent.image.name}</p>
             </div>
           )}
         </div>
@@ -319,23 +319,23 @@ export function CreateNewEventPage() {
           className={classes.textInput}
           placeholder={defaultForm.name}
           name="event name"
-          onChange={setFormItem("name")}
+          onChange={setFormItem('name')}
           type={TextOptions.Text}
           error={false}
           autofocus={true}
-          value={formContent.name === defaultForm.name ? "" : formContent.name}
+          value={formContent.name === defaultForm.name ? '' : formContent.name}
         />
         <label className={classes.field}>Event location</label>
         <TextInput
           className={classes.textInput}
           placeholder={defaultForm.location}
           name="event location"
-          onChange={setFormItem("location")}
+          onChange={setFormItem('location')}
           type={TextOptions.Text}
           error={false}
           value={
             formContent.location === defaultForm.location
-              ? ""
+              ? ''
               : formContent.location
           }
         />
@@ -345,11 +345,11 @@ export function CreateNewEventPage() {
             <TextInput
               className={classes.textInput}
               placeholder="DD/MM/YYY"
-              value={formContent.endDateTime.toLocaleDateString("en-CA")}
+              value={formContent.endDateTime.toLocaleDateString('en-CA')}
               name="event date"
-              onChange={setFormItem("endDateTime")}
+              onChange={setFormItem('endDateTime')}
               type={TextOptions.Date}
-              error={submitError.includes("Invalid date")}
+              error={submitError.includes('Invalid date')}
             />
           </div>
           <div className={classes.timeInput}>
@@ -358,12 +358,12 @@ export function CreateNewEventPage() {
               className={classes.textInput}
               placeholder="HH:MM"
               value={formContent.startDateTime
-                .toLocaleTimeString("en-GB")
+                .toLocaleTimeString('en-GB')
                 .slice(0, 5)}
               name="event start time"
-              onChange={setFormItem("startDateTime")}
+              onChange={setFormItem('startDateTime')}
               type={TextOptions.Time}
-              error={submitError.includes("Invalid date")}
+              error={submitError.includes('Invalid date')}
             />
           </div>
           <div className={classes.timeInput}>
@@ -372,12 +372,12 @@ export function CreateNewEventPage() {
               className={classes.textInput}
               placeholder="HH:MM"
               value={formContent.endDateTime
-                .toLocaleTimeString("en-GB")
+                .toLocaleTimeString('en-GB')
                 .slice(0, 5)}
               name="event end time"
-              onChange={setFormItem("endDateTime")}
+              onChange={setFormItem('endDateTime')}
               type={TextOptions.Time}
-              error={submitError.includes("Invalid date")}
+              error={submitError.includes('Invalid date')}
             />
           </div>
         </div>
@@ -386,13 +386,13 @@ export function CreateNewEventPage() {
           className={`${classes.textInput} ${classes.description}`}
           placeholder={defaultForm.description}
           name="event description"
-          onChange={setFormItem("description")}
+          onChange={setFormItem('description')}
           type={TextOptions.Text}
           error={false}
           textarea={true}
           value={
             formContent.description === defaultForm.description
-              ? ""
+              ? ''
               : formContent.description
           }
         />

@@ -24,7 +24,7 @@ export interface UserIdBody {
 }
 
 export interface CreateEventBody {
-  banner: Base64Image;
+  image: Base64Image;
   name: string;
   startDateTime: Date;
   endDateTime: Date;

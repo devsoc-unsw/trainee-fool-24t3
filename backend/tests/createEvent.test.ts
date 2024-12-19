@@ -11,7 +11,7 @@ describe('/event endpoint', () => {
     const { status, body } = await request(app)
       .post('/event')
       .send({
-        banner: 'asdasd',
+        image: 'asdasd',
         name: 'tiktokrizzparty',
         startDateTime: start,
         endDateTime: new Date(start.getTime() + 86400000),
@@ -62,7 +62,7 @@ describe('/event endpoint', () => {
       .post('/event')
       .set('Cookie', sessionID)
       .send({
-        banner:
+        image:
           'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
         name: 'tiktokrizzparty',
         startDateTime: new Date(),
@@ -93,7 +93,7 @@ describe('/event endpoint', () => {
       .post('/event')
       .set('Cookie', sessionID)
       .send({
-        banner:
+        image:
           'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
         name: 'tiktokrizzparty',
         startDateTime: dayjs().add(30, 'm'),

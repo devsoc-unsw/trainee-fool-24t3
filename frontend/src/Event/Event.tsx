@@ -4,7 +4,7 @@ import ColorThief, { RGBColor } from 'colorthief';
 
 export interface EventType {
   id: number;
-  banner: string;
+  image: string;
   name: string;
   startDateTime: Date;
   endDateTime: Date;
@@ -16,7 +16,7 @@ export interface EventType {
 
 export interface EventFromDatabase {
   id: number;
-  banner: string;
+  image: string;
   name: string;
   startDateTime: string;
   endDateTime: string;
@@ -28,13 +28,27 @@ export interface EventFromDatabase {
 
 const colorThief = new ColorThief();
 
+const hueFromRGB = (rgb: RGBColor) => {
+  let hue;
+};
+
+const rgbToHSL = (rgb: RGBColor) => {
+  const hue = hueFromRGB(rgb);
+};
+
 export function Event(props: EventType) {
+  const [backgroundColour, setBackgroundColor] = useState<RGBColor | null>(
+    null
+  );
+  const [textColour, setTextColour] = useState<RGBColor | null>(null);
   const [dominantColour, setDominantColour] = useState<RGBColor | null>(null);
 
-  const getDominantColour = async (img: HTMLImageElement) => {
-    const colour = await colorThief.getColor(img);
-    if (colour) {
-      setDominantColour(colour);
+  const getPalette = async (img: HTMLImageElement) => {
+    const palette = await colorThief.getPalette(img);
+    if (palette) {
+      setDominantColour(palette[0]);
+      setBackgroundColor(palette[4]);
+      setTextColour([255, 255, 255]);
     } else {
       return null;
     }
@@ -43,11 +57,11 @@ export function Event(props: EventType) {
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = 'Anonymous';
-    img.src = props.banner;
+    img.src = props.image;
     img.addEventListener('load', () => {
-      getDominantColour(img);
+      getPalette(img);
     });
-  }, [props.banner]);
+  }, [props.image]);
 
   function formatDate(date: Date) {
     return date.toLocaleString('default', {
@@ -67,13 +81,17 @@ export function Event(props: EventType) {
           '--dominant-colour': dominantColour
             ? `rgba(${dominantColour}, 0.5)`
             : '',
+          '--background-colour': backgroundColour
+            ? `rgba(${backgroundColour}, 1)`
+            : '',
+          '--text-colour': textColour ? `rgba(${textColour}, 1)` : '',
         } as React.CSSProperties
       }
     >
       <div
         className={classes.picture}
         style={{
-          backgroundImage: `url(${props.banner})`,
+          backgroundImage: `url(${props.image})`,
           backgroundPositionY: 0,
         }}
       ></div>

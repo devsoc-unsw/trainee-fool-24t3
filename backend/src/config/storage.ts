@@ -31,7 +31,7 @@ export const uploadFile = async (
   const { data, error } = await storageClient
     .from('images')
     .upload(
-      `${societyId}/${eventName}/banner.${fileType.split('/')[1]}`,
+      `${societyId}/${eventName}/image.${fileType.split('/')[1]}`,
       decode(file),
       {
         contentType: fileType,

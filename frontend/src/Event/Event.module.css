@@ -1,5 +1,6 @@
 .container {
-  background: #dbdbdb;
+  background: var(--background-colour);
+  color: var(--text-colour);
   border-radius: 16px;
   padding: 0;
   position: relative;

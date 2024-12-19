@@ -15,37 +15,45 @@ datasource db {
 }
 
 model HSLColour {
-  id         Int           @id
+  id         Int @id
   hue        Int
   saturation Int
   lightness  Int
-  images     ImageColour[]
+
+  dominantId  ImageColours[] @relation("dominant")
+  secondaryId ImageColours[] @relation("secondary")
+  tertiaryId  ImageColours[] @relation("tertiary")
 
   @@unique([hue, saturation, lightness])
 }
 
-model ImageColour {
-  imageURL String
-  colourID Int
+model ImageColours {
+  colourID Int @id
 
-  image  Image     @relation(fields: [imageURL], references: [url])
-  colour HSLColour @relation(fields: [colourID], references: [id])
+  dominantID  Int
+  secondaryID Int
+  tertiaryID  Int
 
-  @@unique([imageURL, colourID])
+  image    Image?
+  dominant HSLColour @relation(name: "dominant", fields: [dominantID], references: [id])
+
+  secondary HSLColour @relation(name: "secondary", fields: [secondaryID], references: [id])
+  tertiary  HSLColour @relation(name: "tertiary", fields: [tertiaryID], references: [id])
 }
 
 model Image {
-  url     String        @id
-  colours ImageColour[]
+  url     String       @id
+  colours ImageColours @relation(fields: [imageColoursID], references: [colourID])
 
-  profilePictureUser   User @relation(fields: [profilePictureUserId], references: [id])
-  profilePictureUserId Int  @unique
+  profilePictureUser   User @relation(fields: [profilePictureUserID], references: [id])
+  profilePictureUserID Int  @unique
 
-  societyPicture   Society @relation(fields: [societyPictureId], references: [id])
-  societyPictureId Int     @unique
+  societyPicture   Society @relation(fields: [societyPictureID], references: [id])
+  societyPictureID Int     @unique
 
-  eventPicture   Event @relation(fields: [eventPictureId], references: [id])
-  eventPictureId Int   @unique
+  eventPicture   Event @relation(fields: [eventPictureID], references: [id])
+  eventPictureID Int   @unique
+  imageColoursID Int   @unique
 }
 
 model User {

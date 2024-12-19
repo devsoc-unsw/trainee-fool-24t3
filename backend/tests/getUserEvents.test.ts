@@ -62,7 +62,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner:
+          image:
             'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
           name: 'tiktokrizzparty' + i,
           startDateTime: new Date(),
@@ -157,7 +157,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner:
+          image:
             'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
           name: 'tiktokrizzparty' + i,
           startDateTime: new Date(),
@@ -246,7 +246,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner:
+          image:
             'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
           name: 'tiktokrizzparty' + i,
           startDateTime: new Date(),
@@ -397,7 +397,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner:
+          image:
             'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
           name: 'tiktokrizzyparty' + i,
           startDateTime: startDate,
@@ -500,7 +500,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner:
+          image:
             'https://img-cdn.inc.com/image/upload/f_webp,q_auto,c_fit/images/panoramic/Island-Entertainment-viral-tiktok-inc_539684_hnvnix.jpg',
           name: 'tiktokrizzyparty' + i,
           startDateTime: startDate,
@@ -594,7 +594,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner: 'https://example.com/banner.jpg',
+          image: 'https://example.com/image.jpg',
           name: 'afterevents' + i,
           startDateTime: startDate,
           endDateTime: endDate,
@@ -704,7 +704,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner: 'https://example.com/banner.jpg',
+          image: 'https://example.com/image.jpg',
           name: 'afterevents' + i,
           startDateTime: startDate,
           endDateTime: endDate,
@@ -717,7 +717,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner: 'https://example.com/banner.jpg',
+          image: 'https://example.com/image.jpg',
           name: 'afterevents2' + i,
           startDateTime: startDate,
           endDateTime: endDate,
@@ -826,7 +826,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner: 'https://example.com/banner.jpg',
+          image: 'https://example.com/image.jpg',
           name: 'afterevents' + i,
           startDateTime: startDate,
           endDateTime: endDate,
@@ -839,7 +839,7 @@ describe('GET /user/events endpoint', () => {
         .post('/event')
         .set('Cookie', sessionID)
         .send({
-          banner: 'https://example.com/banner.jpg',
+          image: 'https://example.com/image.jpg',
           name: 'afterevents2' + i,
           startDateTime: startDate,
           endDateTime: endDate,
